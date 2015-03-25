@@ -1,4 +1,4 @@
-Aras.ViewModel provides a .NET library for building Aras Innovator Applications
+Aras.ViewModel provides a .NET library for building [Aras Innovator](http://www.aras.com) Applications
 
 Copyright (C) 2015 Processwall Limited.
 
