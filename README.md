@@ -1,6 +1,6 @@
 Aras.ViewModel provides a .NET library for building [Aras Innovator](http://www.aras.com) Applications
 
-Copyright (C) 2015 Processwall Limited.
+Copyright (C) 2015 [Processwall Limited](http://www.processwall.com).
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published
