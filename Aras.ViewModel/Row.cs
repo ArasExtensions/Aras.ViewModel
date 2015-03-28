@@ -30,23 +30,34 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel
 {
-    public class Column : Base
+    public class Row : Base
     {
         public Grid Grid { get; private set; }
 
-        public String Name { get; private set; }
-        public String Label { get; private set; }
+        private Dictionary<Column, Cell> _cells;
 
-        public override string ToString()
+        public IEnumerable<Cell> Cells
         {
-            return this.Label;
+            get
+            {
+                return this._cells.Values;
+            }
         }
 
-        internal Column(Grid Grid, String Name, String Label)
+        public Cell Cell(Column Column)
+        {
+            return this._cells[Column];
+        }
+
+        internal Row(Grid Grid)
         {
             this.Grid = Grid;
-            this.Name = Name;
-            this.Label = Label;
+            this._cells = new Dictionary<Column, Cell>();
+
+            foreach(Column col in this.Grid.Columns)
+            {
+                this._cells[col] = new Cell(this, col);
+            }
         }
     }
 }

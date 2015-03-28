@@ -30,23 +30,29 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel
 {
-    public class Column : Base
+    public class Cell : Base
     {
-        public Grid Grid { get; private set; }
+        public Row Row { get; private set; }
 
-        public String Name { get; private set; }
-        public String Label { get; private set; }
+        public Column Column { get; private set; }
 
-        public override string ToString()
+        private Property _property;
+        public Property Property
         {
-            return this.Label;
+            get
+            {
+                return this._property;
+            }
+            set
+            {
+                this._property = value;
+            }
         }
 
-        internal Column(Grid Grid, String Name, String Label)
+        internal Cell(Row Row, Column Column)
         {
-            this.Grid = Grid;
-            this.Name = Name;
-            this.Label = Label;
+            this.Row = Row;
+            this.Column = Column;
         }
     }
 }

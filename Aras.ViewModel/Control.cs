@@ -100,7 +100,6 @@ namespace Aras.ViewModel
             {
                 throw new Exceptions.DuplicateCommandNameException(Command.Name);
             }
-
         }
 
         protected void SetPropertyObject(String Name, object Value)
@@ -111,6 +110,23 @@ namespace Aras.ViewModel
         protected void SetCommandCanExecute(String Name, Boolean Value)
         {
             this.Command(Name).CanExecute = Value;
+        }
+
+        protected Property CreateProperty(String Name, Boolean Required, Boolean ReadOnly, Model.Cache.Property Property)
+        {
+            Property ret = null;
+
+            switch(Property.GetType().Name)
+            {
+                case "String":
+                    ret = new Properties.String(this, Name, Required, ReadOnly, null);
+                    break;
+                default:
+                    throw new NotImplementedException("Property type not supported: " + Property.GetType().Name);
+            }
+
+            ret.Binding = Property;
+            return ret;
         }
 
         public Control(Aras.Model.Session Session)

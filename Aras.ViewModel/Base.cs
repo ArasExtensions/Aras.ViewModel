@@ -30,9 +30,45 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel
 {
-    public abstract class Base
+    public abstract class Base: IEquatable<Base>
     {
         public Guid ID { get; private set; }
+
+        public bool Equals(Base other)
+        {
+            if (other == null)
+            {
+                return false;
+            }
+            else
+            {
+                return this.ID.Equals(other.ID);
+            }
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+            else
+            {
+                if (obj is Base)
+                {
+                    return this.Equals((Base)obj);
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
+        public override int GetHashCode()
+        {
+            return this.ID.GetHashCode();
+        }
 
         public Base()
         {

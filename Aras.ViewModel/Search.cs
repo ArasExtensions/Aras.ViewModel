@@ -41,11 +41,17 @@ namespace Aras.ViewModel
 
         public Model.ItemType ItemType { get; private set; }
 
+        public IEnumerable<Model.PropertyType> PropertyTypes { get; private set; }
+
         public Properties.Int32 PageSize { get; private set; }
 
         public Properties.Int32 PageCount { get; private set; }
 
         public Properties.Int32 Page { get; private set; }
+
+        public Grid GridControl { get; private set; }
+
+        public Properties.Control Grid { get; private set; }
 
         public Command Refresh { get; private set; }
 
@@ -57,6 +63,12 @@ namespace Aras.ViewModel
                 if (this._request == null)
                 {
                     this._request = this.Session.Create(this.ItemType.Action("get"));
+                    
+                    foreach (Model.PropertyType proptype in this.PropertyTypes)
+                    {
+                        this._request.AddSelection(proptype);
+                    }
+
                     this._request.Paging = true;
                     this._request.Page = (int)this.Page.Value;
                     this._request.PageSize = (int)this.PageSize.Value;
@@ -72,6 +84,36 @@ namespace Aras.ViewModel
 
             Model.Response.IEnumerable<Model.Response.Item> response = await this.Request.ExecuteAsync();
 
+            // Set number of rows on Grid
+            this.GridControl.NoRows = response.Count();
+
+            // Add Items to Grid
+            int rowindex = 0;
+
+            foreach(Model.Response.Item item in response)
+            {
+                Row row = this.GridControl.Row(rowindex);
+           
+                foreach(Model.PropertyType proptype in this.PropertyTypes)
+                {
+                    Column column = this.GridControl.Column(proptype.Name);
+                    Cell cell = row.Cell(column);
+
+                    Model.Cache.Property prop = item.Cache.Property(proptype);
+
+                    if (cell.Property == null)
+                    {
+                        cell.Property = this.CreateProperty(prop.Name + "_" + rowindex.ToString(), true, true, prop);
+                    }
+                    else
+                    {
+                        cell.Property.Binding = prop;
+                    }
+                }
+
+                rowindex++;
+            }
+
             this.SetCommandCanExecute("Refresh", true);
         }
 
@@ -85,10 +127,11 @@ namespace Aras.ViewModel
             this.Request.PageSize = (int)this.PageSize.Value;
         }
 
-        public Search(Aras.Model.Session Session, Model.ItemType ItemType)
+        public Search(Aras.Model.Session Session, Model.ItemType ItemType, IEnumerable<Model.PropertyType> PropertyTypes)
             : base(Session)
         {
             this.ItemType = ItemType;
+            this.PropertyTypes = PropertyTypes;
 
             this.PageSize = new Properties.Int32(this, "PageSize", true, false, MinPageSize, MaxPageSize, DefaultPageSize);
             this.PageSize.ObjectChanged += PageSize_ObjectChanged;
@@ -100,7 +143,16 @@ namespace Aras.ViewModel
             this.Page = new Properties.Int32(this, "Page", true, false, MinPage, MaxPage, DefaultPage);
             this.Page.ObjectChanged += Page_ObjectChanged;
             this.RegisterProperty(this.Page);
-                        
+
+            this.GridControl = new Grid(this.Session);
+            this.Grid = new Properties.Control(this, "Grid", true, true, this.GridControl);
+            this.RegisterProperty(this.Grid);
+            
+            foreach(Model.PropertyType proptype in this.PropertyTypes)
+            {
+                this.GridControl.AddColumn(proptype.Name, proptype.Label);
+            }
+
             this.Refresh = new Command(this, "Refresh", this.OnExecuteRefresh, true);
             this.RegisterCommand(this.Refresh);
         }

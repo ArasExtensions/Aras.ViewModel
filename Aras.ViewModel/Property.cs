@@ -99,6 +99,34 @@ namespace Aras.ViewModel
             }
         }
 
+        private Model.Cache.Property _binding;
+        public Model.Cache.Property Binding
+        {
+            get
+            {
+                return this._binding;
+            }
+            set
+            {
+                if (value == null)
+                {
+                    if (this._binding != null)
+                    {
+                        this._binding = null;
+                        this.SetObject(null);
+                    }
+                }
+                else
+                {
+                    if (this._binding == null || !this._binding.Equals(value))
+                    {
+                        this._binding = value;
+                        this.SetObject(this._binding.Object);
+                    }
+                }
+            }
+        }
+
         public override string ToString()
         {
             if (this.Object == null)
