@@ -30,7 +30,7 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel
 {
-    public class Search : Grid
+    public class Search : Control
     {
         const System.Int32 MinPageSize = 5;
         const System.Int32 MaxPageSize = 100;
