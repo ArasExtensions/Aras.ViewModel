@@ -32,100 +32,92 @@ namespace Aras.ViewModel
 {
     public class Grid : Control
     {
-        private Dictionary<String, Column> _columns;
-        public IEnumerable<Column> Columns
-        {
-            get
-            {
-                return this._columns.Values;
-            }
-        }
+        public Properties.ControlList Columns { get; private set; }
 
         public Column AddColumn(String Name, String Label)
         {
-            if (!this._columns.ContainsKey(Name))
+            Column column = this.Column(Name);
+
+            if (column == null)
             {
-                this._columns[Name] = new Column(this, Name, Label);
+                column = new Column(this, Name, Label);
+                this.Columns.Value.Add(column);
             }
 
-            return this._columns[Name];
+            return column;
         }
 
         public Column Column(String Name)
         {
-            return this._columns[Name];
+            foreach(Control control in this.Columns.Value)
+            {
+                Column column = (Column)control;
+
+                if (column.Name.Value == Name)
+                {
+                    return column;
+                }
+            }
+
+            return null;
         }
 
-        private List<Row> _rows;
-        public IEnumerable<Row> Rows
-        {
-            get
-            {
-                return this._rows;
-            }
-        }
+        public Properties.ControlList Rows { get; private set; }
 
         public Row Row(int Index)
         {
-            return this._rows[Index];
+            return (Row)this.Rows.Value[Index];
         }
 
         public void ClearRows()
         {
-            this._rows.Clear();
+            this.Rows.Value.Clear();
         }
 
         public Row AddRow()
         {
             Row row = new Row(this);
-            this._rows.Add(row);
+            this.Rows.Value.Add(row);
             return row;
-        }
-
-        public Row InsertRow(Row Row)
-        {
-            if (Row.Grid.Equals(this))
-            {
-                Row row = new Row(this);
-                this._rows.Insert(this._rows.IndexOf(Row), row);
-                return row;
-            }
-            else
-            {
-                throw new ArgumentException("Row not associated with Grid");
-            }
         }
 
         public int NoRows
         {
             get
             {
-                return this._rows.Count();
+                return this.Rows.Value.Count();
             }
             set
             {
-                if (this._rows.Count() < value)
+                if (this.Rows.Value.Count < value)
                 {
                     // Need to add some more Rows
-                    int diff = value-this._rows.Count;
+                    int diff = value - this.Rows.Value.Count;
+                    this.Rows.Value.NotifyListChanged = false;
 
                     for(int i=0; i<diff; i++)
                     {
                         this.AddRow();
                     }
+
+                    this.Rows.Value.NotifyListChanged = true;
                 }
-                else
+                else if (this.Rows.Value.Count > value)
                 {
                     // Need to remove Rows
-                    this._rows.RemoveRange(value, this._rows.Count - value);
+                    this.Rows.Value.RemoveRange(value, this.Rows.Value.Count - value);
                 }
             }
         }
+
         public Grid(Model.Session Session)
             :base(Session)
         {
-            this._columns = new Dictionary<String, Column>();
-            this._rows = new List<Row>();
+            this.Columns = new Properties.ControlList(this, "Columns", true, false);
+            this.RegisterProperty(this.Columns);
+
+            this.Rows = new Properties.ControlList(this, "Rows", true, false);
+            this.RegisterProperty(this.Rows);
         }
     }
 }

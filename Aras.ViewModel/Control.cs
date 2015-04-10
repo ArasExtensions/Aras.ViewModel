@@ -58,14 +58,7 @@ namespace Aras.ViewModel
 
         protected void RegisterProperty(Property Property)
         {
-            if (!this._properties.ContainsKey(Property.Name))
-            {
-                this._properties[Property.Name] = Property;
-            }
-            else
-            {
-                throw new Exceptions.DuplicatePropertyNameException(Property.Name);
-            }
+            this._properties[Property.Name] = Property;
         }
 
         private Dictionary<String, Command> _commands;

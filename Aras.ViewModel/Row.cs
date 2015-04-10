@@ -30,34 +30,42 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel
 {
-    public class Row : Base
+    public class Row : Control
     {
         public Grid Grid { get; private set; }
 
-        private Dictionary<Column, Cell> _cells;
+        public Properties.ControlList Cells { get; private set; }
 
-        public IEnumerable<Cell> Cells
+        private void AddCells()
         {
-            get
+            foreach(Column column in Grid.Columns.Value)
             {
-                return this._cells.Values;
+                this.Cells.Value.Add(new Cell(column, this));
             }
         }
 
         public Cell Cell(Column Column)
         {
-            return this._cells[Column];
+            foreach(Cell cell in this.Cells.Value)
+            {
+                if (cell.Column.Equals(Column))
+                {
+                    return cell;
+                }
+            }
+
+            return null;
         }
 
         internal Row(Grid Grid)
+            :base(Grid.Session)
         {
             this.Grid = Grid;
-            this._cells = new Dictionary<Column, Cell>();
 
-            foreach(Column col in this.Grid.Columns)
-            {
-                this._cells[col] = new Cell(this, col);
-            }
+            this.Cells = new Properties.ControlList(this, "Cells", true, false);
+            this.RegisterProperty(this.Cells);
+
+            this.AddCells();
         }
     }
 }

@@ -28,37 +28,45 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Aras.ViewModel
+namespace Aras.ViewModel.Properties
 {
-    public class Cell : Control
+    public class ControlList : Property
     {
-        public Row Row { get; private set; }
-
-        public Column Column { get; private set; }
-
-        private Property _value;
-        public Property Value
+        internal override void SetObject(object value)
         {
-            get
+            if (value == null || value is ObservableList<ViewModel.Control>)
             {
-                return this._value;
+                base.SetObject(value);
             }
-            set
+            else
             {
-                this._value = value;
-
-                if (this._value != null)
-                {
-                    this.RegisterProperty(this._value);
-                }
+                throw new Exceptions.ValueTypeException("List<Aras.ViewModel.Control>");
             }
         }
 
-        internal Cell(Column Column, Row Row)
-            :base(Column.Grid.Session)
+        public ObservableList<ViewModel.Control> Value
         {
-            this.Row = Row;
-            this.Column = Column;
+            get
+            {
+                return (ObservableList<ViewModel.Control>)this.Object;
+            }
+            set
+            {
+                this.Object = value;
+            }
+        }
+
+        public ControlList(ViewModel.Control Control, System.String Name, Boolean Required, Boolean ReadOnly)
+            : base(Control, Name, Required, ReadOnly)
+        {
+            ObservableList<ViewModel.Control> values = new ObservableList<ViewModel.Control>();
+            values.ListChanged += values_ListChanged;
+            this.SetObject(values);
+        }
+
+        void values_ListChanged(object sender, EventArgs e)
+        {
+            this.OnPropertyChanged();
         }
     }
 }

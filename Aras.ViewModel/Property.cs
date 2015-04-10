@@ -42,13 +42,13 @@ namespace Aras.ViewModel
             }
         }
 
-        public event EventHandler ObjectChanged;
+        public event EventHandler PropertyChanged;
 
-        private void OnObjectChanged()
+        protected void OnPropertyChanged()
         {
-            if (this.ObjectChanged != null)
+            if (this.PropertyChanged != null)
             {
-                this.ObjectChanged(this, EventArgs.Empty);
+                this.PropertyChanged(this, EventArgs.Empty);
             }
         }
 
@@ -67,7 +67,7 @@ namespace Aras.ViewModel
                 if (this._object != null)
                 {
                     this._object = null;
-                    this.OnObjectChanged();
+                    this.OnPropertyChanged();
                 }
             }
             else
@@ -75,7 +75,7 @@ namespace Aras.ViewModel
                 if (!value.Equals(this._object))
                 {
                     this._object = value;
-                    this.OnObjectChanged();
+                    this.OnPropertyChanged();
                 }
             }
         }

@@ -101,13 +101,13 @@ namespace Aras.ViewModel
 
                     Model.Cache.Property prop = item.Cache.Property(proptype);
 
-                    if (cell.Property == null)
+                    if (cell.Value == null)
                     {
-                        cell.Property = this.CreateProperty(prop.Name + "_" + rowindex.ToString(), true, true, prop);
+                        cell.Value = this.CreateProperty(prop.Name + "_" + rowindex.ToString(), true, true, prop);
                     }
                     else
                     {
-                        cell.Property.Binding = prop;
+                        cell.Value.Binding = prop;
                     }
                 }
 
@@ -134,14 +134,14 @@ namespace Aras.ViewModel
             this.PropertyTypes = PropertyTypes;
 
             this.PageSize = new Properties.Int32(this, "PageSize", true, false, MinPageSize, MaxPageSize, DefaultPageSize);
-            this.PageSize.ObjectChanged += PageSize_ObjectChanged;
+            this.PageSize.PropertyChanged += PageSize_ObjectChanged;
             this.RegisterProperty(this.PageSize);
             
             this.PageCount = new Properties.Int32(this, "PageCount", true, true, 0, System.Int32.MaxValue, 0);
             this.RegisterProperty(this.PageCount);
             
             this.Page = new Properties.Int32(this, "Page", true, false, MinPage, MaxPage, DefaultPage);
-            this.Page.ObjectChanged += Page_ObjectChanged;
+            this.Page.PropertyChanged += Page_ObjectChanged;
             this.RegisterProperty(this.Page);
 
             this.GridControl = new Grid(this.Session);
