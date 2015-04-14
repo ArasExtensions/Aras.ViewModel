@@ -36,9 +36,9 @@ namespace Aras.ViewModel
 
         public String Name { get; private set; }
 
-        public delegate void OnExecute(object parameter);
+        public delegate Task OnExecuteAsync(object parameter);
 
-        private OnExecute _execute;
+        private OnExecuteAsync _execute;
 
         public event EventHandler CanExecuteChanged;
 
@@ -67,20 +67,20 @@ namespace Aras.ViewModel
             }
         }
 
-        public void Execute()
+        public async Task ExecuteAsync()
         {
-            this.Execute(null);
+            await this.ExecuteAsync(null);
         }
 
-        public void Execute(object parameter)
+        public async Task ExecuteAsync(object parameter)
         {
-            if (this._execute != null)
+            if (this._execute != null && this.CanExecute)
             {
-                this._execute(parameter);
+                await this._execute(parameter);
             }
         }
 
-        public Command(Control Control, String Name, OnExecute Execute, Boolean CanExecute)
+        public Command(Control Control, String Name, OnExecuteAsync Execute, Boolean CanExecute)
             :base()
         {
             this.Control = Control;

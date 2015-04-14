@@ -128,6 +128,7 @@ namespace Aras.ViewModel
         {
             lock(this.CommandQueueLock)
             {
+                this.AddControlToCache(Command.Control);
                 this.CommandQueue.Enqueue(Command);
             }
         }
@@ -198,6 +199,7 @@ namespace Aras.ViewModel
         {
             lock (this.PropertyQueueLock)
             {
+                this.AddControlToCache(Property.Control);
                 this.PropertyQueue.Enqueue(Property);
             }
         }

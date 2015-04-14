@@ -78,7 +78,7 @@ namespace Aras.ViewModel
             }
         }
 
-        private async void OnExecuteRefresh(object parameter)
+        private async Task OnExecuteRefreshAsync(object parameter)
         {
             this.SetCommandCanExecute("Refresh", false);
 
@@ -153,7 +153,7 @@ namespace Aras.ViewModel
                 this.GridControl.AddColumn(proptype.Name, proptype.Label);
             }
 
-            this.Refresh = new Command(this, "Refresh", this.OnExecuteRefresh, true);
+            this.Refresh = new Command(this, "Refresh", this.OnExecuteRefreshAsync, true);
             this.RegisterCommand(this.Refresh);
         }
     }
