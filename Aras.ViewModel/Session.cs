@@ -74,28 +74,21 @@ namespace Aras.ViewModel
         }
 
         private Dictionary<Guid, ViewModel.Control> ControlCache;
+
         private void AddControlToCache(ViewModel.Control Control)
         {
             if (!this.ControlCache.ContainsKey(Control.ID))
             {
+                // Add Control to Cache
                 this.ControlCache[Control.ID] = Control;
 
+                // Add Properties to Cache
                 foreach (ViewModel.Property property in Control.Properties)
                 {
-                    if (property is ViewModel.Properties.Control)
-                    {
-                        ViewModel.Control childcontrol = ((ViewModel.Properties.Control)property).Value;
-                        this.AddControlToCache(childcontrol);
-                    }
-                    else if (property is ViewModel.Properties.ControlList)
-                    {
-                        foreach(ViewModel.Control childcontrol in ((ViewModel.Properties.ControlList)property).Value)
-                        {
-                            this.AddControlToCache(childcontrol);
-                        }
-                    }
+                    this.AddPropertyToCache(property);
                 }
 
+                // Add Commands to Cache
                 foreach(ViewModel.Command command in Control.Commands)
                 {
                     this.AddCommandToCache(command);
@@ -147,7 +140,12 @@ namespace Aras.ViewModel
             {
                 while(this.CommandQueue.Count > 0)
                 {
-                    ret.Add(this.CommandQueue.Dequeue());
+                    ViewModel.Command command = this.CommandQueue.Dequeue();
+
+                    if (!ret.Contains(command))
+                    {
+                        ret.Add(command);
+                    }
                 }
             }
 
@@ -159,6 +157,76 @@ namespace Aras.ViewModel
             return this.CommandCache[ID];
         }
 
+        private Dictionary<Guid, ViewModel.Property> PropertyCache;
+
+        private void AddPropertyToCache(ViewModel.Property Property)
+        {
+            if (!this.PropertyCache.ContainsKey(Property.ID))
+            {
+                // Store Property in Cache
+                this.PropertyCache[Property.ID] = Property;
+
+                // Link to Event for when Property Changes
+                Property.PropertyChanged += Property_PropertyChanged;
+
+                // Store related Controls
+                if (Property is ViewModel.Properties.Control)
+                {
+                    ViewModel.Control childcontrol = ((ViewModel.Properties.Control)Property).Value;
+                    this.AddControlToCache(childcontrol);
+                }
+                else if (Property is ViewModel.Properties.ControlList)
+                {
+                    foreach (ViewModel.Control childcontrol in ((ViewModel.Properties.ControlList)Property).Value)
+                    {
+                        this.AddControlToCache(childcontrol);
+                    }
+                }
+            }
+        }
+
+        void Property_PropertyChanged(object sender, EventArgs e)
+        {
+            ViewModel.Property property = (ViewModel.Property)sender;
+            this.AddPropertyToQueue(property);
+        }
+
+        private object PropertyQueueLock = new object();
+        private Queue<ViewModel.Property> PropertyQueue;
+
+        private void AddPropertyToQueue(ViewModel.Property Property)
+        {
+            lock (this.PropertyQueueLock)
+            {
+                this.PropertyQueue.Enqueue(Property);
+            }
+        }
+
+        public IEnumerable<ViewModel.Property> GetPropertiesFromQueue()
+        {
+            List<ViewModel.Property> ret = new List<ViewModel.Property>();
+
+            lock (this.PropertyQueueLock)
+            {
+                while (this.PropertyQueue.Count > 0)
+                {
+                    ViewModel.Property property = this.PropertyQueue.Dequeue();
+
+                    if (!ret.Contains(property))
+                    {
+                        ret.Add(property);
+                    }
+                }
+            }
+
+            return ret;
+        }
+
+        public ViewModel.Property Property(Guid ID)
+        {
+            return this.PropertyCache[ID];
+        }
+
         internal Session(Manager Manager, Model.Session ModelSession)
         {
             this.Manager = Manager;
@@ -166,6 +234,8 @@ namespace Aras.ViewModel
             this.ControlCache = new Dictionary<Guid, ViewModel.Control>();
             this.CommandCache = new Dictionary<Guid, ViewModel.Command>();
             this.CommandQueue = new Queue<ViewModel.Command>();
+            this.PropertyCache = new Dictionary<Guid, Property>();
+            this.PropertyQueue = new Queue<Property>();
         }
     }
 }

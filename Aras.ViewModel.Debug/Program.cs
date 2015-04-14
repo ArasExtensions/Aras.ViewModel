@@ -57,10 +57,12 @@ namespace Aras.ViewModel.Debug
 
             searchcommand.Execute();
             IEnumerable<ViewModel.Command> commandqueue1 = session.GetCommandsFromQueue();
+            IEnumerable<ViewModel.Property> propertyqueue1 = session.GetPropertiesFromQueue();
 
             Thread.Sleep(5000);
 
             IEnumerable<ViewModel.Command> commandqueue2 = session.GetCommandsFromQueue();
+            IEnumerable<ViewModel.Property> propertyqueue2 = session.GetPropertiesFromQueue();
             
         }
     }
