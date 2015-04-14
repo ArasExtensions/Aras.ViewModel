@@ -25,31 +25,36 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace Aras.ViewModel.Debug
+namespace Aras.ViewModel
 {
-    class Program
+    public static class Utilities
     {
-        static void Main(string[] args)
+        public static String GuidToString(Guid Guid)
         {
-            // Create Manager
-            String URL = "http://localhost/innovatorserver100sp4";
-            Manager manager = new Manager(URL);
-            
-            // Add Applications
-            manager.LoadAssembly("AESSiS.PartViewer");
+            byte[] bytes = Guid.ToByteArray();
+            StringBuilder result = new StringBuilder(bytes.Length * 2);
 
-            // Get Database
-            Model.Database database = manager.Database("Development100SP4");
+            for (int i = 0; i < bytes.Length; i++)
+            {
+                result.Append(bytes[i].ToString("X2"));
+            }
 
-            // Craete Session
-            Session session = manager.Login(database, "admin", "innovator");
+            return result.ToString();
+        }
 
-            // Get Application
-            Application partviewapp = session.Applications.First();
+        public static Guid StringToGuid(String String)
+        {
+            byte[] bytes = new byte[String.Length / 2];
+
+            for (int i = 0; i < String.Length / 2; i++)
+            {
+                bytes[i] = Convert.ToByte(String.Substring(i * 2, 2), 16);
+            }
+
+            return new Guid(bytes);
         }
     }
 }
