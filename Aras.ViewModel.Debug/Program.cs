@@ -49,7 +49,19 @@ namespace Aras.ViewModel.Debug
             Session session = manager.Login(database, "admin", "innovator");
 
             // Get Application
-            Application partviewapp = session.Applications.First();
+            AESSiS.PartViewer.Application partviewapp = (AESSiS.PartViewer.Application)session.Applications.First();
+
+            // Click Refresh 
+            ViewModel.Search searchcontrol = (ViewModel.Search)session.Control(partviewapp.Search.Value.ID);
+            ViewModel.Command searchcommand = session.Command(searchcontrol.Command("Refresh").ID);
+
+            searchcommand.Execute();
+            IEnumerable<ViewModel.Command> commandqueue1 = session.GetCommandsFromQueue();
+
+            Thread.Sleep(5000);
+
+            IEnumerable<ViewModel.Command> commandqueue2 = session.GetCommandsFromQueue();
+            
         }
     }
 }

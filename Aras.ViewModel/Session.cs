@@ -98,7 +98,7 @@ namespace Aras.ViewModel
 
                 foreach(ViewModel.Command command in Control.Commands)
                 {
-                    this.CommandCache[command.ID] = command;
+                    this.AddCommandToCache(command);
                 }
             }
         }
@@ -139,7 +139,7 @@ namespace Aras.ViewModel
             }
         }
 
-        internal List<ViewModel.Command> GetCommandsFromQueue()
+        public IEnumerable<ViewModel.Command> GetCommandsFromQueue()
         {
             List<ViewModel.Command> ret = new List<ViewModel.Command>();
 
