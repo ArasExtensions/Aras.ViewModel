@@ -105,11 +105,6 @@ namespace Aras.ViewModel
             this.Property(Name).SetObject(Value);
         }
 
-        protected void SetCommandCanExecute(String Name, Boolean Value)
-        {
-            this.Command(Name).CanExecute = Value;
-        }
-
         protected Property CreateProperty(String Name, Boolean Required, Boolean ReadOnly, Model.Cache.Property Property)
         {
             Property ret = null;

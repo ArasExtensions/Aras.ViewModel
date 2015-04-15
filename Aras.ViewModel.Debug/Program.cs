@@ -53,17 +53,34 @@ namespace Aras.ViewModel.Debug
 
             // Click Refresh 
             ViewModel.Search searchcontrol = (ViewModel.Search)session.Control(partviewapp.Search.Value.ID);
+            ViewModel.Grid gridcontrol = (ViewModel.Grid)searchcontrol.Grid.Value;
+            ViewModel.Properties.ControlList gridrows = (ViewModel.Properties.ControlList)gridcontrol.Property("Rows");
+            gridrows.PropertyChanged += gridrows_PropertyChanged;
             ViewModel.Command searchcommand = session.Command(searchcontrol.Command("Refresh").ID);
 
-            searchcommand.Execute();
-            IEnumerable<ViewModel.Command> commandqueue1 = session.GetCommandsFromQueue();
-            IEnumerable<ViewModel.Property> propertyqueue1 = session.GetPropertiesFromQueue();
+            while (true)
+            {
+                
+                searchcommand.ExecuteAsync();
+                Thread.Sleep(2000);
+                System.Console.WriteLine("No Rows: " + gridrows.Value.Count);
+            }          
+        }
 
-            Thread.Sleep(5000);
+        static void gridrows_PropertyChanged(object sender, EventArgs e)
+        {
+            Console.WriteLine("Changed");
 
-            IEnumerable<ViewModel.Command> commandqueue2 = session.GetCommandsFromQueue();
-            IEnumerable<ViewModel.Property> propertyqueue2 = session.GetPropertiesFromQueue();
-            
+            ViewModel.Properties.ControlList gridrows = (ViewModel.Properties.ControlList)sender;
+
+            foreach (Row row in gridrows.Value)
+            {
+                Cell cell = (Cell)row.Cells.Value.First();
+                Console.WriteLine(cell.Value.Object);
+            }
+
+            Console.WriteLine();
+
         }
     }
 }

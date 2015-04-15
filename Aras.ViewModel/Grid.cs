@@ -87,27 +87,6 @@ namespace Aras.ViewModel
             {
                 return this.Rows.Value.Count();
             }
-            set
-            {
-                if (this.Rows.Value.Count < value)
-                {
-                    // Need to add some more Rows
-                    int diff = value - this.Rows.Value.Count;
-                    this.Rows.Value.NotifyListChanged = false;
-
-                    for(int i=0; i<diff; i++)
-                    {
-                        this.AddRow();
-                    }
-
-                    this.Rows.Value.NotifyListChanged = true;
-                }
-                else if (this.Rows.Value.Count > value)
-                {
-                    // Need to remove Rows
-                    this.Rows.Value.RemoveRange(value, this.Rows.Value.Count - value);
-                }
-            }
         }
 
         public Grid(Model.Session Session)

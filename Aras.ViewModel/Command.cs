@@ -36,7 +36,7 @@ namespace Aras.ViewModel
 
         public String Name { get; private set; }
 
-        public delegate Task OnExecuteAsync(object parameter);
+        public delegate Task<Boolean> OnExecuteAsync(object parameter);
 
         private OnExecuteAsync _execute;
 
@@ -50,7 +50,8 @@ namespace Aras.ViewModel
             }
         }
 
-        private Boolean _canExecute;
+        private object _canExecuteLock = new object();
+        private volatile Boolean _canExecute;
         public Boolean CanExecute
         {
             get
@@ -59,24 +60,31 @@ namespace Aras.ViewModel
             }
             internal set
             {
-                if (value != this._canExecute)
+                lock (this._canExecuteLock)
                 {
-                    this._canExecute = value;
-                    this.OnCanExecuteChanged();
+                    if (value != this._canExecute)
+                    {
+                        this._canExecute = value;
+                        this.OnCanExecuteChanged();
+                    }
                 }
             }
         }
 
-        public async Task ExecuteAsync()
+        public async Task<Boolean> ExecuteAsync()
         {
-            await this.ExecuteAsync(null);
+            return await this.ExecuteAsync(null);
         }
 
-        public async Task ExecuteAsync(object parameter)
+        public async Task<Boolean> ExecuteAsync(object parameter)
         {
-            if (this._execute != null && this.CanExecute)
+            if (this._execute != null)
             {
-                await this._execute(parameter);
+                return await this._execute(parameter);
+            }
+            else
+            {
+                throw new ArgumentException("OnExecuteAsync is null");
             }
         }
 

@@ -78,33 +78,63 @@ namespace Aras.ViewModel
             }
         }
 
-        private async Task OnExecuteRefreshAsync(object parameter)
+        private async Task<Boolean> OnExecuteRefreshAsync(object parameter)
         {
-            this.SetCommandCanExecute("Refresh", false);
+            this.Refresh.CanExecute = false;
 
             Model.Response.IEnumerable<Model.Response.Item> response = await this.Request.ExecuteAsync();
 
-            // Set number of rows on Grid
-            this.GridControl.NoRows = response.Count();
+            this.GridControl.Rows.Value.NotifyListChanged = false;
 
             // Add Items to Grid
             int rowindex = 0;
 
             foreach(Model.Response.Item item in response)
             {
-                Row row = this.GridControl.Row(rowindex);
-           
-                foreach(Model.PropertyType proptype in this.PropertyTypes)
+                if (rowindex + 1 > this.GridControl.NoRows)
                 {
-                    Column column = this.GridControl.Column(proptype.Name);
-                    Cell cell = row.Cell(column);
-                    cell.SetModelProperty(item.Cache.Property(proptype));
+                    // Need to add new Row
+                    Row row = new Row(this.GridControl);
+
+                    foreach (Model.PropertyType proptype in this.PropertyTypes)
+                    {
+                        Column column = this.GridControl.Column(proptype.Name);
+                        Cell cell = row.Cell(column);
+                        cell.SetModelProperty(item.Cache.Property(proptype));
+                    }
+
+                    this.GridControl.Rows.Value.Add(row);
+
+                }
+                else
+                {
+                    // Update existing row
+                    Row row = this.GridControl.Row(rowindex);
+
+                    foreach (Model.PropertyType proptype in this.PropertyTypes)
+                    {
+                        Column column = this.GridControl.Column(proptype.Name);
+                        Cell cell = row.Cell(column);
+                        cell.SetModelProperty(item.Cache.Property(proptype));
+                    }
                 }
 
                 rowindex++;
             }
 
-            this.SetCommandCanExecute("Refresh", true);
+            // Remove any spare Rows
+
+            if (response.Count() < this.GridControl.NoRows)
+            {
+                int diff = this.GridControl.NoRows - response.Count();
+                this.GridControl.Rows.Value.RemoveRange(response.Count(), diff);
+            }
+
+            this.GridControl.Rows.Value.NotifyListChanged = true;
+
+            this.Refresh.CanExecute = true;
+
+            return true;
         }
 
         void Page_ObjectChanged(object sender, EventArgs e)
