@@ -77,22 +77,19 @@ namespace Aras.ViewModel
 
         private void AddControlToCache(ViewModel.Control Control)
         {
-            if (!this.ControlCache.ContainsKey(Control.ID))
+            // Add Control to Cache
+            this.ControlCache[Control.ID] = Control;
+
+            // Add Properties to Cache
+            foreach (ViewModel.Property property in Control.Properties)
             {
-                // Add Control to Cache
-                this.ControlCache[Control.ID] = Control;
+                this.AddPropertyToCache(property);
+            }
 
-                // Add Properties to Cache
-                foreach (ViewModel.Property property in Control.Properties)
-                {
-                    this.AddPropertyToCache(property);
-                }
-
-                // Add Commands to Cache
-                foreach(ViewModel.Command command in Control.Commands)
-                {
-                    this.AddCommandToCache(command);
-                }
+            // Add Commands to Cache
+            foreach (ViewModel.Command command in Control.Commands)
+            {
+                this.AddCommandToCache(command);
             }
         }
 
@@ -169,19 +166,19 @@ namespace Aras.ViewModel
 
                 // Link to Event for when Property Changes
                 Property.PropertyChanged += Property_PropertyChanged;
+            }
 
-                // Store related Controls
-                if (Property is ViewModel.Properties.Control)
+            // Store related Controls
+            if (Property is ViewModel.Properties.Control)
+            {
+                ViewModel.Control childcontrol = ((ViewModel.Properties.Control)Property).Value;
+                this.AddControlToCache(childcontrol);
+            }
+            else if (Property is ViewModel.Properties.ControlList)
+            {
+                foreach (ViewModel.Control childcontrol in ((ViewModel.Properties.ControlList)Property).Value)
                 {
-                    ViewModel.Control childcontrol = ((ViewModel.Properties.Control)Property).Value;
                     this.AddControlToCache(childcontrol);
-                }
-                else if (Property is ViewModel.Properties.ControlList)
-                {
-                    foreach (ViewModel.Control childcontrol in ((ViewModel.Properties.ControlList)Property).Value)
-                    {
-                        this.AddControlToCache(childcontrol);
-                    }
                 }
             }
         }

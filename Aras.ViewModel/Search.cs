@@ -98,17 +98,7 @@ namespace Aras.ViewModel
                 {
                     Column column = this.GridControl.Column(proptype.Name);
                     Cell cell = row.Cell(column);
-
-                    Model.Cache.Property prop = item.Cache.Property(proptype);
-
-                    if (cell.Value == null)
-                    {
-                        cell.Value = this.CreateProperty(prop.Name + "_" + rowindex.ToString(), true, true, prop);
-                    }
-                    else
-                    {
-                        cell.Value.Binding = prop;
-                    }
+                    cell.SetModelProperty(item.Cache.Property(proptype));
                 }
 
                 rowindex++;

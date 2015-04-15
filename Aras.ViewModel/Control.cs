@@ -44,6 +44,11 @@ namespace Aras.ViewModel
             }
         }
 
+        public Boolean HasProperty(String Name)
+        {
+            return this._properties.ContainsKey(Name);
+        }
+
         public Property Property(String Name)
         {
             if (this._properties.ContainsKey(Name))
@@ -108,17 +113,35 @@ namespace Aras.ViewModel
         protected Property CreateProperty(String Name, Boolean Required, Boolean ReadOnly, Model.Cache.Property Property)
         {
             Property ret = null;
+            Property currentproperty = null;
+            String currenttype = null;
+
+            if (this.HasProperty(Name))
+            {
+                currentproperty = this.Property(Name);
+                currenttype = currentproperty.GetType().Name;
+            }
 
             switch(Property.GetType().Name)
             {
                 case "String":
-                    ret = new Properties.String(this, Name, Required, ReadOnly, null);
+
+                    if (currentproperty == null || currenttype != "String")
+                    {
+                        ret = new Properties.String(this, Name, Required, ReadOnly, null);
+                    }
+                    else
+                    {
+                        ret = this.Property(Name);
+                    }
+
                     break;
                 default:
                     throw new NotImplementedException("Property type not supported: " + Property.GetType().Name);
             }
 
             ret.Binding = Property;
+            this.RegisterProperty(ret);
             return ret;
         }
 
