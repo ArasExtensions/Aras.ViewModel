@@ -43,6 +43,35 @@ namespace Aras.ViewModel
             }
         }
 
+        private Object _expireLock = new Object();
+        private DateTime _expire;
+        public DateTime Expire
+        {
+            get
+            {
+                lock(this._expireLock)
+                {
+                    return this._expire;
+                }
+            }
+        }
+
+        internal void UpdateExpire()
+        {
+            lock(this._expireLock)
+            {
+                this._expire = DateTime.UtcNow.AddMinutes(this.Manager.ExpireSession);
+            }
+        }
+
+        public Boolean Expired
+        {
+            get
+            {
+                return DateTime.Compare(this.Expire, DateTime.UtcNow) < 0;
+            }
+        }
+
         public String Token
         {
             get

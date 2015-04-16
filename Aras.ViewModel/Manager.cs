@@ -34,7 +34,35 @@ namespace Aras.ViewModel
 {
     public class Manager
     {
+        private const double MinExpireSession = 1;
+        private const double MaxExpireSession = 60;
+        private const double DefaultExpireSession = 10;
+
         public String URL { get; private set; }
+
+        private double _expireSession;
+        public double ExpireSession
+        {
+            get
+            {
+                return this._expireSession;
+            }
+            set
+            {
+                if (value < MinExpireSession)
+                {
+                    this._expireSession = MinExpireSession;
+                }
+                else if (value > MaxExpireSession)
+                {
+                    this._expireSession = MaxExpireSession;
+                }
+                else
+                {
+                    this._expireSession = value;
+                }
+            }
+        }
 
         private Model.Server _server;
         public Model.Server Server
@@ -82,25 +110,44 @@ namespace Aras.ViewModel
             return this.Server.Database(Name);
         }
 
-        private Dictionary<Guid, Session> SessionCache;
+        private Object _sessionCacheLock = new Object();
+        private volatile Dictionary<Guid, Session> _sessionCache;
+
+        private void AddSessionToCache(Session Session)
+        {
+            lock (this._sessionCacheLock)
+            {
+                this._sessionCache[Session.ID] = Session;
+            }
+        }
+
+        private Session GetSessionFromCache(Guid ID)
+        {
+            lock (this._sessionCacheLock)
+            {
+                return this._sessionCache[ID];
+            }
+        }
 
         public Session Login(Model.Database Database, String Username, String Password)
         {
             Model.Session modelsession = Database.Login(Username, Password);
             Session session = new Session(this, modelsession);
-            this.SessionCache[session.ID] = session;
+            this.AddSessionToCache(session);
             return session;
         }
 
         public Session Session(String Token)
         {
-            return this.SessionCache[Utilities.StringToGuid(Token)];
+            return this.GetSessionFromCache(Utilities.StringToGuid(Token));
         }
 
         public Manager(String URL)
         {
+            this.ExpireSession = DefaultExpireSession;
+
             this.URL = URL;
-            this.SessionCache = new Dictionary<Guid, Session>();
+            this._sessionCache = new Dictionary<Guid, Session>();
             this.ApplicationTypesCache = new List<Type>();
 
             // Set Default Assembly Directory
