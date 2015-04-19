@@ -56,6 +56,25 @@ namespace Aras.ViewModel.Properties
             }
         }
 
+        public Boolean Contains(ViewModel.Control Control)
+        {
+            if (Control == null)
+            {
+                return false;
+            }
+            else
+            {
+                if (this.Value == null)
+                {
+                    return false;
+                }
+                else
+                {
+                    return this.Value.Contains(Control);
+                }
+            }
+        }
+
         public ControlList(ViewModel.Control Control, System.String Name, Boolean Required, Boolean ReadOnly)
             : base(Control, Name, Required, ReadOnly)
         {

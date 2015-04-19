@@ -69,9 +69,23 @@ namespace Aras.ViewModel
             return (Row)this.Rows.Value[Index];
         }
 
+        private void checkSeleted()
+        {
+            if (this.Selected.Value != null)
+            {
+                if (!this.Rows.Contains(this.Selected.Value))
+                {
+                    this.Selected.Value = null;
+                }
+            }
+        }
+
+        public Properties.Control Selected { get; private set; }
+
         public void ClearRows()
         {
             this.Rows.Value.Clear();
+            this.checkSeleted();
         }
 
         public Row AddRow()
@@ -97,6 +111,16 @@ namespace Aras.ViewModel
 
             this.Rows = new Properties.ControlList(this, "Rows", true, false);
             this.RegisterProperty(this.Rows);
+
+            this.Selected = new Properties.Control(this, "Selected", false, false, null);
+            this.RegisterProperty(this.Selected);
+            this.Selected.PropertyChanged += Selected_PropertyChanged;
+        }
+
+        void Selected_PropertyChanged(object sender, EventArgs e)
+        {
+            // Check new Selected Value is a Row
+            this.checkSeleted();
         }
     }
 }

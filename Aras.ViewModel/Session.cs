@@ -106,19 +106,22 @@ namespace Aras.ViewModel
 
         private void AddControlToCache(ViewModel.Control Control)
         {
-            // Add Control to Cache
-            this.ControlCache[Control.ID] = Control;
-
-            // Add Properties to Cache
-            foreach (ViewModel.Property property in Control.Properties)
+            if (Control != null)
             {
-                this.AddPropertyToCache(property);
-            }
+                // Add Control to Cache
+                this.ControlCache[Control.ID] = Control;
 
-            // Add Commands to Cache
-            foreach (ViewModel.Command command in Control.Commands)
-            {
-                this.AddCommandToCache(command);
+                // Add Properties to Cache
+                foreach (ViewModel.Property property in Control.Properties)
+                {
+                    this.AddPropertyToCache(property);
+                }
+
+                // Add Commands to Cache
+                foreach (ViewModel.Command command in Control.Commands)
+                {
+                    this.AddCommandToCache(command);
+                }
             }
         }
 
@@ -212,6 +215,11 @@ namespace Aras.ViewModel
             }
         }
 
+        public Property Property(Guid ID)
+        {
+            return this.PropertyCache[ID];
+        }
+
         void Property_PropertyChanged(object sender, EventArgs e)
         {
             ViewModel.Property property = (ViewModel.Property)sender;
@@ -248,11 +256,6 @@ namespace Aras.ViewModel
             }
 
             return ret;
-        }
-
-        public ViewModel.Property Property(Guid ID)
-        {
-            return this.PropertyCache[ID];
         }
 
         internal Session(Manager Manager, Model.Session ModelSession)
