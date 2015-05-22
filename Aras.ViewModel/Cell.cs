@@ -32,26 +32,33 @@ namespace Aras.ViewModel
 {
     public class Cell : Control
     {
-        public Column Column { get; private set; }
-
         public Row Row { get; private set; }
 
-        public Property Name { get; private set; }
+        public Column Column { get; private set; }
 
-        public Property Value { get; private set; }
-
-        public void SetModelProperty(Model.Property Property)
-        {
-            this.Value = this.CreateProperty("Value", true, true, Property);
+        private Property _value;
+        public Property Value 
+        { 
+            get
+            {
+                return this._value;
+            }
+            set
+            {
+                if (this._value != value)
+                {
+                    this._value = value;
+                    this.OnPropertyChanged("Value");
+                }
+            }
         }
 
-        internal Cell(Column Column, Row Row)
-            :base(Column.Grid.Session)
+        internal Cell(Session Session, Row Row, Column Column)
+            :base(Session)
         {
-            this.Column = Column;
             this.Row = Row;
-            this.Name = new Properties.String(this, "Name", true, true, this.Column.Name.Object.ToString());
-            this.RegisterProperty(this.Name);
+            this.Column = Column;
+            this.Value = null;
         }
     }
 }

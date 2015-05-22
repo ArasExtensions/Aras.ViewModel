@@ -32,7 +32,7 @@ namespace Aras.ViewModel
 {
     public abstract class Application : Control
     {
-        public Application(Model.Session Session)
+        public Application(Session Session)
             : base(Session)
         {
      

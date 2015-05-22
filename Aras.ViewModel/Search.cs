@@ -32,32 +32,84 @@ namespace Aras.ViewModel
 {
     public class Search : Control
     {
-        const System.Int32 MinPageSize = 5;
-        const System.Int32 MaxPageSize = 100;
-        const System.Int32 DefaultPageSize = 25;
-        const System.Int32 MinPage = 1;
-        const System.Int32 MaxPage = Int32.MaxValue;
-        const System.Int32 DefaultPage = 1;
+        private const System.Int32 MinPageSize = 5;
+        private const System.Int32 MaxPageSize = 100;
+        private const System.Int32 DefaultPageSize = 25;
+        private const System.Int32 MinPage = 1;
+        private const System.Int32 MaxPage = Int32.MaxValue;
+        private const System.Int32 DefaultPage = 1;
 
         public Model.ItemType ItemType { get; private set; }
 
-        public IEnumerable<Model.PropertyType> PropertyTypes { get; private set; }
+        public Model.ObservableLists.PropertyType SelectPropertyTypes { get; private set; }
 
-        public IEnumerable<Model.PropertyType> GridPropertyTypes { get; private set; }
+        public Model.ObservableLists.PropertyType GridPropertyTypes { get; private set; }
 
-        public Properties.Int32 PageSize { get; private set; }
+        private System.Int32 _pageSize;
+        public System.Int32 PageSize 
+        { 
+            get
+            {
+                return this._pageSize;
+            }
+            private set
+            {
+                if (value >= MinPageSize && value <= MaxPageSize)
+                {
+                    if (this._pageSize != value)
+                    {
+                        this._pageSize = value;
+                        this.OnPropertyChanged("PageSize");
+                    }
+                }
+                else
+                {
+                    throw new ArgumentException("PageSize must be between " + MinPageSize.ToString() + " to " + MaxPageSize.ToString());
+                }
+            }
+        }
 
-        public Properties.Int32 PageCount { get; private set; }
+        private System.Int32 _pageCount;
+        public System.Int32 PageCount 
+        { 
+            get
+            {
+                return this._pageCount;
+            }
+            private set
+            {
+                if (this._pageCount != value)
+                {
+                    this._pageCount = value;
+                    this.OnPropertyChanged("PageCount");
+                }
+            }
+        }
 
-        public Properties.Int32 Page { get; private set; }
+        private System.Int32 _page;
+        public System.Int32 Page 
+        { 
+            get
+            {
+                return this._page;
+            }
+            set
+            {
+                if (this._page != value)
+                {
+                    this._page = value;
+                    this.OnPropertyChanged("Page");
+                }
+            }
+        }
 
-        public Grid GridControl { get; private set; }
+        public Grid Grid { get; private set; }
 
-        public Properties.Control Grid { get; private set; }
+        public RefreshCommand Refresh { get; private set; }
 
-        public Command Refresh { get; private set; }
+        public Model.ObservableLists.Item Items { get; private set; }
 
-        public Properties.Item Selected { get; private set; }
+        public Model.ObservableLists.Item SelectedItems { get; private set; }
 
         private Model.Requests.Item _request;
         private Model.Requests.Item Request
@@ -66,137 +118,154 @@ namespace Aras.ViewModel
             {
                 if (this._request == null)
                 {
-                    this._request = this.Session.Request(this.ItemType.Action("get"));
-                    
-                    foreach (Model.PropertyType proptype in this.PropertyTypes)
+                    this._request = this.Session.Model.Request(this.ItemType.Action("get"));
+
+                    foreach (Model.PropertyType proptype in this.SelectPropertyTypes)
                     {
                         this._request.AddSelection(proptype);
                     }
 
                     this._request.Paging = true;
-                    this._request.Page = (int)this.Page.Value;
-                    this._request.PageSize = (int)this.PageSize.Value;
+                    this._request.Page = this.Page;
+                    this._request.PageSize = this.PageSize;
                 }
 
                 return this._request;
             }
         }
 
-        private async Task<Boolean> OnExecuteRefreshAsync(object parameter)
-        {
-            this.Refresh.CanExecute = false;
-
-            Model.Response response = await this.Request.ExecuteAsync();
-
-            this.GridControl.Rows.Value.NotifyListChanged = false;
-
-            // Add Items to Grid
-            int rowindex = 0;
-
-            foreach(Model.Responses.Item item in response.Items)
-            {
-                if (rowindex + 1 > this.GridControl.NoRows)
-                {
-                    // Need to add new Row
-                    Row row = new Row(this.GridControl);
-
-                    foreach (Model.PropertyType proptype in this.GridPropertyTypes)
-                    {
-                        Column column = this.GridControl.Column(proptype.Name);
-                        Cell cell = row.Cell(column);
-                        cell.SetModelProperty(item.Cache.Property(proptype));
-                    }
-
-                    this.GridControl.Rows.Value.Add(row);
-
-                }
-                else
-                {
-                    // Update existing row
-                    Row row = this.GridControl.Row(rowindex);
-
-                    foreach (Model.PropertyType proptype in this.GridPropertyTypes)
-                    {
-                        Column column = this.GridControl.Column(proptype.Name);
-                        Cell cell = row.Cell(column);
-                        cell.SetModelProperty(item.Cache.Property(proptype));
-                    }
-                }
-
-                rowindex++;
-            }
-
-            // Remove any spare Rows
-
-            if (response.Items.Count() < this.GridControl.NoRows)
-            {
-                int diff = this.GridControl.NoRows - response.Items.Count();
-                this.GridControl.Rows.Value.RemoveRange(response.Items.Count(), diff);
-            }
-
-            this.GridControl.Rows.Value.NotifyListChanged = true;
-
-            this.Refresh.CanExecute = true;
-
-            return true;
-        }
-
-        void Page_ObjectChanged(object sender, EventArgs e)
-        {
-            this.Request.Page = (int)this.Page.Value;
-        }
-
-        void PageSize_ObjectChanged(object sender, EventArgs e)
-        {
-            this.Request.PageSize = (int)this.PageSize.Value;
-        }
-
-        public Search(Aras.Model.Session Session, Model.ItemType ItemType, IEnumerable<Model.PropertyType> PropertyTypes, IEnumerable<Model.PropertyType> GridPropertyTypes)
+        public Search(Session Session, Model.ItemType ItemType)
             : base(Session)
         {
             this.ItemType = ItemType;
-            this.PropertyTypes = PropertyTypes;
-            this.GridPropertyTypes = GridPropertyTypes;
+            this.SelectPropertyTypes = new Model.ObservableLists.PropertyType(this.ItemType);
+            this.GridPropertyTypes = new Model.ObservableLists.PropertyType(this.ItemType);
+            this.GridPropertyTypes.ListChanged += GridPropertyTypes_ListChanged;
 
-            this.PageSize = new Properties.Int32(this, "PageSize", true, false, MinPageSize, MaxPageSize, DefaultPageSize);
-            this.PageSize.PropertyChanged += PageSize_ObjectChanged;
-            this.RegisterProperty(this.PageSize);
-            
-            this.PageCount = new Properties.Int32(this, "PageCount", true, true, 0, System.Int32.MaxValue, 0);
-            this.RegisterProperty(this.PageCount);
-            
-            this.Page = new Properties.Int32(this, "Page", true, false, MinPage, MaxPage, DefaultPage);
-            this.Page.PropertyChanged += Page_ObjectChanged;
-            this.RegisterProperty(this.Page);
+            this.Items = new Model.ObservableLists.Item();
+            this.Items.ListChanged += Items_ListChanged;
+            this.SelectedItems = new Model.ObservableLists.Item();
 
-            this.GridControl = new Grid(this.Session);
-            this.Grid = new Properties.Control(this, "Grid", true, true, this.GridControl);
-            this.RegisterProperty(this.Grid);
-            
-            foreach(Model.PropertyType proptype in this.GridPropertyTypes)
+            this.PageSize = DefaultPageSize;
+            this.PageCount = 1;
+            this.Page = DefaultPage;
+
+            this.Grid = new Grid(this.Session);
+
+            this.Refresh = new RefreshCommand(this);
+        }
+
+        void Items_ListChanged(object sender, EventArgs e)
+        {
+            // Ensure Grid has correct number of Rows
+            int diff = this.Items.Count() - this.Grid.Rows.Count();
+
+            if (diff > 0)
             {
-                this.GridControl.AddColumn(proptype.Name, proptype.Label);
+                for(int i=0; i<diff; i++)
+                {
+                    this.Grid.AddRow();
+                }
+            }
+            else if (diff < 0)
+            {
+                int startremove = this.Grid.Rows.Count() - Math.Abs(diff);
+                this.Grid.Rows.RemoveRange(startremove, Math.Abs(diff));
             }
 
-            this.GridControl.Selected.PropertyChanged += Selected_PropertyChanged;
+            // Update Cells
+            for (int rowindex = 0; rowindex < this.Items.Count(); rowindex++)
+            {
+                Model.Item item = this.Items[rowindex];
+                Row row = this.Grid.Rows[rowindex];
 
-            this.Refresh = new Command(this, "Refresh", this.OnExecuteRefreshAsync, true);
-            this.RegisterCommand(this.Refresh);
+                for(int columnindex=0; columnindex<this.GridPropertyTypes.Count(); columnindex++)
+                {
+                    Model.PropertyType propertytype = this.GridPropertyTypes[columnindex];
+                    Cell cell = row.Cells[columnindex];
 
-            this.Selected = new Properties.Item(this, "Selected", true, false, null);
-            this.RegisterProperty(this.Selected);
+                    switch(propertytype.GetType().Name)
+                    {
+                        case "String":
+                            
+                            if (cell.Value == null || !(cell.Value is Properties.String))
+                            {
+                                cell.Value = new Properties.String(this.Session, false, true);
+                            }
+
+                            break;
+                        default:
+                            throw new NotImplementedException("PropertyType not implemented: " + propertytype.GetType().Name);
+                    }
+
+                    // Binf Model Property to Cell Value
+                    cell.Value.Binding = item.Property(propertytype.Name);
+                }
+            }
         }
 
-        void Selected_PropertyChanged(object sender, EventArgs e)
+        void GridPropertyTypes_ListChanged(object sender, EventArgs e)
         {
-            // Selected Row has changed
-            Row row = (Row)((Aras.ViewModel.Properties.Control)sender).Value;
-            Cell cell = (Cell)row.Cells.Value.First();
-            Model.Property property = cell.Value.Binding;
-            Model.Item item = property.Item;
-            this.Selected.Value = item;
+            // Check that all Grid Properties are in SelectPropertyTypes
+            foreach(Aras.Model.PropertyType proptype in this.GridPropertyTypes)
+            {
+                if (!this.SelectPropertyTypes.Contains(proptype))
+                {
+                    throw new ArgumentException("All GridProprtyTypes must be present in SelectPropertyTypes");
+                }
+            }
+
+            // Add in required Columns
+            this.Grid.Columns.Clear();
+
+            foreach(Aras.Model.PropertyType proptype in this.GridPropertyTypes)
+            {
+                this.Grid.AddColumn(proptype.Name, proptype.Label);
+            }
         }
 
-     
+        public class RefreshCommand : Command
+        {
+            public Search Search { get; private set; }
+
+            public override bool Execute(object parameter)
+            {
+                Model.Response response = this.Search.Request.Execute();
+
+                this.Search.Items.NotifyListChanged = false;
+                this.Search.Items.Clear();
+
+                foreach(Model.Responses.Item item in response.Items)
+                {
+                    this.Search.Items.Add(item.Cache);
+                }
+
+                this.Search.Items.NotifyListChanged = true;
+
+                return true;
+            }
+
+            public override async Task<bool> ExecuteAsync(object parameter)
+            {
+                Model.Response response = await this.Search.Request.ExecuteAsync();
+
+                this.Search.Items.NotifyListChanged = false;
+                this.Search.Items.Clear();
+
+                foreach (Model.Responses.Item item in response.Items)
+                {
+                    this.Search.Items.Add(item.Cache);
+                }
+
+                this.Search.Items.NotifyListChanged = true;
+
+                return true;
+            }
+
+            internal RefreshCommand(Search Search)
+            {
+                this.Search = Search;
+            }
+        }
     }
 }

@@ -32,34 +32,43 @@ namespace Aras.ViewModel.Properties
 {
     public class Item : Property
     {
-        internal override void SetObject(object value)
-        {
-            if (value == null || value is Aras.Model.Item)
-            {
-                base.SetObject(value);
-            }
-            else
-            {
-                throw new Exceptions.ValueTypeException("Aras.Model.Cache.Item");
-            }
-        }
-
+        private Aras.Model.Item _value;
         public Aras.Model.Item Value
         {
             get
             {
-                return (Aras.Model.Item)this.Object;
+                return this._value;
             }
             set
             {
-                this.Object = value;
+                if (this._value == null)
+                {
+                    if (value != null)
+                    {
+                        this._value = value;
+                        this.OnPropertyChanged("Value");
+                    }
+                }
+                else
+                {
+                    if (!this._value.Equals(value))
+                    {
+                        this._value = value;
+                        this.OnPropertyChanged("Value");
+                    }
+                }
             }
         }
 
-        public Item(ViewModel.Control Control, System.String Name, Boolean Required, Boolean ReadOnly, Model.Item Default)
-            : base(Control, Name, Required, ReadOnly)
+        public Item(Session Session, Boolean Required, Boolean ReadOnly, Model.Item Default)
+            : base(Session, Required, ReadOnly)
         {
-            this.SetObject(Default);
+            this.Value = Default;
+        }
+
+        public Item(Session Session, Boolean Required, Boolean ReadOnly)
+            :this(Session, Required, ReadOnly, null)
+        {
         }
     }
 }

@@ -34,38 +34,19 @@ namespace Aras.ViewModel
     {
         public Grid Grid { get; private set; }
 
-        public Properties.ControlList Cells { get; private set; }
+        public Model.ObservableList<Cell> Cells { get; private set; }
 
-        private void AddCells()
-        {
-            foreach(Column column in Grid.Columns.Value)
-            {
-                this.Cells.Value.Add(new Cell(column, this));
-            }
-        }
-
-        public Cell Cell(Column Column)
-        {
-            foreach(Cell cell in this.Cells.Value)
-            {
-                if (cell.Column.Equals(Column))
-                {
-                    return cell;
-                }
-            }
-
-            return null;
-        }
-
-        internal Row(Grid Grid)
-            :base(Grid.Session)
+        internal Row(Session Session, Grid Grid)
+            :base(Session)
         {
             this.Grid = Grid;
+            this.Cells = new Model.ObservableList<Cell>();
+            this.Cells.ListChanged += Cells_ListChanged;
+        }
 
-            this.Cells = new Properties.ControlList(this, "Cells", true, false);
-            this.RegisterProperty(this.Cells);
-
-            this.AddCells();
+        void Cells_ListChanged(object sender, EventArgs e)
+        {
+            this.OnPropertyChanged("Cells");
         }
     }
 }

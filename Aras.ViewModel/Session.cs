@@ -31,15 +31,15 @@ namespace Aras.ViewModel
 {
     public class Session
     {
-        public Manager Manager { get; private set; }
+        public Database Database { get; private set; }
 
-        private Model.Session ModelSession { get; set; }
+        public Model.Session Model { get; private set; }
 
         public Guid ID
         {
             get
             {
-                return this.ModelSession.ID;
+                return this.Model.ID;
             }
         }
 
@@ -60,7 +60,7 @@ namespace Aras.ViewModel
         {
             lock(this._expireLock)
             {
-                this._expire = DateTime.UtcNow.AddMinutes(this.Manager.ExpireSession);
+                this._expire = DateTime.UtcNow.AddMinutes(this.Database.Server.ExpireSession);
             }
         }
 
@@ -90,9 +90,9 @@ namespace Aras.ViewModel
                 {
                     this.ApplicationCache = new Dictionary<Guid, ViewModel.Application>();
 
-                    foreach(Type applicationtype in this.Manager.ApplicationTypes)
+                    foreach(Type applicationtype in this.Database.Server.ApplicationTypes)
                     {
-                        Application application = (Application)Activator.CreateInstance(applicationtype, new object[] { this.ModelSession });
+                        Application application = (Application)Activator.CreateInstance(applicationtype, new object[] { this });
                         this.ApplicationCache[application.ID] = application;
                         this.AddControlToCache(application);
                     }
@@ -111,8 +111,9 @@ namespace Aras.ViewModel
                 // Add Control to Cache
                 this.ControlCache[Control.ID] = Control;
 
+                /*
                 // Add Properties to Cache
-                foreach (ViewModel.Property property in Control.Properties)
+                foreach (ViewModel.Property property in Control.Controls)
                 {
                     this.AddPropertyToCache(property);
                 }
@@ -122,6 +123,7 @@ namespace Aras.ViewModel
                 {
                     this.AddCommandToCache(command);
                 }
+                 */
             }
         }
 
@@ -157,7 +159,6 @@ namespace Aras.ViewModel
         {
             lock(this.CommandQueueLock)
             {
-                this.AddControlToCache(Command.Control);
                 this.CommandQueue.Enqueue(Command);
             }
         }
@@ -187,86 +188,13 @@ namespace Aras.ViewModel
             return this.CommandCache[ID];
         }
 
-        private Dictionary<Guid, ViewModel.Property> PropertyCache;
-
-        private void AddPropertyToCache(ViewModel.Property Property)
+        internal Session(Database Database, Model.Session Model)
         {
-            if (!this.PropertyCache.ContainsKey(Property.ID))
-            {
-                // Store Property in Cache
-                this.PropertyCache[Property.ID] = Property;
-
-                // Link to Event for when Property Changes
-                Property.PropertyChanged += Property_PropertyChanged;
-            }
-
-            // Store related Controls
-            if (Property is ViewModel.Properties.Control)
-            {
-                ViewModel.Control childcontrol = ((ViewModel.Properties.Control)Property).Value;
-                this.AddControlToCache(childcontrol);
-            }
-            else if (Property is ViewModel.Properties.ControlList)
-            {
-                foreach (ViewModel.Control childcontrol in ((ViewModel.Properties.ControlList)Property).Value)
-                {
-                    this.AddControlToCache(childcontrol);
-                }
-            }
-        }
-
-        public Property Property(Guid ID)
-        {
-            return this.PropertyCache[ID];
-        }
-
-        void Property_PropertyChanged(object sender, EventArgs e)
-        {
-            ViewModel.Property property = (ViewModel.Property)sender;
-            this.AddPropertyToQueue(property);
-        }
-
-        private object PropertyQueueLock = new object();
-        private Queue<ViewModel.Property> PropertyQueue;
-
-        private void AddPropertyToQueue(ViewModel.Property Property)
-        {
-            lock (this.PropertyQueueLock)
-            {
-                this.AddControlToCache(Property.Control);
-                this.PropertyQueue.Enqueue(Property);
-            }
-        }
-
-        public IEnumerable<ViewModel.Property> GetPropertiesFromQueue()
-        {
-            List<ViewModel.Property> ret = new List<ViewModel.Property>();
-
-            lock (this.PropertyQueueLock)
-            {
-                while (this.PropertyQueue.Count > 0)
-                {
-                    ViewModel.Property property = this.PropertyQueue.Dequeue();
-
-                    if (!ret.Contains(property))
-                    {
-                        ret.Add(property);
-                    }
-                }
-            }
-
-            return ret;
-        }
-
-        internal Session(Manager Manager, Model.Session ModelSession)
-        {
-            this.Manager = Manager;
-            this.ModelSession = ModelSession;
+            this.Database = Database;
+            this.Model = Model;
             this.ControlCache = new Dictionary<Guid, ViewModel.Control>();
             this.CommandCache = new Dictionary<Guid, ViewModel.Command>();
             this.CommandQueue = new Queue<ViewModel.Command>();
-            this.PropertyCache = new Dictionary<Guid, Property>();
-            this.PropertyQueue = new Queue<Property>();
         }
     }
 }

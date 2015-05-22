@@ -35,52 +35,10 @@ namespace Aras.ViewModel.Debug
     {
         static void Main(string[] args)
         {
-            // Create Manager
-            String URL = "http://localhost/innovatorserver100sp4";
-            Manager manager = new Manager(URL);
-            
-            // Add Applications
-            manager.LoadAssembly("AESSiS.PartViewer");
+            Session session = new Session();
+            session.Execute();
 
-            // Get Database
-            Model.Database database = manager.Database("Development100SP4");
-
-            // Craete Session
-            Session session = manager.Login(database, "admin", "innovator");
-
-            // Get Application
-            AESSiS.PartViewer.Application partviewapp = (AESSiS.PartViewer.Application)session.Applications.First();
-
-            // Click Refresh 
-            ViewModel.Search searchcontrol = (ViewModel.Search)session.Control(partviewapp.Search.Value.ID);
-            ViewModel.Grid gridcontrol = (ViewModel.Grid)searchcontrol.Grid.Value;
-            ViewModel.Properties.ControlList gridrows = (ViewModel.Properties.ControlList)gridcontrol.Property("Rows");
-            gridrows.PropertyChanged += gridrows_PropertyChanged;
-            ViewModel.Command searchcommand = session.Command(searchcontrol.Command("Refresh").ID);
-
-            while (true)
-            {
-                
-                searchcommand.ExecuteAsync();
-                Thread.Sleep(2000);
-                System.Console.WriteLine("No Rows: " + gridrows.Value.Count);
-            }          
-        }
-
-        static void gridrows_PropertyChanged(object sender, EventArgs e)
-        {
-            Console.WriteLine("Changed");
-
-            ViewModel.Properties.ControlList gridrows = (ViewModel.Properties.ControlList)sender;
-
-            foreach (Row row in gridrows.Value)
-            {
-                Cell cell = (Cell)row.Cells.Value.First();
-                Console.WriteLine(cell.Value.Object);
-            }
-
-            Console.WriteLine();
-
+            System.Threading.Thread.Sleep(1000000);
         }
     }
 }

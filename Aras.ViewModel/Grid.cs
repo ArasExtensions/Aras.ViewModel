@@ -32,95 +32,61 @@ namespace Aras.ViewModel
 {
     public class Grid : Control
     {
-        public Properties.ControlList Columns { get; private set; }
+        public Model.ObservableList<Column> Columns { get; private set; }
 
         public Column AddColumn(String Name, String Label)
         {
-            Column column = this.Column(Name);
-
-            if (column == null)
-            {
-                column = new Column(this, Name, Label);
-                this.Columns.Value.Add(column);
-            }
-
-            return column;
+            Column col = new Column(this.Session, this, Name, Label);
+            this.Columns.Add(col);
+            return col;
         }
 
-        public Column Column(String Name)
-        {
-            foreach(Control control in this.Columns.Value)
-            {
-                Column column = (Column)control;
-
-                if (column.Name.Value == Name)
-                {
-                    return column;
-                }
-            }
-
-            return null;
-        }
-
-        public Properties.ControlList Rows { get; private set; }
-
-        public Row Row(int Index)
-        {
-            return (Row)this.Rows.Value[Index];
-        }
-
-        private void checkSeleted()
-        {
-            if (this.Selected.Value != null)
-            {
-                if (!this.Rows.Contains(this.Selected.Value))
-                {
-                    this.Selected.Value = null;
-                }
-            }
-        }
-
-        public Properties.Control Selected { get; private set; }
-
-        public void ClearRows()
-        {
-            this.Rows.Value.Clear();
-            this.checkSeleted();
-        }
+        public Model.ObservableList<Row> Rows { get; private set; }
 
         public Row AddRow()
         {
-            Row row = new Row(this);
-            this.Rows.Value.Add(row);
+            Row row = new Row(this.Session, this);
+
+            foreach(Column col in this.Columns)
+            {
+                Cell cell = new Cell(this.Session, row, col);
+                row.Cells.Add(cell);
+            }
+
+            this.Rows.Add(row);
+
             return row;
         }
 
-        public int NoRows
-        {
-            get
-            {
-                return this.Rows.Value.Count();
-            }
-        }
+        public Model.ObservableList<Row> Selected { get; private set; }
 
-        public Grid(Model.Session Session)
+        public Grid(Session Session)
             :base(Session)
         {
-            this.Columns = new Properties.ControlList(this, "Columns", true, false);
-            this.RegisterProperty(this.Columns);
-
-            this.Rows = new Properties.ControlList(this, "Rows", true, false);
-            this.RegisterProperty(this.Rows);
-
-            this.Selected = new Properties.Control(this, "Selected", false, false, null);
-            this.RegisterProperty(this.Selected);
-            this.Selected.PropertyChanged += Selected_PropertyChanged;
+            this.Columns = new Model.ObservableList<Column>();
+            this.Columns.ListChanged += Columns_ListChanged;
+            this.Rows = new Model.ObservableList<Row>();
+            this.Rows.ListChanged += Rows_ListChanged;
+            this.Selected = new Model.ObservableList<Row>();
+            this.Selected.ListChanged += Selected_ListChanged;
         }
 
-        void Selected_PropertyChanged(object sender, EventArgs e)
+        void Selected_ListChanged(object sender, EventArgs e)
         {
-            // Check new Selected Value is a Row
-            this.checkSeleted();
+            this.OnPropertyChanged("Selected");
+        }
+
+        void Rows_ListChanged(object sender, EventArgs e)
+        {
+            this.OnPropertyChanged("Rows");
+        }
+
+        void Columns_ListChanged(object sender, EventArgs e)
+        {
+            this.OnPropertyChanged("Columns");
+
+            // Clear Rows
+            this.Rows.Clear();
         }
     }
 }

@@ -27,125 +27,76 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.ComponentModel;
 
 namespace Aras.ViewModel
 {
-    public abstract class Control : Base
+    public abstract class Control : IEquatable<Control>, INotifyPropertyChanged
     {
-        public Aras.Model.Session Session { get; private set; }
+        public Session Session { get; private set; }
 
-        private Dictionary<String, Property> _properties;
+        public Guid ID { get; private set; }
 
-        public IEnumerable<Property> Properties
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged(String Name)
         {
-            get
+            if (this.PropertyChanged != null)
             {
-                return this._properties.Values;
+                PropertyChangedEventArgs args = new PropertyChangedEventArgs(Name);
+                this.PropertyChanged(this, args);
             }
         }
 
-        public Boolean HasProperty(String Name)
+        protected void OnAllPropertiesChanged()
         {
-            return this._properties.ContainsKey(Name);
+            if (this.PropertyChanged != null)
+            {
+                PropertyChangedEventArgs args = new PropertyChangedEventArgs(String.Empty);
+                this.PropertyChanged(this, args);
+            }
         }
 
-        public Property Property(String Name)
+        public bool Equals(Control other)
         {
-            if (this._properties.ContainsKey(Name))
+            if (other == null)
             {
-                return this._properties[Name];
+                return false;
             }
             else
             {
-                throw new Exceptions.PropertyNameException(Name);
+                return this.ID.Equals(other.ID);
             }
         }
 
-        protected void RegisterProperty(Property Property)
+        public override bool Equals(object obj)
         {
-            this._properties[Property.Name] = Property;
-        }
-
-        private Dictionary<String, Command> _commands;
-
-        public IEnumerable<Command> Commands
-        {
-            get
+            if (obj == null)
             {
-                return this._commands.Values;
-            }
-        }
-
-        public Command Command(String Name)
-        {
-            if (this._commands.ContainsKey(Name))
-            {
-                return this._commands[Name];
+                return false;
             }
             else
             {
-                throw new Exceptions.CommandNameException(Name);
+                if (obj is Control)
+                {
+                    return this.Equals((Control)obj);
+                }
+                else
+                {
+                    return false;
+                }
             }
         }
 
-        protected void RegisterCommand(Command Command)
+        public override int GetHashCode()
         {
-            if (!this._commands.ContainsKey(Command.Name))
-            {
-                this._commands[Command.Name] = Command;
-            }
-            else
-            {
-                throw new Exceptions.DuplicateCommandNameException(Command.Name);
-            }
+            return this.ID.GetHashCode();
         }
 
-        protected void SetPropertyObject(String Name, object Value)
-        {
-            this.Property(Name).SetObject(Value);
-        }
-
-        protected Property CreateProperty(String Name, Boolean Required, Boolean ReadOnly, Model.Property Property)
-        {
-            Property ret = null;
-            Property currentproperty = null;
-            String currenttype = null;
-
-            if (this.HasProperty(Name))
-            {
-                currentproperty = this.Property(Name);
-                currenttype = currentproperty.GetType().Name;
-            }
-
-            switch(Property.GetType().Name)
-            {
-                case "String":
-
-                    if (currentproperty == null || currenttype != "String")
-                    {
-                        ret = new Properties.String(this, Name, Required, ReadOnly, null);
-                    }
-                    else
-                    {
-                        ret = this.Property(Name);
-                    }
-
-                    break;
-                default:
-                    throw new NotImplementedException("Property type not supported: " + Property.GetType().Name);
-            }
-
-            ret.Binding = Property;
-            this.RegisterProperty(ret);
-            return ret;
-        }
-
-        public Control(Aras.Model.Session Session)
-            :base()
+        public Control(Session Session)
         {
             this.Session = Session;
-            this._properties = new Dictionary<String, Property>();
-            this._commands = new Dictionary<String, Command>();
+            this.ID = Guid.NewGuid();
         }
     }
 }

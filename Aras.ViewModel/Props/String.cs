@@ -32,34 +32,94 @@ namespace Aras.ViewModel.Properties
 {
     public class String : Property
     {
-        internal override void SetObject(object value)
+        private const System.Int32 MinLength = 1;
+        private const System.Int32 MaxLength = System.Int32.MaxValue;
+        private const System.Int32 DefaultLength = 32;
+
+        private System.Int32 _length;
+        public System.Int32 Length
         {
-            if (value == null || value is System.String)
+            get
             {
-                base.SetObject(value);
+                return this._length;
             }
-            else
+            set
             {
-                throw new Exceptions.ValueTypeException("System.String");
+                if (this._length != value)
+                {
+                    if (value >= MinLength && value <= MaxLength)
+                    {
+                        this._length = value;
+                        this.OnPropertyChanged("Length");
+                    }
+                    else
+                    {
+                        throw new ArgumentException("Length must be between " + MinLength.ToString() + " and " + MaxLength.ToString());
+                    }
+                }
             }
         }
 
+        private System.String _value;
         public System.String Value
         {
             get
             {
-                return (System.String)this.Object;
+                return this._value;
             }
             set
             {
-                this.Object = value;
+                if (this._value != value)
+                {
+                    this._value = value;
+                    this.OnPropertyChanged("Value");
+                }
             }
         }
 
-        public String(ViewModel.Control Control, System.String Name, Boolean Required, Boolean ReadOnly, System.String Default)
-            : base(Control, Name, Required, ReadOnly)
+        protected override void Property_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            this.SetObject(Default);
+            base.Property_PropertyChanged(sender, e);
+
+            if (e.PropertyName == "Binding")
+            {
+                if (this.Binding != null && this.Binding is Model.Properties.String)
+                {
+                    Model.Properties.String prop = (Model.Properties.String)this.Binding;
+                    Model.PropertyTypes.String proptype = (Model.PropertyTypes.String)prop.PropertyType;
+                    this.Length = proptype.Length;
+                    this.Value = prop.Value;
+                    this.Binding.PropertyChanged += Binding_PropertyChanged;
+
+                }
+            }
         }
+
+        void Binding_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Value")
+            {
+                Model.Properties.String prop = (Model.Properties.String)this.Binding;
+                this.Value = prop.Value;
+            }
+        }
+
+        public String(Session Session, Boolean Required, Boolean ReadOnly, System.Int32 Length, System.String Default)
+            : base(Session, Required, ReadOnly)
+        {
+            this.Length = Length;
+            this.Value = Default;
+        }
+
+        public String(Session Session, Boolean Required, Boolean ReadOnly, System.Int32 Length)
+            : this(Session, Required, ReadOnly, Length, null)
+        {
+        }
+
+        public String(Session Session, Boolean Required, Boolean ReadOnly)
+            : this(Session, Required, ReadOnly, DefaultLength, null)
+        {
+        }
+
     }
 }

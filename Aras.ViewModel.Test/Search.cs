@@ -28,51 +28,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Aras.ViewModel
+namespace Aras.ViewModel.Test
 {
-    public abstract class Base: IEquatable<Base>
+    public class TestSearch : Application
     {
-        public Guid ID { get; private set; }
+        public Search Search { get; private set; }
 
-        public bool Equals(Base other)
+        public TestSearch(Session Session)
+            :base(Session)
         {
-            if (other == null)
-            {
-                return false;
-            }
-            else
-            {
-                return this.ID.Equals(other.ID);
-            }
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (obj == null)
-            {
-                return false;
-            }
-            else
-            {
-                if (obj is Base)
-                {
-                    return this.Equals((Base)obj);
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
-
-        public override int GetHashCode()
-        {
-            return this.ID.GetHashCode();
-        }
-
-        public Base()
-        {
-            this.ID = Guid.NewGuid();
+            Model.ItemType itemtype = this.Session.Model.ItemType("Part");
+            this.Search = new Search(Session, itemtype);
+            this.Search.SelectPropertyTypes.Add("item_number,major_rev,name,viewable_file");
+            this.Search.GridPropertyTypes.Add("item_number,major_rev,name");
         }
     }
 }

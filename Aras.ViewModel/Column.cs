@@ -34,25 +34,51 @@ namespace Aras.ViewModel
     {
         public Grid Grid { get; private set; }
 
-        public Properties.String Name { get; private set; }
+        private System.String _name;
+        public System.String Name 
+        { 
+            get
+            {
+                return this._name;
+            }
+            private set
+            {
+                if (this._name != value)
+                {
+                    this._name = value;
+                    this.OnPropertyChanged("Name");
+                }
+            }
+        }
 
-        public Properties.String Label { get; private set; }
+        private System.String _label;
+        public System.String Label 
+        { 
+            get
+            {
+                return this._label;
+            }
+            private set
+            {
+                if (this._label != value)
+                {
+                    this._label = value;
+                    this.OnPropertyChanged("Label");
+                }
+            }
+        }
 
         public override string ToString()
         {
-            return this.Label.Value;
+            return this.Label;
         }
 
-        internal Column(Grid Grid, String Name, String Label)
-            :base(Grid.Session)
+        internal Column(Session Session, Grid Grid, String Name, String Label)
+            :base(Session)
         {
             this.Grid = Grid;
-
-            this.Name = new Properties.String(this, "Name", true, true, Name);
-            this.RegisterProperty(this.Name);
-
-            this.Label = new Properties.String(this, "Label", true, true, Label);
-            this.RegisterProperty(this.Label);
+            this.Name = Name;
+            this.Label = Label;
         }
     }
 }

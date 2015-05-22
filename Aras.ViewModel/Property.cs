@@ -30,71 +30,38 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel
 {
-    public abstract class Property : Base
+    public abstract class Property : Control
     {
-        public Control Control { get; private set; }
-
-        public Model.Session Session
-        {
+        private Boolean _required;
+        public Boolean Required 
+        { 
             get
             {
-                return this.Control.Session;
-            }
-        }
-
-        public event EventHandler PropertyChanged;
-
-        protected void OnPropertyChanged()
-        {
-            if (this.PropertyChanged != null)
-            {
-                this.PropertyChanged(this, EventArgs.Empty);
-            }
-        }
-
-        public String Name { get; private set; }
-
-        public Boolean Required { get; private set; }
-
-        public Boolean ReadOnly { get; internal set; }
-
-        private object _object;
-
-        internal virtual void SetObject(object value)
-        {
-            if (value == null)
-            {
-                if (this._object != null)
-                {
-                    this._object = null;
-                    this.OnPropertyChanged();
-                }
-            }
-            else
-            {
-                if (!value.Equals(this._object))
-                {
-                    this._object = value;
-                    this.OnPropertyChanged();
-                }
-            }
-        }
-
-        public object Object
-        {
-            get
-            {
-                return this._object;
+                return this._required;
             }
             set
             {
-                if (!this.ReadOnly)
+                if (this._required != value)
                 {
-                    this.SetObject(value);
+                    this._required = value;
+                    this.OnPropertyChanged("Required");
                 }
-                else
+            }
+        }
+
+        private Boolean _readOnly;
+        public Boolean ReadOnly 
+        { 
+            get
+            {
+                return this._readOnly;
+            }
+            set
+            {
+                if (this._readOnly != value)
                 {
-                    throw new Exceptions.ValueReadOnlyException();
+                    this._readOnly = value;
+                    this.OnPropertyChanged("ReadOnly");
                 }
             }
         }
@@ -113,7 +80,7 @@ namespace Aras.ViewModel
                     if (this._binding != null)
                     {
                         this._binding = null;
-                        this.SetObject(null);
+                        this.OnPropertyChanged("Binding");
                     }
                 }
                 else
@@ -121,31 +88,30 @@ namespace Aras.ViewModel
                     if (this._binding == null || !this._binding.Equals(value))
                     {
                         this._binding = value;
-                        this.SetObject(this._binding.Object);
+                        this.OnPropertyChanged("Binding");
                     }
                 }
             }
         }
 
-        public override string ToString()
+        protected virtual void Property_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (this.Object == null)
+            if (e.PropertyName == "Binding")
             {
-                return this.Name + ": null";
-            }
-            else
-            {
-                return this.Name + ": " + this.Object.ToString();
+                if (this.Binding != null)
+                {
+                    Model.PropertyType proptype = this.Binding.PropertyType;
+                    this.ReadOnly = proptype.ReadOnly;
+                }
             }
         }
 
-        public Property(Control Control, String Name, Boolean Required, Boolean ReadOnly)
-           :base()
+        public Property(Session Session, Boolean Required, Boolean ReadOnly)
+           :base(Session)
         {
-            this.Control = Control;
-            this.Name = Name;
             this.Required = Required;
-            this.ReadOnly = ReadOnly; 
+            this.ReadOnly = ReadOnly;
+            this.PropertyChanged += Property_PropertyChanged;
         }
     }
 }

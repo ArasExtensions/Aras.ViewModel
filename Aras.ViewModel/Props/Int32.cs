@@ -32,51 +32,73 @@ namespace Aras.ViewModel.Properties
 {
     public class Int32 : Property
     {
-        internal override void SetObject(object value)
-        {
-            if (value == null)
+        private System.Int32 _minValue;
+        public System.Int32 MinValue 
+        { 
+            get
             {
-                base.SetObject(value);
+                return this._minValue;
             }
-            else if (value is System.Int32)
+            set
             {
-                if ((System.Int32)value >= this.MinValue && (System.Int32)value <= this.MaxValue)
+                if (this._minValue != value)
                 {
-                    base.SetObject(value);
+                    this._minValue = value;
+                    this.OnPropertyChanged("MinValue");
                 }
-                else
-                {
-                    throw new Exceptions.ValueRangeException();
-                }
-            }
-            else
-            {
-                throw new Exceptions.ValueTypeException("System.Int32");
             }
         }
 
+        private System.Int32 _maxValue;
+        public System.Int32 MaxValue
+        {
+            get
+            {
+                return this._maxValue;
+            }
+            set
+            {
+                if (this._maxValue != value)
+                {
+                    this._maxValue = value;
+                    this.OnPropertyChanged("MaxValue");
+                }
+            }
+        }
+
+        private System.Int32? _value;
         public System.Int32? Value
         {
             get
             {
-                return (System.Int32)this.Object;
+                return this._value;
             }
             set
             {
-                this.Object = value;
+                if (this._value != value)
+                {
+                    this._value = value;
+                    this.OnPropertyChanged("Value");
+                }
             }
         }
 
-        public System.Int32 MinValue { get; private set; }
-
-        public System.Int32 MaxValue { get; private set; }
-
-        public Int32(ViewModel.Control Control, System.String Name, Boolean Required, Boolean ReadOnly, System.Int32 MinValue, System.Int32 MaxValue, System.Int32? Default)
-            : base(Control, Name, Required, ReadOnly)
+        public Int32(Session Session, Boolean Required, Boolean ReadOnly, System.Int32 MinValue, System.Int32 MaxValue, System.Int32? Default)
+            : base(Session, Required, ReadOnly)
         {
             this.MinValue = MinValue;
             this.MaxValue = MaxValue;
-            this.SetObject(Default);
+            this.Value = Default;
+        }
+
+        public Int32(Session Session, Boolean Required, Boolean ReadOnly, System.Int32? Default)
+            : this(Session, Required, ReadOnly, System.Int32.MinValue, System.Int32.MaxValue, Default)
+        {
+        }
+
+        public Int32(Session Session, Boolean Required, Boolean ReadOnly)
+            : this(Session, Required, ReadOnly, System.Int32.MinValue, System.Int32.MaxValue, null)
+        {
         }
     }
 }

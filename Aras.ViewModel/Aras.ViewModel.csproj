@@ -41,11 +41,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Application.cs" />
-    <Compile Include="Base.cs" />
     <Compile Include="Cell.cs" />
     <Compile Include="Column.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="Control.cs" />
+    <Compile Include="Database.cs" />
     <Compile Include="Exceptions\ValueReadOnlyException.cs" />
     <Compile Include="Exceptions\CommandNameException.cs" />
     <Compile Include="Exceptions\DuplicateCommandNameException.cs" />
@@ -54,11 +54,8 @@
     <Compile Include="Exceptions\ValueTypeException.cs" />
     <Compile Include="Exceptions\DuplicatePropertyNameException.cs" />
     <Compile Include="Grid.cs" />
-    <Compile Include="Manager.cs" />
-    <Compile Include="ObservableList.cs" />
+    <Compile Include="Server.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Props\ControlList.cs" />
-    <Compile Include="Props\Control.cs" />
     <Compile Include="Props\Item.cs" />
     <Compile Include="Row.cs" />
     <Compile Include="Search.cs" />
@@ -74,6 +71,7 @@
       <Name>Aras.Model</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

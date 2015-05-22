@@ -32,7 +32,7 @@ using System.Reflection;
 
 namespace Aras.ViewModel
 {
-    public class Manager
+    public class Server
     {
         private const double MinExpireSession = 1;
         private const double MaxExpireSession = 60;
@@ -64,17 +64,17 @@ namespace Aras.ViewModel
             }
         }
 
-        private Model.Server _server;
-        public Model.Server Server
+        private Model.Server _model;
+        public Model.Server Model
         {
             get
             {
-                if (this._server == null)
+                if (this._model == null)
                 {
-                    this._server = new Model.Server(this.URL);
+                    this._model = new Model.Server(this.URL);
                 }
 
-                return this._server;
+                return this._model;
             }
         }
 
@@ -105,15 +105,42 @@ namespace Aras.ViewModel
             }
         }
 
-        public Model.Database Database(String Name)
+        private List<Database> _databases;
+        public IEnumerable<Database> Databases
         {
-            return this.Server.Database(Name);
+            get
+            {
+                if (this._databases == null)
+                {
+                    this._databases = new List<Database>();
+
+                    foreach(Model.Database modeldatabase in this.Model.Databases)
+                    {
+                        this._databases.Add(new Database(this, modeldatabase));
+                    }
+                }
+
+                return this._databases;
+            }
+        }
+
+        public Database Database(String Name)
+        {
+            foreach(Database database in this.Databases)
+            {
+                if (database.Name.Equals(Name))
+                {
+                    return database;
+                }
+            }
+
+            throw new ArgumentException("Invalid Database Name");
         }
 
         private Object _sessionCacheLock = new Object();
         private volatile Dictionary<Guid, Session> _sessionCache;
 
-        private void AddSessionToCache(Session Session)
+        internal void AddSessionToCache(Session Session)
         {
             lock (this._sessionCacheLock)
             {
@@ -129,20 +156,17 @@ namespace Aras.ViewModel
             }
         }
 
-        public Session Login(Model.Database Database, String Username, String Password)
-        {
-            Model.Session modelsession = Database.Login(Username, Password);
-            Session session = new Session(this, modelsession);
-            this.AddSessionToCache(session);
-            return session;
-        }
-
         public Session Session(String Token)
         {
             return this.GetSessionFromCache(Utilities.StringToGuid(Token));
         }
 
-        public Manager(String URL)
+        public override string ToString()
+        {
+            return this.URL;
+        }
+
+        public Server(String URL)
         {
             this.ExpireSession = DefaultExpireSession;
 

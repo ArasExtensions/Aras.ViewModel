@@ -28,38 +28,39 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Aras.ViewModel.Properties
+namespace Aras.ViewModel
 {
-    public class Control : Property
+    public class Database
     {
-        internal override void SetObject(object value)
-        {
-            if (value == null || value is ViewModel.Control)
-            {
-                base.SetObject(value);
-            }
-            else
-            {
-                throw new Exceptions.ValueTypeException("Aras.ViewModel.Control");
-            }
-        }
+        public Server Server { get; private set; }
 
-        public ViewModel.Control Value
+        public Model.Database Model { get; private set; }
+
+        public String Name
         {
             get
             {
-                return (ViewModel.Control)this.Object;
-            }
-            set
-            {
-                this.Object = value;
+                return this.Model.Name;
             }
         }
 
-        public Control(ViewModel.Control Control, System.String Name, Boolean Required, Boolean ReadOnly, ViewModel.Control Default)
-            : base(Control, Name, Required, ReadOnly)
+        public Session Login(String Username, String Password)
         {
-            this.SetObject(Default);
+            Model.Session modelsession = this.Model.Login(Username, Password);
+            Session session = new Session(this, modelsession);
+            this.Server.AddSessionToCache(session);
+            return session;
+        }
+
+        public override string ToString()
+        {
+            return this.Name;
+        }
+
+        internal Database(Server Server, Model.Database Model)
+        {
+            this.Server = Server;
+            this.Model = Model;
         }
     }
 }

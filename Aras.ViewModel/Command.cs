@@ -30,15 +30,9 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel
 {
-    public class Command : Base
+    public abstract class Command
     {
-        public Control Control { get; private set; }
-
-        public String Name { get; private set; }
-
-        public delegate Task<Boolean> OnExecuteAsync(object parameter);
-
-        private OnExecuteAsync _execute;
+        public Guid ID { get; private set; }
 
         public event EventHandler CanExecuteChanged;
 
@@ -51,14 +45,17 @@ namespace Aras.ViewModel
         }
 
         private object _canExecuteLock = new object();
-        private volatile Boolean _canExecute;
+        private Boolean _canExecute;
         public Boolean CanExecute
         {
             get
             {
-                return this._canExecute;
+                lock (this._canExecuteLock)
+                {
+                    return this._canExecute;
+                }
             }
-            internal set
+            private set
             {
                 lock (this._canExecuteLock)
                 {
@@ -71,30 +68,28 @@ namespace Aras.ViewModel
             }
         }
 
+        protected void SetCanExecute(Boolean Value)
+        {
+            this.CanExecute = Value;
+        }
+
+        public abstract Boolean Execute(object parameter);
+
+        public Boolean Execute()
+        {
+            return this.Execute(null);
+        }
+
+        public abstract Task<Boolean> ExecuteAsync(object parameter);
+
         public async Task<Boolean> ExecuteAsync()
         {
             return await this.ExecuteAsync(null);
         }
 
-        public async Task<Boolean> ExecuteAsync(object parameter)
+        public Command()
         {
-            if (this._execute != null)
-            {
-                return await this._execute(parameter);
-            }
-            else
-            {
-                throw new ArgumentException("OnExecuteAsync is null");
-            }
-        }
-
-        public Command(Control Control, String Name, OnExecuteAsync Execute, Boolean CanExecute)
-            :base()
-        {
-            this.Control = Control;
-            this.Name = Name;
-            this._execute = Execute;
-            this._canExecute = CanExecute;
+            this.ID = Guid.NewGuid();
         }
     }
 }
