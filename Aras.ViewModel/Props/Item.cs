@@ -34,7 +34,7 @@ namespace Aras.ViewModel.Properties
     {
         internal override void SetObject(object value)
         {
-            if (value == null || value is Aras.Model.Cache.Item)
+            if (value == null || value is Aras.Model.Item)
             {
                 base.SetObject(value);
             }
@@ -44,11 +44,11 @@ namespace Aras.ViewModel.Properties
             }
         }
 
-        public Aras.Model.Cache.Item Value
+        public Aras.Model.Item Value
         {
             get
             {
-                return (Aras.Model.Cache.Item)this.Object;
+                return (Aras.Model.Item)this.Object;
             }
             set
             {
@@ -56,7 +56,7 @@ namespace Aras.ViewModel.Properties
             }
         }
 
-        public Item(ViewModel.Control Control, System.String Name, Boolean Required, Boolean ReadOnly, Model.Cache.Item Default)
+        public Item(ViewModel.Control Control, System.String Name, Boolean Required, Boolean ReadOnly, Model.Item Default)
             : base(Control, Name, Required, ReadOnly)
         {
             this.SetObject(Default);

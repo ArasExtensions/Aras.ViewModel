@@ -40,7 +40,7 @@ namespace Aras.ViewModel
 
         public Property Value { get; private set; }
 
-        public void SetModelProperty(Model.Cache.Property Property)
+        public void SetModelProperty(Model.Property Property)
         {
             this.Value = this.CreateProperty("Value", true, true, Property);
         }

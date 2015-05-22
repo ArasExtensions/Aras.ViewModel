@@ -50,7 +50,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\AESSiS.PartViewer\AESSiS.PartViewer\AESSiS.PartViewer.csproj">
+    <ProjectReference Include="..\..\..\AESSiS\PartViewer\AESSiS.PartViewer\AESSiS.PartViewer.csproj">
       <Project>{6143c66d-2144-4e46-9893-8165cd28b256}</Project>
       <Name>AESSiS.PartViewer</Name>
     </ProjectReference>

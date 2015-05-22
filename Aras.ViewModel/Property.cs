@@ -99,8 +99,8 @@ namespace Aras.ViewModel
             }
         }
 
-        private Model.Cache.Property _binding;
-        public Model.Cache.Property Binding
+        private Model.Property _binding;
+        public Model.Property Binding
         {
             get
             {

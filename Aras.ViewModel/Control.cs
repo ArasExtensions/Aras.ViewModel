@@ -105,7 +105,7 @@ namespace Aras.ViewModel
             this.Property(Name).SetObject(Value);
         }
 
-        protected Property CreateProperty(String Name, Boolean Required, Boolean ReadOnly, Model.Cache.Property Property)
+        protected Property CreateProperty(String Name, Boolean Required, Boolean ReadOnly, Model.Property Property)
         {
             Property ret = null;
             Property currentproperty = null;

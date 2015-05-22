@@ -43,7 +43,7 @@ namespace Aras.ViewModel.Debug
             propertytypes.Add(itemtype.PropertyType("major_rev"));
             propertytypes.Add(itemtype.PropertyType("name"));
 
-            this.Search = new Properties.Control(this, "Search", true, true, new ViewModel.Search(this.Session, itemtype, propertytypes));
+            this.Search = new Properties.Control(this, "Search", true, true, new ViewModel.Search(this.Session, itemtype, propertytypes, propertytypes));
             this.RegisterProperty(this.Search);
         }
     }

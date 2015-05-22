@@ -59,14 +59,14 @@ namespace Aras.ViewModel
 
         public Properties.Item Selected { get; private set; }
 
-        private Model.Request.Item _request;
-        private Model.Request.Item Request
+        private Model.Requests.Item _request;
+        private Model.Requests.Item Request
         {
             get
             {
                 if (this._request == null)
                 {
-                    this._request = this.Session.Create(this.ItemType.Action("get"));
+                    this._request = this.Session.Request(this.ItemType.Action("get"));
                     
                     foreach (Model.PropertyType proptype in this.PropertyTypes)
                     {
@@ -86,14 +86,14 @@ namespace Aras.ViewModel
         {
             this.Refresh.CanExecute = false;
 
-            Model.Response.IEnumerable<Model.Response.Item> response = await this.Request.ExecuteAsync();
+            Model.Response response = await this.Request.ExecuteAsync();
 
             this.GridControl.Rows.Value.NotifyListChanged = false;
 
             // Add Items to Grid
             int rowindex = 0;
 
-            foreach(Model.Response.Item item in response)
+            foreach(Model.Responses.Item item in response.Items)
             {
                 if (rowindex + 1 > this.GridControl.NoRows)
                 {
@@ -128,10 +128,10 @@ namespace Aras.ViewModel
 
             // Remove any spare Rows
 
-            if (response.Count() < this.GridControl.NoRows)
+            if (response.Items.Count() < this.GridControl.NoRows)
             {
-                int diff = this.GridControl.NoRows - response.Count();
-                this.GridControl.Rows.Value.RemoveRange(response.Count(), diff);
+                int diff = this.GridControl.NoRows - response.Items.Count();
+                this.GridControl.Rows.Value.RemoveRange(response.Items.Count(), diff);
             }
 
             this.GridControl.Rows.Value.NotifyListChanged = true;
@@ -192,8 +192,8 @@ namespace Aras.ViewModel
             // Selected Row has changed
             Row row = (Row)((Aras.ViewModel.Properties.Control)sender).Value;
             Cell cell = (Cell)row.Cells.Value.First();
-            Model.Cache.Property property = cell.Value.Binding;
-            Model.Cache.Item item = property.Item;
+            Model.Property property = cell.Value.Binding;
+            Model.Item item = property.Item;
             this.Selected.Value = item;
         }
 
