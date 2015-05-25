@@ -37,6 +37,7 @@ namespace Aras.ViewModel.Properties
         private const System.Int32 DefaultLength = 32;
 
         private System.Int32 _length;
+        [Attributes.Property("Length")]
         public System.Int32 Length
         {
             get
@@ -61,6 +62,7 @@ namespace Aras.ViewModel.Properties
         }
 
         private System.String _value;
+        [Attributes.Property("Value")]
         public System.String Value
         {
             get

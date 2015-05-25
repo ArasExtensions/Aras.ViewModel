@@ -10,7 +10,7 @@ namespace Aras.ViewModel.Debug
     {
         private const String URL = "http://localhost/innovatorserver100sp4";
 
-        public async Task<Boolean> Execute()
+        public Boolean Execute()
         {
             // Create Server
             ViewModel.Server server = new Server(URL);
@@ -27,14 +27,21 @@ namespace Aras.ViewModel.Debug
             // Get Application
             Aras.ViewModel.Test.TestSearch testsearch = (Aras.ViewModel.Test.TestSearch)session.Applications.First();
 
-            int cnt = 0;
+            // Run Search
+            Boolean test = testsearch.Search.Refresh.Execute();
 
-            while (cnt < 10)
+            System.Console.WriteLine("Item Count: " + testsearch.Search.Items.Count());
+
+            foreach(Row row in testsearch.Search.Grid.Rows)
             {
-                Boolean test = await testsearch.Search.Refresh.ExecuteAsync();
-                System.Threading.Thread.Sleep(2000);
-                System.Console.WriteLine("Item Count: " + testsearch.Search.Items.Count());
-                cnt++;
+                foreach(Cell cell in row.Cells)
+                {
+                    foreach(String name in cell.PropertyNames)
+                    {
+                        object prop = cell.Property(name);
+                    }
+
+                }
             }
 
             return true;

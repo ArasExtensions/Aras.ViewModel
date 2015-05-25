@@ -33,6 +33,7 @@ namespace Aras.ViewModel.Properties
     public class Int32 : Property
     {
         private System.Int32 _minValue;
+        [Attributes.Property("MinValue")]
         public System.Int32 MinValue 
         { 
             get
@@ -50,6 +51,7 @@ namespace Aras.ViewModel.Properties
         }
 
         private System.Int32 _maxValue;
+        [Attributes.Property("MaxValue")]
         public System.Int32 MaxValue
         {
             get
@@ -67,6 +69,7 @@ namespace Aras.ViewModel.Properties
         }
 
         private System.Int32? _value;
+        [Attributes.Property("Value")]
         public System.Int32? Value
         {
             get

@@ -41,6 +41,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Application.cs" />
+    <Compile Include="Attributes\Property.cs" />
+    <Compile Include="Attributes\Command.cs" />
     <Compile Include="Cell.cs" />
     <Compile Include="Column.cs" />
     <Compile Include="Command.cs" />

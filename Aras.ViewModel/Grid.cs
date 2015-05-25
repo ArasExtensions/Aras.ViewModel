@@ -32,6 +32,7 @@ namespace Aras.ViewModel
 {
     public class Grid : Control
     {
+        [Attributes.Property("Columns")]
         public Model.ObservableList<Column> Columns { get; private set; }
 
         public Column AddColumn(String Name, String Label)
@@ -41,6 +42,7 @@ namespace Aras.ViewModel
             return col;
         }
 
+        [Attributes.Property("Rows")]
         public Model.ObservableList<Row> Rows { get; private set; }
 
         public Row AddRow()
@@ -58,6 +60,7 @@ namespace Aras.ViewModel
             return row;
         }
 
+        [Attributes.Property("Selected")]
         public Model.ObservableList<Row> Selected { get; private set; }
 
         public Grid(Session Session)

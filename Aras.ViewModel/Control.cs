@@ -57,6 +57,136 @@ namespace Aras.ViewModel
             }
         }
 
+        private Dictionary<String, Command> _commandsCache;
+        private Dictionary<String, Command> CommandsCache
+        {
+            get
+            {
+                if (this._commandsCache == null)
+                {
+                    this._commandsCache = new Dictionary<String, Command>();
+
+                    foreach (System.Reflection.PropertyInfo propinfo in this.GetType().GetProperties())
+                    {
+                        object[] customattrs = propinfo.GetCustomAttributes(typeof(Attributes.Command), true);
+
+                        foreach (object customattr in customattrs)
+                        {
+                            if (customattr is Attributes.Command)
+                            {
+                                this._commandsCache[((Attributes.Command)customattr).Name] = (Command)propinfo.GetValue(this);
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                return this._commandsCache;
+            }
+        }
+
+        public IEnumerable<String> CommandNames
+        {
+            get
+            {
+                return this.CommandsCache.Keys;
+            }
+        }
+
+        public IEnumerable<Command> Commands
+        {
+            get
+            {
+                return this.CommandsCache.Values;
+            }
+        }
+
+        public Command Command(String Name)
+        {
+            return this.CommandsCache[Name];
+        }
+
+        private Dictionary<String, object> _propertiesCache;
+        private Dictionary<String, object> PropertiesCache
+        {
+            get
+            {
+                if (this._propertiesCache == null)
+                {
+                    this._propertiesCache = new Dictionary<String, object>();
+
+                    foreach (System.Reflection.PropertyInfo propinfo in this.GetType().GetProperties())
+                    {
+                        object[] customattrs = propinfo.GetCustomAttributes(typeof(Attributes.Property), true);
+
+                        foreach (object customattr in customattrs)
+                        {
+                            this._propertiesCache[((Attributes.Property)customattr).Name] = propinfo.GetValue(this);
+                            break;
+                        }
+                    }
+                }
+
+                return this._propertiesCache;
+            }
+        }
+
+        public IEnumerable<String> PropertyNames
+        {
+            get
+            {
+                return this.PropertiesCache.Keys;
+            }
+        }
+
+        public IEnumerable<object> Properties
+        {
+            get
+            {
+                return this.PropertiesCache.Values;
+            }
+        }
+
+        public object Property(String Name)
+        {
+            return this.PropertiesCache[Name];
+        }
+
+        public IEnumerable<Control> Controls
+        {
+            get
+            {
+                List<Control> controls = new List<Control>();
+
+                foreach(object property in this.Properties)
+                {
+                    if (property is Control)
+                    {
+                        Control thiscontrol = (Control)property;
+
+                        if (!controls.Contains(thiscontrol))
+                        {
+                            controls.Add(thiscontrol);
+                        }
+                    }
+                    else if (property is IEnumerable<Control>)
+                    {
+                        IEnumerable<Control> thiscontrols = (IEnumerable<Control>)property;
+
+                        foreach(Control thiscontrol in thiscontrols)
+                        {
+                            if (!controls.Contains(thiscontrol))
+                            {
+                                controls.Add(thiscontrol);
+                            }
+                        }
+                    }
+                }
+
+                return controls;
+            }
+        }
+
         public bool Equals(Control other)
         {
             if (other == null)

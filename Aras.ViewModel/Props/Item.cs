@@ -33,6 +33,7 @@ namespace Aras.ViewModel.Properties
     public class Item : Property
     {
         private Aras.Model.Item _value;
+        [Attributes.Property("Value")]
         public Aras.Model.Item Value
         {
             get

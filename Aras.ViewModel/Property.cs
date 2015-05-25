@@ -33,6 +33,7 @@ namespace Aras.ViewModel
     public abstract class Property : Control
     {
         private Boolean _required;
+        [Attributes.Property("Required")]
         public Boolean Required 
         { 
             get
@@ -50,6 +51,7 @@ namespace Aras.ViewModel
         }
 
         private Boolean _readOnly;
+        [Attributes.Property("ReadOnly")]
         public Boolean ReadOnly 
         { 
             get

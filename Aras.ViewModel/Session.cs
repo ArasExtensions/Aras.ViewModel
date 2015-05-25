@@ -108,22 +108,26 @@ namespace Aras.ViewModel
         {
             if (Control != null)
             {
-                // Add Control to Cache
-                this.ControlCache[Control.ID] = Control;
-
-                /*
-                // Add Properties to Cache
-                foreach (ViewModel.Property property in Control.Controls)
+                if (!this.ControlCache.ContainsKey(Control.ID))
                 {
-                    this.AddPropertyToCache(property);
+                    // Add Control to Cache
+                    this.ControlCache[Control.ID] = Control;
+
+                    // Link to PropertyChanged Event
+                    Control.PropertyChanged += Control_PropertyChanged;
+
+                    // Add Commands to Cache
+                    foreach (String name in Control.CommandNames)
+                    {
+                        this.AddCommandToCache(name, Control.Command(name));
+                    }
                 }
 
-                // Add Commands to Cache
-                foreach (ViewModel.Command command in Control.Commands)
+                // Add Child Controls to Cache
+                foreach (Control thiscontrol in Control.Controls)
                 {
-                    this.AddCommandToCache(command);
+                    this.AddControlToCache(thiscontrol);
                 }
-                 */
             }
         }
 
@@ -132,12 +136,70 @@ namespace Aras.ViewModel
             return this.ControlCache[ID];
         }
 
+        void Control_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            // Add Control to Queue so change is picked up
+            ViewModel.Control control = (ViewModel.Control)sender;
+            this.AddControlToQueue(control);
+
+            // Check if changed Property is a Control or List of Controls
+            object property = control.Property(e.PropertyName);
+
+            if (property is Control)
+            {
+                this.AddControlToCache((Control)property);
+            }
+            else if (property is IEnumerable<Control>)
+            {
+                foreach(Control childcontrol in ((IEnumerable<Control>)property))
+                {
+                    this.AddControlToCache(childcontrol);
+                }
+            }
+        }
+
+        private object ControlQueueLock = new object();
+        private Queue<ViewModel.Control> ControlQueue;
+
+        private void AddControlToQueue(ViewModel.Control Control)
+        {
+            lock (this.ControlQueueLock)
+            {
+                this.ControlQueue.Enqueue(Control);
+            }
+        }
+
+        public IEnumerable<ViewModel.Control> GetControlsFromQueue()
+        {
+            List<ViewModel.Control> ret = new List<ViewModel.Control>();
+
+            lock (this.ControlQueueLock)
+            {
+                while (this.ControlQueue.Count > 0)
+                {
+                    ViewModel.Control control = this.ControlQueue.Dequeue();
+
+                    if (!ret.Contains(control))
+                    {
+                        ret.Add(control);
+                    }
+                }
+            }
+
+            return ret;
+        }
+
         private Dictionary<Guid, ViewModel.Command> CommandCache;
 
-        private void AddCommandToCache(ViewModel.Command Command)
+        private Dictionary<Guid, String> CommandNameCache;
+
+        private void AddCommandToCache(String Name, ViewModel.Command Command)
         {
             if (!this.CommandCache.ContainsKey(Command.ID))
             {
+                // Store Command Name
+                this.CommandNameCache[Command.ID] = Name;
+
                 // Store Command in Cache
                 this.CommandCache[Command.ID] = Command;
 
@@ -188,12 +250,19 @@ namespace Aras.ViewModel
             return this.CommandCache[ID];
         }
 
+        public String CommandName(Guid ID)
+        {
+            return this.CommandNameCache[ID];
+        }
+
         internal Session(Database Database, Model.Session Model)
         {
             this.Database = Database;
             this.Model = Model;
             this.ControlCache = new Dictionary<Guid, ViewModel.Control>();
+            this.ControlQueue = new Queue<ViewModel.Control>();
             this.CommandCache = new Dictionary<Guid, ViewModel.Command>();
+            this.CommandNameCache = new Dictionary<Guid, String>();
             this.CommandQueue = new Queue<ViewModel.Command>();
         }
     }

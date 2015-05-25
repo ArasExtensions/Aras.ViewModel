@@ -37,8 +37,6 @@ namespace Aras.ViewModel.Debug
         {
             Session session = new Session();
             session.Execute();
-
-            System.Threading.Thread.Sleep(1000000);
         }
     }
 }

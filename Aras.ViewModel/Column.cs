@@ -35,6 +35,7 @@ namespace Aras.ViewModel
         public Grid Grid { get; private set; }
 
         private System.String _name;
+        [Attributes.Property("Name")]
         public System.String Name 
         { 
             get
@@ -52,6 +53,7 @@ namespace Aras.ViewModel
         }
 
         private System.String _label;
+        [Attributes.Property("Label")]
         public System.String Label 
         { 
             get

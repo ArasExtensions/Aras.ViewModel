@@ -37,6 +37,7 @@ namespace Aras.ViewModel
         public Column Column { get; private set; }
 
         private Property _value;
+        [Attributes.Property("Value")]
         public Property Value 
         { 
             get

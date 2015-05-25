@@ -46,6 +46,7 @@ namespace Aras.ViewModel
         public Model.ObservableLists.PropertyType GridPropertyTypes { get; private set; }
 
         private System.Int32 _pageSize;
+        [Attributes.Property("PageSize")]
         public System.Int32 PageSize 
         { 
             get
@@ -70,6 +71,7 @@ namespace Aras.ViewModel
         }
 
         private System.Int32 _pageCount;
+        [Attributes.Property("PageCount")]
         public System.Int32 PageCount 
         { 
             get
@@ -87,6 +89,7 @@ namespace Aras.ViewModel
         }
 
         private System.Int32 _page;
+        [Attributes.Property("Page")]
         public System.Int32 Page 
         { 
             get
@@ -103,8 +106,10 @@ namespace Aras.ViewModel
             }
         }
 
+        [Attributes.Property("Grid")]
         public Grid Grid { get; private set; }
 
+        [Attributes.Command("Refresh")]
         public RefreshCommand Refresh { get; private set; }
 
         public Model.ObservableLists.Item Items { get; private set; }
