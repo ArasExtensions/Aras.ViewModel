@@ -34,39 +34,19 @@ namespace Aras.ViewModel
     {
         public Grid Grid { get; private set; }
 
-        private System.String _name;
-        [Attributes.Property("Name")]
         public System.String Name 
         { 
             get
             {
-                return this._name;
-            }
-            private set
-            {
-                if (this._name != value)
-                {
-                    this._name = value;
-                    this.OnPropertyChanged("Name");
-                }
+                return (System.String)this.PropertiesCache["Name"];
             }
         }
 
-        private System.String _label;
-        [Attributes.Property("Label")]
         public System.String Label 
         { 
             get
             {
-                return this._label;
-            }
-            private set
-            {
-                if (this._label != value)
-                {
-                    this._label = value;
-                    this.OnPropertyChanged("Label");
-                }
+                return (System.String)this.PropertiesCache["Label"];
             }
         }
 
@@ -79,8 +59,8 @@ namespace Aras.ViewModel
             :base(Session)
         {
             this.Grid = Grid;
-            this.Name = Name;
-            this.Label = Label;
+            this.PropertiesCache["Name"] = Name;
+            this.PropertiesCache["Label"] = Label;
         }
     }
 }

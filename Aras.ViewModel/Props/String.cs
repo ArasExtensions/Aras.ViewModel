@@ -36,21 +36,19 @@ namespace Aras.ViewModel.Properties
         private const System.Int32 MaxLength = System.Int32.MaxValue;
         private const System.Int32 DefaultLength = 32;
 
-        private System.Int32 _length;
-        [Attributes.Property("Length")]
         public System.Int32 Length
         {
             get
             {
-                return this._length;
+                return (System.Int32)this.PropertiesCache["Length"];
             }
             set
             {
-                if (this._length != value)
+                if (!((System.Int32)this.PropertiesCache["Length"]).Equals(value))
                 {
                     if (value >= MinLength && value <= MaxLength)
                     {
-                        this._length = value;
+                        this.PropertiesCache["Length"] = value;
                         this.OnPropertyChanged("Length");
                     }
                     else
@@ -61,20 +59,43 @@ namespace Aras.ViewModel.Properties
             }
         }
 
-        private System.String _value;
-        [Attributes.Property("Value")]
         public System.String Value
         {
             get
             {
-                return this._value;
+                return (System.String)this.PropertiesCache["Value"];
             }
             set
             {
-                if (this._value != value)
+                if (this.PropertiesCache["Value"] == null)
                 {
-                    this._value = value;
-                    this.OnPropertyChanged("Value");
+                    if (value != null)
+                    {
+                        if (value.Length <= this.Length)
+                        {
+                            this.PropertiesCache["Value"] = value;
+                            this.OnPropertyChanged("Value");
+                        }
+                        else
+                        {
+                            throw new ArgumentException("Length must be no greater than " + this.Length.ToString());
+                        }
+                    }
+                }
+                else
+                {
+                    if (!((System.String)this.PropertiesCache["Value"]).Equals(value))
+                    {
+                        if (value == null || value.Length <= this.Length)
+                        {
+                            this.PropertiesCache["Value"] = value;
+                            this.OnPropertyChanged("Value");
+                        }
+                        else
+                        {
+                            throw new ArgumentException("Length must be no greater than " + this.Length.ToString());
+                        }
+                    }
                 }
             }
         }
@@ -92,7 +113,6 @@ namespace Aras.ViewModel.Properties
                     this.Length = proptype.Length;
                     this.Value = prop.Value;
                     this.Binding.PropertyChanged += Binding_PropertyChanged;
-
                 }
             }
         }
@@ -109,7 +129,9 @@ namespace Aras.ViewModel.Properties
         public String(Session Session, Boolean Required, Boolean ReadOnly, System.Int32 Length, System.String Default)
             : base(Session, Required, ReadOnly)
         {
+            this.PropertiesCache["Length"] = DefaultLength;
             this.Length = Length;
+            this.PropertiesCache["Value"] = null;
             this.Value = Default;
         }
 

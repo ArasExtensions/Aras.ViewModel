@@ -106,30 +106,7 @@ namespace Aras.ViewModel
             return this.CommandsCache[Name];
         }
 
-        private Dictionary<String, object> _propertiesCache;
-        private Dictionary<String, object> PropertiesCache
-        {
-            get
-            {
-                if (this._propertiesCache == null)
-                {
-                    this._propertiesCache = new Dictionary<String, object>();
-
-                    foreach (System.Reflection.PropertyInfo propinfo in this.GetType().GetProperties())
-                    {
-                        object[] customattrs = propinfo.GetCustomAttributes(typeof(Attributes.Property), true);
-
-                        foreach (object customattr in customattrs)
-                        {
-                            this._propertiesCache[((Attributes.Property)customattr).Name] = propinfo.GetValue(this);
-                            break;
-                        }
-                    }
-                }
-
-                return this._propertiesCache;
-            }
-        }
+        protected Dictionary<String, object> PropertiesCache;
 
         public IEnumerable<String> PropertyNames
         {
@@ -150,6 +127,11 @@ namespace Aras.ViewModel
         public object Property(String Name)
         {
             return this.PropertiesCache[Name];
+        }
+
+        public Boolean HasProperty(String Name)
+        {
+            return this.PropertiesCache.ContainsKey(Name);
         }
 
         public IEnumerable<Control> Controls
@@ -225,6 +207,7 @@ namespace Aras.ViewModel
 
         public Control(Session Session)
         {
+            this.PropertiesCache = new Dictionary<String, object>();
             this.Session = Session;
             this.ID = Guid.NewGuid();
         }

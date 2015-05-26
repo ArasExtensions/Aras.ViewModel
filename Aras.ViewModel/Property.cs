@@ -32,37 +32,33 @@ namespace Aras.ViewModel
 {
     public abstract class Property : Control
     {
-        private Boolean _required;
-        [Attributes.Property("Required")]
         public Boolean Required 
         { 
             get
             {
-                return this._required;
+                return (Boolean)this.PropertiesCache["Required"];
             }
             set
             {
-                if (this._required != value)
+                if (!((Boolean)this.PropertiesCache["Required"]).Equals(value))
                 {
-                    this._required = value;
+                    this.PropertiesCache["Required"] = value;
                     this.OnPropertyChanged("Required");
                 }
             }
         }
 
-        private Boolean _readOnly;
-        [Attributes.Property("ReadOnly")]
         public Boolean ReadOnly 
         { 
             get
             {
-                return this._readOnly;
+                return (Boolean)this.PropertiesCache["ReadOnly"];
             }
             set
             {
-                if (this._readOnly != value)
+                if (!((Boolean)this.PropertiesCache["ReadOnly"]).Equals(value))
                 {
-                    this._readOnly = value;
+                    this.PropertiesCache["ReadOnly"] = value;
                     this.OnPropertyChanged("ReadOnly");
                 }
             }
@@ -111,8 +107,8 @@ namespace Aras.ViewModel
         public Property(Session Session, Boolean Required, Boolean ReadOnly)
            :base(Session)
         {
-            this.Required = Required;
-            this.ReadOnly = ReadOnly;
+            this.PropertiesCache["Required"] = Required;
+            this.PropertiesCache["ReadOnly"] = ReadOnly;
             this.PropertyChanged += Property_PropertyChanged;
         }
     }

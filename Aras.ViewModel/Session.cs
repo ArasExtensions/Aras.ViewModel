@@ -143,17 +143,20 @@ namespace Aras.ViewModel
             this.AddControlToQueue(control);
 
             // Check if changed Property is a Control or List of Controls
-            object property = control.Property(e.PropertyName);
+            if (control.HasProperty(e.PropertyName))
+            {
+                object property = control.Property(e.PropertyName);
 
-            if (property is Control)
-            {
-                this.AddControlToCache((Control)property);
-            }
-            else if (property is IEnumerable<Control>)
-            {
-                foreach(Control childcontrol in ((IEnumerable<Control>)property))
+                if (property is Control)
                 {
-                    this.AddControlToCache(childcontrol);
+                    this.AddControlToCache((Control)property);
+                }
+                else if (property is IEnumerable<Control>)
+                {
+                    foreach (Control childcontrol in ((IEnumerable<Control>)property))
+                    {
+                        this.AddControlToCache(childcontrol);
+                    }
                 }
             }
         }

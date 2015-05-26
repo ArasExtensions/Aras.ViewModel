@@ -32,29 +32,27 @@ namespace Aras.ViewModel.Properties
 {
     public class Item : Property
     {
-        private Aras.Model.Item _value;
-        [Attributes.Property("Value")]
         public Aras.Model.Item Value
         {
             get
             {
-                return this._value;
+                return (Aras.Model.Item)this.PropertiesCache["Value"];
             }
             set
             {
-                if (this._value == null)
+                if (this.PropertiesCache["Value"] == null)
                 {
                     if (value != null)
                     {
-                        this._value = value;
+                        this.PropertiesCache["Value"] = value;
                         this.OnPropertyChanged("Value");
                     }
                 }
                 else
                 {
-                    if (!this._value.Equals(value))
+                    if (!((Aras.Model.Item)this.PropertiesCache["Value"]).Equals(value))
                     {
-                        this._value = value;
+                        this.PropertiesCache["Value"] = value;
                         this.OnPropertyChanged("Value");
                     }
                 }
@@ -64,7 +62,7 @@ namespace Aras.ViewModel.Properties
         public Item(Session Session, Boolean Required, Boolean ReadOnly, Model.Item Default)
             : base(Session, Required, ReadOnly)
         {
-            this.Value = Default;
+            this.PropertiesCache["Value"] = Default;
         }
 
         public Item(Session Session, Boolean Required, Boolean ReadOnly)
