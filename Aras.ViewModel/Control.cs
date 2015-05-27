@@ -116,14 +116,6 @@ namespace Aras.ViewModel
             }
         }
 
-        public IEnumerable<object> Properties
-        {
-            get
-            {
-                return this.PropertiesCache.Values;
-            }
-        }
-
         public object Property(String Name)
         {
             return this.PropertiesCache[Name];
@@ -140,7 +132,7 @@ namespace Aras.ViewModel
             {
                 List<Control> controls = new List<Control>();
 
-                foreach(object property in this.Properties)
+                foreach(object property in this.PropertiesCache.Values)
                 {
                     if (property is Control)
                     {
