@@ -32,7 +32,6 @@ namespace Aras.ViewModel.Test
 {
     public class TestSearch : Application
     {
-        [ViewModel.Attributes.Property("Search")]
         public Search Search { get; private set; }
 
         public TestSearch(Session Session)
