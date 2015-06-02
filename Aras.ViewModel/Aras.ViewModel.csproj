@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Application.cs" />
+    <Compile Include="Attributes\Property.cs" />
     <Compile Include="Attributes\Command.cs" />
     <Compile Include="Cell.cs" />
     <Compile Include="Column.cs" />
@@ -57,7 +58,6 @@
     <Compile Include="Grid.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Props\Item.cs" />
     <Compile Include="Row.cs" />
     <Compile Include="Search.cs" />
     <Compile Include="Property.cs" />

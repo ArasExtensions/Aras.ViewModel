@@ -36,9 +36,9 @@ namespace Aras.ViewModel.Debug
             {
                 foreach(Cell cell in row.Cells)
                 {
-                    foreach(String name in cell.PropertyNames)
+                    foreach(String name in cell.Properties)
                     {
-                        object prop = cell.Property(name);
+                        object prop = cell.GetPropertyValue(name);
                     }
 
                 }

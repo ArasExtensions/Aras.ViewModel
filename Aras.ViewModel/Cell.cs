@@ -36,17 +36,19 @@ namespace Aras.ViewModel
 
         public Column Column { get; private set; }
 
+        private Property _value;
+        [Attributes.Property("Value")]
         public Property Value 
         { 
             get
             {
-                return (Property)this.PropertiesCache["Value"];
+                return this._value;
             }
             set
             {
-                if (this.PropertiesCache["Value"] != value)
+                if (this._value != value)
                 {
-                    this.PropertiesCache["Value"] = value;
+                    this._value = value;
                     this.OnPropertyChanged("Value");
                 }
             }
@@ -57,7 +59,7 @@ namespace Aras.ViewModel
         {
             this.Row = Row;
             this.Column = Column;
-            this.PropertiesCache["Value"] = null;
+            this.Value = null;
         }
     }
 }

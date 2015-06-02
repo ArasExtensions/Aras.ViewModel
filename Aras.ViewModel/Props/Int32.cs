@@ -32,61 +32,26 @@ namespace Aras.ViewModel.Properties
 {
     public class Int32 : Property
     {
-        public System.Int32 MinValue 
-        { 
-            get
-            {
-                return (System.Int32)this.PropertiesCache["MinValue"];
-            }
-            set
-            {
-                if (!((System.Int32)this.PropertiesCache["MinValue"]).Equals(value))
-                {
-                    this.PropertiesCache["MinValue"] = value;
-                    this.OnPropertyChanged("MinValue");
-                }
-            }
-        }
+        [Attributes.Property("MinValue")]
+        public System.Int32 MinValue { get; private set; }
 
-        public System.Int32 MaxValue
-        {
-            get
-            {
-                return (System.Int32)this.PropertiesCache["MaxValue"];
-            }
-            set
-            {
-                if (!((System.Int32)this.PropertiesCache["MaxValue"]).Equals(value))
-                {
-                    this.PropertiesCache["MaxValue"] = value;
-                    this.OnPropertyChanged("MaxValue");
-                }
-            }
-        }
+        [Attributes.Property("MaxValue")]
+        public System.Int32 MaxValue { get; private set; }
 
+        private System.Int32? _value;
+        [Attributes.Property("Value")]
         public System.Int32? Value
         {
             get
             {
-                return (System.Int32?)this.PropertiesCache["Value"];
+                return this._value;
             }
             set
             {
-                if (this.PropertiesCache["Value"] == null)
+                if (this._value != value)
                 {
-                    if (value != null)
-                    {
-                        this.PropertiesCache["Value"] = value;
-                        this.OnPropertyChanged("Value");
-                    }
-                }
-                else
-                {
-                    if (!((System.Int32)this.PropertiesCache["Value"]).Equals(value))
-                    {
-                        this.PropertiesCache["Value"] = value;
-                        this.OnPropertyChanged("Value");
-                    }
+                    this._value = value;
+                    this.OnPropertyChanged("Value");
                 }
             }
         }
@@ -94,9 +59,9 @@ namespace Aras.ViewModel.Properties
         public Int32(Session Session, Boolean Required, Boolean ReadOnly, System.Int32 MinValue, System.Int32 MaxValue, System.Int32? Default)
             : base(Session, Required, ReadOnly)
         {
-            this.PropertiesCache["MinValue"] = MinValue;
-            this.PropertiesCache["MaxValue"] = MaxValue;
-            this.PropertiesCache["Value"] = Default;
+            this.MinValue = MinValue;
+            this.MaxValue = MaxValue;
+            this.Value = Default;
         }
 
         public Int32(Session Session, Boolean Required, Boolean ReadOnly, System.Int32? Default)

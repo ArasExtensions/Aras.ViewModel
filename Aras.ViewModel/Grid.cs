@@ -32,13 +32,9 @@ namespace Aras.ViewModel
 {
     public class Grid : Control
     {
-        public Model.ObservableList<Column> Columns
-        {
-            get
-            {
-                return (Model.ObservableList<Column>)this.PropertiesCache["Columns"];
-            }
-        }
+
+        [Attributes.Property("Columns")]
+        public Model.ObservableList<Column> Columns { get; private set; }
 
         public Column AddColumn(String Name, String Label)
         {
@@ -47,13 +43,8 @@ namespace Aras.ViewModel
             return col;
         }
 
-        public Model.ObservableList<Row> Rows
-        {
-            get
-            {
-                return (Model.ObservableList<Row>)this.PropertiesCache["Rows"];
-            }
-        }
+        [Attributes.Property("Rows")]
+        public Model.ObservableList<Row> Rows {get; private set;} 
 
         public Row AddRow()
         {
@@ -70,22 +61,17 @@ namespace Aras.ViewModel
             return row;
         }
 
-        public Model.ObservableList<Row> Selected
-        {
-            get
-            {
-                return (Model.ObservableList<Row>)this.PropertiesCache["Selected"];
-            }
-        }
+        [Attributes.Property("Selected")]
+        public Model.ObservableList<Row> Selected { get; private set; }
  
         public Grid(Session Session)
             :base(Session)
         {
-            this.PropertiesCache["Columns"] = new Model.ObservableList<Column>();
+            this.Columns = new Model.ObservableList<Column>();
             this.Columns.ListChanged += Columns_ListChanged;
-            this.PropertiesCache["Rows"] = new Model.ObservableList<Row>();
+            this.Rows = new Model.ObservableList<Row>();
             this.Rows.ListChanged += Rows_ListChanged;
-            this.PropertiesCache["Selected"] = new Model.ObservableList<Row>();
+            this.Selected = new Model.ObservableList<Row>();
             this.Selected.ListChanged += Selected_ListChanged;
         }
 

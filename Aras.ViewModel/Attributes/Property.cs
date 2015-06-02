@@ -28,29 +28,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Aras.ViewModel
+namespace Aras.ViewModel.Attributes
 {
-    public class Column : Control
+    [AttributeUsage(AttributeTargets.Property)]
+    public class Property : Attribute
     {
-        public Grid Grid { get; private set; }
+        public String Name { get; private set; }
 
-        [Attributes.Property("Name")]
-        public System.String Name { get; private set; }
-
-        [Attributes.Property("Label")]
-        public System.String Label { get; private set; }
-
-        public override string ToString()
+        public Property(String Name)
         {
-            return this.Label;
-        }
-
-        internal Column(Session Session, Grid Grid, String Name, String Label)
-            :base(Session)
-        {
-            this.Grid = Grid;
             this.Name = Name;
-            this.Label = Label;
         }
     }
 }

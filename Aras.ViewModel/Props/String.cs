@@ -36,19 +36,21 @@ namespace Aras.ViewModel.Properties
         private const System.Int32 MaxLength = System.Int32.MaxValue;
         private const System.Int32 DefaultLength = 32;
 
+        private System.Int32 _length;
+        [Attributes.Property("Length")]
         public System.Int32 Length
         {
             get
             {
-                return (System.Int32)this.PropertiesCache["Length"];
+                return this._length;
             }
             set
             {
-                if (!((System.Int32)this.PropertiesCache["Length"]).Equals(value))
+                if (!this._length.Equals(value))
                 {
                     if (value >= MinLength && value <= MaxLength)
                     {
-                        this.PropertiesCache["Length"] = value;
+                        this._length = value;
                         this.OnPropertyChanged("Length");
                     }
                     else
@@ -59,21 +61,23 @@ namespace Aras.ViewModel.Properties
             }
         }
 
+        private System.String _value;
+        [Attributes.Property("Value")]
         public System.String Value
         {
             get
             {
-                return (System.String)this.PropertiesCache["Value"];
+                return this._value;
             }
             set
             {
-                if (this.PropertiesCache["Value"] == null)
+                if (this._value == null)
                 {
                     if (value != null)
                     {
                         if (value.Length <= this.Length)
                         {
-                            this.PropertiesCache["Value"] = value;
+                            this._value = value;
                             this.OnPropertyChanged("Value");
                         }
                         else
@@ -84,11 +88,11 @@ namespace Aras.ViewModel.Properties
                 }
                 else
                 {
-                    if (!((System.String)this.PropertiesCache["Value"]).Equals(value))
+                    if (!this._value.Equals(value))
                     {
                         if (value == null || value.Length <= this.Length)
                         {
-                            this.PropertiesCache["Value"] = value;
+                            this._value = value;
                             this.OnPropertyChanged("Value");
                         }
                         else
@@ -129,9 +133,7 @@ namespace Aras.ViewModel.Properties
         public String(Session Session, Boolean Required, Boolean ReadOnly, System.Int32 Length, System.String Default)
             : base(Session, Required, ReadOnly)
         {
-            this.PropertiesCache["Length"] = DefaultLength;
             this.Length = Length;
-            this.PropertiesCache["Value"] = null;
             this.Value = Default;
         }
 

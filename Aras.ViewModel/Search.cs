@@ -45,19 +45,21 @@ namespace Aras.ViewModel
 
         public Model.ObservableLists.PropertyType GridPropertyTypes { get; private set; }
 
+        private System.Int32 _pageSize;
+        [Attributes.Property("PageSize")]
         public System.Int32 PageSize 
         { 
             get
             {
-                return (System.Int32)this.PropertiesCache["PageSize"];
+                return this._pageSize;
             }
             set
             {
                 if (value >= MinPageSize && value <= MaxPageSize)
                 {
-                    if (!((System.Int32)this.PropertiesCache["PageSize"]).Equals(value))
+                    if (!this._pageSize.Equals(value))
                     {
-                        this.PropertiesCache["PageSize"] = value;
+                        this._pageSize = value;
                         this.OnPropertyChanged("PageSize");
                     }
                 }
@@ -68,45 +70,44 @@ namespace Aras.ViewModel
             }
         }
 
+        private System.Int32 _pageCount;
+        [Attributes.Property("PageCount")]
         public System.Int32 PageCount 
         { 
             get
             {
-                return (System.Int32)this.PropertiesCache["PageCount"];
+                return this._pageCount;
             }
             private set
             {
-                if (!((System.Int32)this.PropertiesCache["PageCount"]).Equals(value))
+                if (!this._pageCount.Equals(value))
                 {
-                    this.PropertiesCache["PageCount"] = value;
+                    this._pageCount = value;
                     this.OnPropertyChanged("PageCount");
                 }
             }
         }
 
+        private System.Int32 _page;
+        [Attributes.Property("Page")]
         public System.Int32 Page 
         { 
             get
             {
-                return (System.Int32)this.PropertiesCache["Page"];
+                return this._page;
             }
             set
             {
-                if (!((System.Int32)this.PropertiesCache["Page"]).Equals(value))
+                if (!this._page.Equals(value))
                 {
-                    this.PropertiesCache["Page"] = value;
+                    this._page = value;
                     this.OnPropertyChanged("Page");
                 }
             }
         }
 
-        public Grid Grid
-        {
-            get
-            {
-                return (Grid)this.PropertiesCache["Grid"];
-            }
-        }
+        [Attributes.Property("Grid")]
+        public Grid Grid { get; private set; }
 
         [Attributes.Command("Refresh")]
         public RefreshCommand Refresh { get; private set; }
@@ -150,11 +151,11 @@ namespace Aras.ViewModel
             this.Items.ListChanged += Items_ListChanged;
             this.SelectedItems = new Model.ObservableLists.Item();
 
-            this.PropertiesCache["PageSize"] = DefaultPageSize;
-            this.PropertiesCache["PageCount"] = 1;
-            this.PropertiesCache["Page"] = DefaultPage;
+            this.PageSize = DefaultPageSize;
+            this.PageCount = 1;
+            this.Page = DefaultPage;
 
-            this.PropertiesCache["Grid"] = new Grid(this.Session);
+            this.Grid = new Grid(this.Session);
 
             this.Refresh = new RefreshCommand(this);
         }

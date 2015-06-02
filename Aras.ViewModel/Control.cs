@@ -57,14 +57,14 @@ namespace Aras.ViewModel
             }
         }
 
-        private Dictionary<String, Command> _commandsCache;
-        private Dictionary<String, Command> CommandsCache
+        private Dictionary<String, System.Reflection.PropertyInfo> _commandInfoCache;
+        private Dictionary<String, System.Reflection.PropertyInfo> CommandInfoCache
         {
             get
             {
-                if (this._commandsCache == null)
+                if (this._commandInfoCache == null)
                 {
-                    this._commandsCache = new Dictionary<String, Command>();
+                    this._commandInfoCache = new Dictionary<String, System.Reflection.PropertyInfo>();
 
                     foreach (System.Reflection.PropertyInfo propinfo in this.GetType().GetProperties())
                     {
@@ -72,58 +72,77 @@ namespace Aras.ViewModel
 
                         foreach (object customattr in customattrs)
                         {
-                            if (customattr is Attributes.Command)
-                            {
-                                this._commandsCache[((Attributes.Command)customattr).Name] = (Command)propinfo.GetValue(this);
-                                break;
-                            }
+
+                            this._commandInfoCache[((Attributes.Command)customattr).Name] = propinfo;
+                            break;
+
                         }
                     }
                 }
 
-                return this._commandsCache;
+                return this._commandInfoCache;
             }
         }
 
-        public IEnumerable<String> CommandNames
+        public IEnumerable<String> Commands
         {
             get
             {
-                return this.CommandsCache.Keys;
+                return this.CommandInfoCache.Keys;
             }
         }
 
-        public IEnumerable<Command> Commands
+        public Command GetCommand(String Name)
+        {
+            return (Command)this.CommandInfoCache[Name].GetValue(this);
+        }
+
+        private Dictionary<String, System.Reflection.PropertyInfo> _propertyInfoCache;
+        private Dictionary<String, System.Reflection.PropertyInfo> PropertyInfoCache
         {
             get
             {
-                return this.CommandsCache.Values;
+                if (this._propertyInfoCache == null)
+                {
+                    this._propertyInfoCache = new Dictionary<String, System.Reflection.PropertyInfo>();
+
+                    foreach (System.Reflection.PropertyInfo propinfo in this.GetType().GetProperties())
+                    {
+                        object[] customattrs = propinfo.GetCustomAttributes(typeof(Attributes.Property), true);
+
+                        foreach (object customattr in customattrs)
+                        {
+                            this._propertyInfoCache[((Attributes.Property)customattr).Name] = propinfo;
+                            break;
+                        }
+                    }
+                }
+
+                return this._propertyInfoCache;
             }
         }
 
-        public Command Command(String Name)
-        {
-            return this.CommandsCache[Name];
-        }
-
-        protected Dictionary<String, object> PropertiesCache;
-
-        public IEnumerable<String> PropertyNames
+        public IEnumerable<String> Properties
         {
             get
             {
-                return this.PropertiesCache.Keys;
+                return this.PropertyInfoCache.Keys;
             }
-        }
-
-        public object Property(String Name)
-        {
-            return this.PropertiesCache[Name];
         }
 
         public Boolean HasProperty(String Name)
         {
-            return this.PropertiesCache.ContainsKey(Name);
+            return this.PropertyInfoCache.ContainsKey(Name);
+        }
+
+        public object GetPropertyValue(String Name)
+        {
+            return this.PropertyInfoCache[Name].GetValue(this);
+        }
+
+        public void SetPropertyValue(String Name, object value)
+        {
+            this.PropertyInfoCache[Name].SetValue(this, value);
         }
 
         public IEnumerable<Control> Controls
@@ -132,20 +151,22 @@ namespace Aras.ViewModel
             {
                 List<Control> controls = new List<Control>();
 
-                foreach(object property in this.PropertiesCache.Values)
+                foreach(String property in this.Properties)
                 {
-                    if (property is Control)
+                    object propertyvalue = this.GetPropertyValue(property);
+
+                    if (propertyvalue is Control)
                     {
-                        Control thiscontrol = (Control)property;
+                        Control thiscontrol = (Control)propertyvalue;
 
                         if (!controls.Contains(thiscontrol))
                         {
                             controls.Add(thiscontrol);
                         }
                     }
-                    else if (property is IEnumerable<Control>)
+                    else if (propertyvalue is IEnumerable<Control>)
                     {
-                        IEnumerable<Control> thiscontrols = (IEnumerable<Control>)property;
+                        IEnumerable<Control> thiscontrols = (IEnumerable<Control>)propertyvalue;
 
                         foreach(Control thiscontrol in thiscontrols)
                         {
@@ -199,7 +220,6 @@ namespace Aras.ViewModel
 
         public Control(Session Session)
         {
-            this.PropertiesCache = new Dictionary<String, object>();
             this.Session = Session;
             this.ID = Guid.NewGuid();
         }

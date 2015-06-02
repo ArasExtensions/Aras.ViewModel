@@ -34,19 +34,14 @@ namespace Aras.ViewModel
     {
         public Grid Grid { get; private set; }
 
-        public Model.ObservableList<Cell> Cells
-        {
-            get
-            {
-                return (Model.ObservableList<Cell>)this.PropertiesCache["Cells"];
-            }
-        }
+        [Attributes.Property("Cells")]
+        public Model.ObservableList<Cell> Cells { get; private set; }
 
         internal Row(Session Session, Grid Grid)
             :base(Session)
         {
             this.Grid = Grid;
-            this.PropertiesCache["Cells"] = new Model.ObservableList<Cell>();
+            this.Cells = new Model.ObservableList<Cell>();
             this.Cells.ListChanged += Cells_ListChanged;
         }
 

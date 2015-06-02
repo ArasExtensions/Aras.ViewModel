@@ -117,9 +117,9 @@ namespace Aras.ViewModel
                     Control.PropertyChanged += Control_PropertyChanged;
 
                     // Add Commands to Cache
-                    foreach (String name in Control.CommandNames)
+                    foreach (String name in Control.Commands)
                     {
-                        this.AddCommandToCache(name, Control.Command(name));
+                        this.AddCommandToCache(name, Control.GetCommand(name));
                     }
                 }
 
@@ -145,7 +145,7 @@ namespace Aras.ViewModel
             // Check if changed Property is a Control or List of Controls
             if (control.HasProperty(e.PropertyName))
             {
-                object property = control.Property(e.PropertyName);
+                object property = control.GetPropertyValue(e.PropertyName);
 
                 if (property is Control)
                 {
