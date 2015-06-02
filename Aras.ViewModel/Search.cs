@@ -203,7 +203,7 @@ namespace Aras.ViewModel
                             throw new NotImplementedException("PropertyType not implemented: " + propertytype.GetType().Name);
                     }
 
-                    // Binf Model Property to Cell Value
+                    // Bind Model Property to Cell Value
                     cell.Value.Binding = item.Property(propertytype.Name);
                 }
             }
@@ -238,13 +238,7 @@ namespace Aras.ViewModel
                 Model.Response response = this.Search.Request.Execute();
 
                 this.Search.Items.NotifyListChanged = false;
-                this.Search.Items.Clear();
-
-                foreach(Model.Responses.Item item in response.Items)
-                {
-                    this.Search.Items.Add(item.Cache);
-                }
-
+                this.Search.Items.Replace(response);
                 this.Search.Items.NotifyListChanged = true;
 
                 return true;
@@ -255,13 +249,7 @@ namespace Aras.ViewModel
                 Model.Response response = await this.Search.Request.ExecuteAsync();
 
                 this.Search.Items.NotifyListChanged = false;
-                this.Search.Items.Clear();
-
-                foreach (Model.Responses.Item item in response.Items)
-                {
-                    this.Search.Items.Add(item.Cache);
-                }
-
+                this.Search.Items.Replace(response);
                 this.Search.Items.NotifyListChanged = true;
 
                 return true;

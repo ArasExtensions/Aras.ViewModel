@@ -28,20 +28,23 @@ namespace Aras.ViewModel.Debug
             Aras.ViewModel.Test.TestSearch testsearch = (Aras.ViewModel.Test.TestSearch)session.Applications.First();
 
             // Run Search
-            Boolean test = testsearch.Search.Refresh.Execute();
-
-            System.Console.WriteLine("Item Count: " + testsearch.Search.Items.Count());
-
-            foreach(Row row in testsearch.Search.Grid.Rows)
+            while (true)
             {
-                foreach(Cell cell in row.Cells)
+                Boolean test = testsearch.Search.Refresh.Execute();
+
+                System.Console.WriteLine("Item Count: " + testsearch.Search.Items.Count());
+
+                foreach (Row row in testsearch.Search.Grid.Rows)
                 {
-                    foreach(String name in cell.Properties)
+                    foreach (Cell cell in row.Cells)
                     {
-                        object prop = cell.GetPropertyValue(name);
+                        System.Console.Write(((Properties.String)cell.Value).Value + " ");
                     }
 
+                    System.Console.WriteLine("");
                 }
+
+                System.Threading.Thread.Sleep(2000);
             }
 
             return true;
