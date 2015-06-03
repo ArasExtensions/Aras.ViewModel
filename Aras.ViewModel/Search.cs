@@ -189,22 +189,8 @@ namespace Aras.ViewModel
                     Model.PropertyType propertytype = this.GridPropertyTypes[columnindex];
                     Cell cell = row.Cells[columnindex];
 
-                    switch(propertytype.GetType().Name)
-                    {
-                        case "String":
-                            
-                            if (cell.Value == null || !(cell.Value is Properties.String))
-                            {
-                                cell.Value = new Properties.String(this.Session, false, true);
-                            }
-
-                            break;
-                        default:
-                            throw new NotImplementedException("PropertyType not implemented: " + propertytype.GetType().Name);
-                    }
-
                     // Bind Model Property to Cell Value
-                    cell.Value.Binding = item.Property(propertytype.Name);
+                    cell.Binding = item.Property(propertytype.Name);
                 }
             }
         }

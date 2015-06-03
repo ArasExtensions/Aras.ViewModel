@@ -36,9 +36,9 @@ namespace Aras.ViewModel
 
         public Column Column { get; private set; }
 
-        private Property _value;
+        private String _value;
         [Attributes.Property("Value")]
-        public Property Value 
+        public String Value 
         { 
             get
             {
@@ -50,8 +50,61 @@ namespace Aras.ViewModel
                 {
                     this._value = value;
                     this.OnPropertyChanged("Value");
+
+                    // Update Binding
+
+                    if (this.Binding != null)
+                    {
+                        this.Binding.ValueString = value;
+                    }
                 }
             }
+        }
+
+        private Model.Property _binding;
+        public Model.Property Binding
+        {
+            get
+            {
+                return this._binding;
+            }
+            set
+            {
+                if (value == null)
+                {
+                    if (this._binding != null)
+                    {
+                        this._binding.PropertyChanged -= Binding_PropertyChanged;
+                        this._binding = null;
+                        this.Value = null;
+                    }
+                }
+                else
+                {
+                    if (this._binding == null)
+                    {
+                        this._binding = value;
+                        this._binding.PropertyChanged += Binding_PropertyChanged;
+                    }
+                    else
+                    {
+                        if(!this._binding.Equals(value))
+                        {
+                            this._binding.PropertyChanged -= Binding_PropertyChanged;
+                            this._binding = value;
+                            this._binding.PropertyChanged += Binding_PropertyChanged;
+                        }
+                    }
+
+                    this.Value = this._binding.ValueString;
+                }
+            }
+        }
+
+        void Binding_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            Model.Property property = (Model.Property)sender;
+            this.Value = property.ValueString;
         }
 
         internal Cell(Session Session, Row Row, Column Column)

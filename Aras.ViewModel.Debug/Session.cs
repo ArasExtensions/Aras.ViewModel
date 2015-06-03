@@ -38,7 +38,7 @@ namespace Aras.ViewModel.Debug
                 {
                     foreach (Cell cell in row.Cells)
                     {
-                        System.Console.Write(((Properties.String)cell.Value).Value + " ");
+                        System.Console.Write(cell.Value + " ");
                     }
 
                     System.Console.WriteLine("");
