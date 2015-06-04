@@ -55,9 +55,48 @@ namespace Aras.ViewModel
 
                     if (this.Binding != null)
                     {
-                        this.Binding.ValueString = value;
+                        if (!(this.Binding is Model.Properties.Item))
+                        {
+                            this.Binding.ValueString = value;
+                        }
                     }
                 }
+            }
+        }
+
+        private void setValue(Model.Property Property)
+        {
+            if (Property != null)
+            {
+                if (Property is Model.Properties.Item)
+                {
+                    Model.Item propitem = ((Model.Properties.Item)Property).Value;
+
+                    if (propitem != null)
+                    {
+                        if (!propitem.HasProperty("keyed_name"))
+                        {
+                            Model.Requests.Item itemrequest = this.Session.Model.Request(propitem.ItemType.Action("get"));
+                            itemrequest.AddSelection("keyed_name");
+                            itemrequest.ID = propitem.ID;
+                            Model.Response itemresponse = itemrequest.Execute();
+                        }
+
+                        this.Value = propitem.KeyedName;
+                    }
+                    else
+                    {
+                        this.Value = null;
+                    }
+                }
+                else
+                {
+                    this.Value = Property.ValueString;
+                }
+            }
+            else
+            {
+                this.Value = null;
             }
         }
 
@@ -76,7 +115,7 @@ namespace Aras.ViewModel
                     {
                         this._binding.PropertyChanged -= Binding_PropertyChanged;
                         this._binding = null;
-                        this.Value = null;
+                        this.setValue(null);
                     }
                 }
                 else
@@ -96,7 +135,7 @@ namespace Aras.ViewModel
                         }
                     }
 
-                    this.Value = this._binding.ValueString;
+                    this.setValue(this._binding);
                 }
             }
         }
