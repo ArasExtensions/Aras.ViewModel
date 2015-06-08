@@ -145,6 +145,11 @@ namespace Aras.ViewModel
             this.PropertyInfoCache[Name].SetValue(this, value);
         }
 
+        public Boolean GetPropertyReadOnly(String Name)
+        {
+            return (this.PropertyInfoCache[Name].GetSetMethod() == null);
+        }
+
         public IEnumerable<Control> Controls
         {
             get
