@@ -46,6 +46,44 @@ namespace Aras.ViewModel
         [Attributes.Property("Rows")]
         public Model.ObservableList<Row> Rows {get; private set;} 
 
+        public System.Int32 NoRows
+        {
+            get
+            {
+                return this.Rows.Count();
+            }
+            set
+            {
+                if (value >= 0)
+                {
+                    if (value == 0)
+                    {
+                        this.Rows.Clear();
+                    }
+                    else
+                    {
+                        if (value > this.Rows.Count())
+                        {
+                            Int32 diff = value - this.Rows.Count();
+
+                            for (int i=0; i < diff; i++)
+                            {
+                                this.AddRow();
+                            }
+                        }
+                        else if (value < this.Rows.Count())
+                        {
+                            this.Rows.RemoveRange(value, (this.Rows.Count() - value));
+                        }
+                    }
+                }
+                else
+                {
+                    throw new ArgumentException("Number of Rows must be greater than or equal to 0");
+                }
+            }
+        }
+
         public Row AddRow()
         {
             Row row = new Row(this.Session, this);
