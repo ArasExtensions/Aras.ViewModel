@@ -40,6 +40,8 @@ namespace Aras.ViewModel
 
         public String URL { get; private set; }
 
+        public Common.Logging.ILog Log { get; private set; }
+
         private double _expireSession;
         public double ExpireSession
         {
@@ -166,11 +168,12 @@ namespace Aras.ViewModel
             return this.URL;
         }
 
-        public Server(String URL)
+        public Server(String URL, Common.Logging.ILog Log)
         {
             this.ExpireSession = DefaultExpireSession;
 
             this.URL = URL;
+            this.Log = Log;
             this._sessionCache = new Dictionary<Guid, Session>();
             this.ApplicationTypesCache = new List<Type>();
 

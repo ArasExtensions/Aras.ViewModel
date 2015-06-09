@@ -33,6 +33,14 @@ namespace Aras.ViewModel
     {
         public Database Database { get; private set; }
 
+        public Common.Logging.ILog Log
+        {
+            get
+            {
+                return this.Database.Log;
+            }
+        }
+
         public Model.Session Model { get; private set; }
 
         public Guid ID
@@ -90,11 +98,18 @@ namespace Aras.ViewModel
                 {
                     this.ApplicationCache = new Dictionary<Guid, ViewModel.Application>();
 
-                    foreach(Type applicationtype in this.Database.Server.ApplicationTypes)
+                    foreach (Type applicationtype in this.Database.Server.ApplicationTypes)
                     {
-                        Application application = (Application)Activator.CreateInstance(applicationtype, new object[] { this });
-                        this.ApplicationCache[application.ID] = application;
-                        this.AddControlToCache(application);
+                        try
+                        {
+                            Application application = (Application)Activator.CreateInstance(applicationtype, new object[] { this });
+                            this.ApplicationCache[application.ID] = application;
+                            this.AddControlToCache(application);
+                        }
+                        catch (Exception e)
+                        {
+                            this.Log.Message(Common.Logging.Levels.Error, "Failed to create Application: " + applicationtype.FullName + Environment.NewLine + e.Message);
+                        }
                     }
                 }
 

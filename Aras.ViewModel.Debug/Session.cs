@@ -8,7 +8,7 @@ namespace Aras.ViewModel.Debug
 {
     public class Session
     {
-        private const String URL = "http://localhost/innovatorserver100sp4";
+        private const String URL = "http://localhost/InnovatorServer10SP4";
 
         public Boolean Execute()
         {
@@ -19,7 +19,7 @@ namespace Aras.ViewModel.Debug
             server.LoadAssembly("Aras.ViewModel.Test");
 
             // Get Database
-            ViewModel.Database database = server.Database("Development100SP4");
+            ViewModel.Database database = server.Database("Development10SP4");
 
             // Craete Session
             ViewModel.Session session = database.Login("admin", "innovator");

@@ -34,6 +34,14 @@ namespace Aras.ViewModel
     {
         public Server Server { get; private set; }
 
+        public Common.Logging.ILog Log
+        {
+            get
+            {
+                return this.Server.Log;
+            }
+        }
+
         public Model.Database Model { get; private set; }
 
         public String Name
