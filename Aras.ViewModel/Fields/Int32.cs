@@ -28,9 +28,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Aras.ViewModel.Properties
+namespace Aras.ViewModel.Fields
 {
-    public class Int32 : Property
+    public class Int32 : Field
     {
         [Attributes.Property("MinValue")]
         public System.Int32 MinValue { get; private set; }

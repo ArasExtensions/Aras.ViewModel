@@ -60,9 +60,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Row.cs" />
     <Compile Include="Search.cs" />
-    <Compile Include="Property.cs" />
-    <Compile Include="Props\Int32.cs" />
-    <Compile Include="Props\String.cs" />
+    <Compile Include="Field.cs" />
+    <Compile Include="Fields\Int32.cs" />
+    <Compile Include="Fields\String.cs" />
     <Compile Include="Session.cs" />
     <Compile Include="Utilities.cs" />
   </ItemGroup>

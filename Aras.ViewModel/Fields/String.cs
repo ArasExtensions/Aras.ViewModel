@@ -28,9 +28,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Aras.ViewModel.Properties
+namespace Aras.ViewModel.Fields
 {
-    public class String : Property
+    public class String : Field
     {
         private const System.Int32 MinLength = 1;
         private const System.Int32 MaxLength = System.Int32.MaxValue;

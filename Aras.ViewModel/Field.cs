@@ -30,7 +30,7 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel
 {
-    public abstract class Property : Control
+    public abstract class Field : Control
     {
         [Attributes.Property("Required")]
         public Boolean Required { get; set; }
@@ -78,7 +78,7 @@ namespace Aras.ViewModel
             }
         }
 
-        public Property(Session Session, Boolean Required, Boolean ReadOnly)
+        public Field(Session Session, Boolean Required, Boolean ReadOnly)
            :base(Session)
         {
             this.Required = Required;
