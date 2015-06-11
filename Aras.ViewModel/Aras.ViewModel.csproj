@@ -56,6 +56,10 @@
     <Compile Include="Exceptions\ValueTypeException.cs" />
     <Compile Include="Exceptions\DuplicatePropertyNameException.cs" />
     <Compile Include="Grid.cs" />
+    <Compile Include="ObservableList.cs" />
+    <Compile Include="ObservableLists\Column.cs" />
+    <Compile Include="ObservableLists\Cells.cs" />
+    <Compile Include="ObservableLists\Row.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Row.cs" />

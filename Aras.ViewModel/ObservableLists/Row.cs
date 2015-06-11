@@ -28,26 +28,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Aras.ViewModel
+namespace Aras.ViewModel.ObservableLists
 {
-    public class Row : Control
+    public class Row : ViewModel.ObservableList<ViewModel.Row>
     {
-        public Grid Grid { get; private set; }
 
-        [Attributes.Property("Cells")]
-        public ObservableLists.Cell Cells { get; private set; }
-
-        internal Row(Session Session, Grid Grid)
-            :base(Session)
-        {
-            this.Grid = Grid;
-            this.Cells = new ObservableLists.Cell();
-            this.Cells.ListChanged += Cells_ListChanged;
-        }
-
-        void Cells_ListChanged(object sender, EventArgs e)
-        {
-            this.OnPropertyChanged("Cells");
-        }
     }
 }

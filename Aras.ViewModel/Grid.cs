@@ -34,7 +34,7 @@ namespace Aras.ViewModel
     {
 
         [Attributes.Property("Columns")]
-        public Model.ObservableList<Column> Columns { get; private set; }
+        public ObservableLists.Column Columns { get; private set; }
 
         public Column AddColumn(String Name, String Label)
         {
@@ -44,7 +44,7 @@ namespace Aras.ViewModel
         }
 
         [Attributes.Property("Rows")]
-        public Model.ObservableList<Row> Rows {get; private set;} 
+        public ObservableLists.Row Rows {get; private set;} 
 
         public System.Int32 NoRows
         {
@@ -100,16 +100,16 @@ namespace Aras.ViewModel
         }
 
         [Attributes.Property("Selected")]
-        public Model.ObservableList<Row> Selected { get; private set; }
+        public ObservableLists.Row Selected { get; private set; }
  
         public Grid(Session Session)
             :base(Session)
         {
-            this.Columns = new Model.ObservableList<Column>();
+            this.Columns = new ObservableLists.Column();
             this.Columns.ListChanged += Columns_ListChanged;
-            this.Rows = new Model.ObservableList<Row>();
+            this.Rows = new ObservableLists.Row();
             this.Rows.ListChanged += Rows_ListChanged;
-            this.Selected = new Model.ObservableList<Row>();
+            this.Selected = new ObservableLists.Row();
             this.Selected.ListChanged += Selected_ListChanged;
         }
 

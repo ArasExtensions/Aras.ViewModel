@@ -150,6 +150,11 @@ namespace Aras.ViewModel
             return (this.PropertyInfoCache[Name].GetSetMethod() == null);
         }
 
+        public Type GetPropertyType(String Name)
+        {
+            return this.PropertyInfoCache[Name].PropertyType;
+        }
+
         public IEnumerable<Control> Controls
         {
             get
