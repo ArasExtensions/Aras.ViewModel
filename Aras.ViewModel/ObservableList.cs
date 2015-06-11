@@ -32,5 +32,16 @@ namespace Aras.ViewModel
 {
     public class ObservableList<T> : Model.ObservableList<T> where T : Control
     {
+        public void Replace(IEnumerable<ViewModel.Control> Values)
+        {
+            List<T> list = new List<T>();
+
+            foreach(ViewModel.Control control in Values)
+            {
+                list.Add((T)control);
+            }
+
+            this.Replace(list);
+        }
     }
 }
