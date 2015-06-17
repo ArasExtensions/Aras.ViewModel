@@ -30,24 +30,16 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel
 {
-    public class Row : Control
+    internal class PropertyDetails
     {
-        public Grid Grid { get; private set; }
+        internal System.Reflection.PropertyInfo PropertyInfo { get; private set; }
 
-        [Attributes.Property("Cells", true)]
-        public ObservableLists.Cell Cells { get; private set; }
+        internal Attributes.Property Attribute { get; private set; }
 
-        internal Row(Grid Grid)
-            :base(Grid.Session)
+        internal PropertyDetails(System.Reflection.PropertyInfo PropertyInfo, Attributes.Property Attribute)
         {
-            this.Grid = Grid;
-            this.Cells = new ObservableLists.Cell();
-            this.Cells.ListChanged += Cells_ListChanged;
-        }
-
-        void Cells_ListChanged(object sender, EventArgs e)
-        {
-            this.OnPropertyChanged("Cells");
+            this.PropertyInfo = PropertyInfo;
+            this.Attribute = Attribute;
         }
     }
 }

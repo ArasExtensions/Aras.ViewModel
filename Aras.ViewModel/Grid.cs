@@ -33,17 +33,38 @@ namespace Aras.ViewModel
     public class Grid : Control
     {
 
-        [Attributes.Property("Columns")]
+        [Attributes.Property("Columns", true)]
         public ObservableLists.Column Columns { get; private set; }
 
-        public Column AddColumn(String Name, String Label)
+        public Column AddStringColumn(String Name, String Label, Boolean Editable)
         {
-            Column col = new Column(this.Session, this, Name, Label);
+            Columns.String col = new Columns.String(this, Name, Label, Editable);
             this.Columns.Add(col);
             return col;
         }
 
-        [Attributes.Property("Rows")]
+        public Column AddListColumn(String Name, String Label, Boolean Editable)
+        {
+            Columns.List col = new Columns.List(this, Name, Label, Editable);
+            this.Columns.Add(col);
+            return col;
+        }
+
+        public Column AddFloatColumn(String Name, String Label, Boolean Editable)
+        {
+            Columns.Float col = new Columns.Float(this, Name, Label, Editable);
+            this.Columns.Add(col);
+            return col;
+        }
+
+        public Column AddBooleanColumn(String Name, String Label, Boolean Editable)
+        {
+            Columns.Boolean col = new Columns.Boolean(this, Name, Label, Editable);
+            this.Columns.Add(col);
+            return col;
+        }
+
+        [Attributes.Property("Rows", true)]
         public ObservableLists.Row Rows {get; private set;} 
 
         public System.Int32 NoRows
@@ -86,12 +107,27 @@ namespace Aras.ViewModel
 
         public Row AddRow()
         {
-            Row row = new Row(this.Session, this);
+            Row row = new Row(this);
 
             foreach(Column col in this.Columns)
             {
-                Cell cell = new Cell(this.Session, row, col);
-                row.Cells.Add(cell);
+                switch (col.GetType().Name)
+                {
+                    case "String":
+                        row.Cells.Add(new Cells.String((Columns.String)col, row));
+                        break;
+                    case "List":
+                        row.Cells.Add(new Cells.List((Columns.List)col, row));
+                        break;
+                    case "Boolean":
+                        row.Cells.Add(new Cells.Boolean((Columns.Boolean)col, row));
+                        break;
+                    case "Float":
+                        row.Cells.Add(new Cells.Float((Columns.Float)col, row));
+                        break;
+                    default:
+                        throw new NotImplementedException("Column type not implemented: " + col.GetType().FullName);
+                }
             }
 
             this.Rows.Add(row);
@@ -99,7 +135,7 @@ namespace Aras.ViewModel
             return row;
         }
 
-        [Attributes.Property("Selected")]
+        [Attributes.Property("Selected", true)]
         public ObservableLists.Row Selected { get; private set; }
  
         public Grid(Session Session)

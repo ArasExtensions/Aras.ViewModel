@@ -30,14 +30,14 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel
 {
-    public class Cell : Control
+    public abstract class Cell : Control
     {
         public Row Row { get; private set; }
 
         public Column Column { get; private set; }
 
         private String _value;
-        [Attributes.Property("Value")]
+        [Attributes.Property("Value", false)]
         public String Value 
         { 
             get
@@ -146,8 +146,8 @@ namespace Aras.ViewModel
             this.Value = property.ValueString;
         }
 
-        internal Cell(Session Session, Row Row, Column Column)
-            :base(Session)
+        internal Cell(Column Column, Row Row)
+            :base(Column.Session)
         {
             this.Row = Row;
             this.Column = Column;

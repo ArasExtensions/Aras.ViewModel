@@ -32,14 +32,14 @@ namespace Aras.ViewModel.Fields
 {
     public class Int32 : Field
     {
-        [Attributes.Property("MinValue")]
+        [Attributes.Property("MinValue", true)]
         public System.Int32 MinValue { get; private set; }
 
-        [Attributes.Property("MaxValue")]
+        [Attributes.Property("MaxValue", true)]
         public System.Int32 MaxValue { get; private set; }
 
         private System.Int32? _value;
-        [Attributes.Property("Value")]
+        [Attributes.Property("Value", false)]
         public System.Int32? Value
         {
             get

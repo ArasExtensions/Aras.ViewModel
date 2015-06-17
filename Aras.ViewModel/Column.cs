@@ -30,27 +30,46 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel
 {
-    public class Column : Control
+    public abstract class Column : Control
     {
         public Grid Grid { get; private set; }
 
-        [Attributes.Property("Name")]
+        [Attributes.Property("Name", true)]
         public System.String Name { get; private set; }
 
-        [Attributes.Property("Label")]
+        [Attributes.Property("Label", true)]
         public System.String Label { get; private set; }
+
+        private Boolean _editable;
+        [Attributes.Property("Editable", true)]
+        public System.Boolean Editable 
+        { 
+            get
+            {
+                return this._editable;
+            }
+            set
+            {
+                if (this._editable != value)
+                {
+                    this._editable = value;
+                    this.OnPropertyChanged("Editable");
+                }
+            }
+        }
 
         public override string ToString()
         {
             return this.Label;
         }
 
-        internal Column(Session Session, Grid Grid, String Name, String Label)
-            :base(Session)
+        internal Column(Grid Grid, String Name, String Label, Boolean Editable)
+            :base(Grid.Session)
         {
             this.Grid = Grid;
             this.Name = Name;
             this.Label = Label;
+            this.Editable = Editable;
         }
     }
 }

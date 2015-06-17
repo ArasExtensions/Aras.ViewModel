@@ -97,14 +97,14 @@ namespace Aras.ViewModel
             return (Command)this.CommandInfoCache[Name].GetValue(this);
         }
 
-        private Dictionary<String, System.Reflection.PropertyInfo> _propertyInfoCache;
-        private Dictionary<String, System.Reflection.PropertyInfo> PropertyInfoCache
+        private Dictionary<String, PropertyDetails> _propertyInfoCache;
+        private Dictionary<String, PropertyDetails> PropertyInfoCache
         {
             get
             {
                 if (this._propertyInfoCache == null)
                 {
-                    this._propertyInfoCache = new Dictionary<String, System.Reflection.PropertyInfo>();
+                    this._propertyInfoCache = new Dictionary<String, PropertyDetails>();
 
                     foreach (System.Reflection.PropertyInfo propinfo in this.GetType().GetProperties())
                     {
@@ -112,7 +112,7 @@ namespace Aras.ViewModel
 
                         foreach (object customattr in customattrs)
                         {
-                            this._propertyInfoCache[((Attributes.Property)customattr).Name] = propinfo;
+                            this._propertyInfoCache[((Attributes.Property)customattr).Name] = new PropertyDetails(propinfo, (Attributes.Property)customattr);
                             break;
                         }
                     }
@@ -137,22 +137,22 @@ namespace Aras.ViewModel
 
         public object GetPropertyValue(String Name)
         {
-            return this.PropertyInfoCache[Name].GetValue(this);
+            return this.PropertyInfoCache[Name].PropertyInfo.GetValue(this);
         }
 
         public void SetPropertyValue(String Name, object value)
         {
-            this.PropertyInfoCache[Name].SetValue(this, value);
+            this.PropertyInfoCache[Name].PropertyInfo.SetValue(this, value);
         }
 
         public Boolean GetPropertyReadOnly(String Name)
         {
-            return (this.PropertyInfoCache[Name].GetSetMethod() == null);
+            return (this.PropertyInfoCache[Name].Attribute.ReadOnly);
         }
 
         public Type GetPropertyType(String Name)
         {
-            return this.PropertyInfoCache[Name].PropertyType;
+            return this.PropertyInfoCache[Name].PropertyInfo.PropertyType;
         }
 
         public IEnumerable<Control> Controls

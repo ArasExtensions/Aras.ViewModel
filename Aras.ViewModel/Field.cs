@@ -32,10 +32,10 @@ namespace Aras.ViewModel
 {
     public abstract class Field : Control
     {
-        [Attributes.Property("Required")]
+        [Attributes.Property("Required", true)]
         public Boolean Required { get; set; }
 
-        [Attributes.Property("ReadOnly")]
+        [Attributes.Property("ReadOnly", true)]
         public Boolean ReadOnly { get; set; }
 
         private Model.Property _binding;

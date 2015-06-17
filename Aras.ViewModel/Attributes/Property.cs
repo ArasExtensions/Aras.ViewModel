@@ -35,9 +35,12 @@ namespace Aras.ViewModel.Attributes
     {
         public String Name { get; private set; }
 
-        public Property(String Name)
+        public Boolean ReadOnly { get; private set; }
+
+        public Property(String Name, Boolean ReadOnly)
         {
             this.Name = Name;
+            this.ReadOnly = ReadOnly;
         }
     }
 }

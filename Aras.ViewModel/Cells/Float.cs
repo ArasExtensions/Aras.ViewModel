@@ -28,26 +28,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Aras.ViewModel
+namespace Aras.ViewModel.Cells
 {
-    public class Row : Control
+    public class Float : Cell
     {
-        public Grid Grid { get; private set; }
 
-        [Attributes.Property("Cells", true)]
-        public ObservableLists.Cell Cells { get; private set; }
-
-        internal Row(Grid Grid)
-            :base(Grid.Session)
+        internal Float(Columns.Float Column, Row Row)
+            :base(Column, Row)
         {
-            this.Grid = Grid;
-            this.Cells = new ObservableLists.Cell();
-            this.Cells.ListChanged += Cells_ListChanged;
-        }
 
-        void Cells_ListChanged(object sender, EventArgs e)
-        {
-            this.OnPropertyChanged("Cells");
         }
     }
 }
