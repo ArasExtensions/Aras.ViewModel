@@ -32,7 +32,6 @@ namespace Aras.ViewModel.Cells
 {
     public class List : Cell
     {
-
         public override System.String ValueString
         {
             get
@@ -91,10 +90,36 @@ namespace Aras.ViewModel.Cells
             }
         }
 
+        [Attributes.Property("Values", Attributes.PropertyTypes.StringList, true)]
+        public ObservableLists.String Values { get; private set; }
+
+        protected override void OnBindingChanged()
+        {
+            base.OnBindingChanged();
+
+            // Update List Values
+
+            if (this.Binding != null && this.Binding is Model.Properties.List)
+            {
+                Model.Properties.List property = (Model.Properties.List)this.Binding;
+                Model.PropertyTypes.List propertytype = (Model.PropertyTypes.List)property.PropertyType;
+
+                this.Values.NotifyListChanged = false;
+                this.Values.Clear();
+
+                foreach (Model.ListValue value in propertytype.Values.Values)
+                {
+                    this.Values.Add(value.Label);
+                }
+
+                this.Values.NotifyListChanged = true;
+            }
+        }
+
         internal List(Columns.List Column, Row Row)
             :base(Column, Row)
         {
-
+            this.Values = new ObservableLists.String();
         }
     }
 }

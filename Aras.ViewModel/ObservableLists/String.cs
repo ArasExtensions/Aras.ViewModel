@@ -28,24 +28,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Aras.ViewModel.Attributes
+namespace Aras.ViewModel.ObservableLists
 {
-    public enum PropertyTypes { Boolean = 0, Int32 = 1, String = 2, Control = 3, ControlList = 4, NullableInt32 = 5, Float=6, StringList=7 };
-
-    [AttributeUsage(AttributeTargets.Property)]
-    public class Property : Attribute
+    public class String : Model.ObservableList<System.String>
     {
-        public String Name { get; private set; }
 
-        public PropertyTypes Type { get; private set; }
-
-        public Boolean ReadOnly { get; private set; }
-
-        public Property(String Name, PropertyTypes Type, Boolean ReadOnly)
-        {
-            this.Name = Name;
-            this.Type = Type;
-            this.ReadOnly = ReadOnly;
-        }
     }
 }

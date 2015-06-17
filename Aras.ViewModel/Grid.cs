@@ -36,28 +36,28 @@ namespace Aras.ViewModel
         [Attributes.Property("Columns", Attributes.PropertyTypes.ControlList, true)]
         public ObservableLists.Column Columns { get; private set; }
 
-        public Column AddStringColumn(String Name, String Label, Boolean Editable)
+        public Columns.String AddStringColumn(String Name, String Label, Boolean Editable)
         {
             Columns.String col = new Columns.String(this, Name, Label, Editable);
             this.Columns.Add(col);
             return col;
         }
 
-        public Column AddListColumn(String Name, String Label, Boolean Editable)
+        public Columns.List AddListColumn(String Name, String Label, Boolean Editable)
         {
             Columns.List col = new Columns.List(this, Name, Label, Editable);
             this.Columns.Add(col);
             return col;
         }
 
-        public Column AddFloatColumn(String Name, String Label, Boolean Editable)
+        public Columns.Float AddFloatColumn(String Name, String Label, Boolean Editable)
         {
             Columns.Float col = new Columns.Float(this, Name, Label, Editable);
             this.Columns.Add(col);
             return col;
         }
 
-        public Column AddBooleanColumn(String Name, String Label, Boolean Editable)
+        public Columns.Boolean AddBooleanColumn(String Name, String Label, Boolean Editable)
         {
             Columns.Boolean col = new Columns.Boolean(this, Name, Label, Editable);
             this.Columns.Add(col);
@@ -107,7 +107,7 @@ namespace Aras.ViewModel
 
         public Row AddRow()
         {
-            Row row = new Row(this);
+            Row row = new Row(this, this.Rows.Count);
 
             foreach(Column col in this.Columns)
             {

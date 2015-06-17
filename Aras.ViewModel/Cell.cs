@@ -91,7 +91,7 @@ namespace Aras.ViewModel
                     {
                         this._binding.PropertyChanged -= Binding_PropertyChanged;
                         this._binding = null;
-                        this.Object = null;
+                        this.OnBindingChanged();
                     }
                 }
                 else
@@ -100,6 +100,7 @@ namespace Aras.ViewModel
                     {
                         this._binding = value;
                         this._binding.PropertyChanged += Binding_PropertyChanged;
+                        this.OnBindingChanged();
                     }
                     else
                     {
@@ -108,18 +109,21 @@ namespace Aras.ViewModel
                             this._binding.PropertyChanged -= Binding_PropertyChanged;
                             this._binding = value;
                             this._binding.PropertyChanged += Binding_PropertyChanged;
+                            this.OnBindingChanged();
                         }
                     }
-
-                    this.Object = this._binding.Object;
                 }
             }
         }
 
+        protected virtual void OnBindingChanged()
+        {
+            this.Object = this.Binding.Object;
+        }
+
         void Binding_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            Model.Property property = (Model.Property)sender;
-            this.Object = property.Object;
+            this.OnBindingChanged();
         }
 
         internal Cell(Column Column, Row Row)

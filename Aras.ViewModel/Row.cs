@@ -34,13 +34,16 @@ namespace Aras.ViewModel
     {
         public Grid Grid { get; private set; }
 
+        public System.Int32 Index { get; private set; }
+
         [Attributes.Property("Cells", Attributes.PropertyTypes.ControlList, true)]
         public ObservableLists.Cell Cells { get; private set; }
 
-        internal Row(Grid Grid)
+        internal Row(Grid Grid, System.Int32 Index)
             :base(Grid.Session)
         {
             this.Grid = Grid;
+            this.Index = Index;
             this.Cells = new ObservableLists.Cell();
             this.Cells.ListChanged += Cells_ListChanged;
         }
