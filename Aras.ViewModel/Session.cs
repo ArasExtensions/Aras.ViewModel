@@ -88,33 +88,26 @@ namespace Aras.ViewModel
             }
         }
 
-        private Dictionary<Guid, ViewModel.Application> ApplicationCache;
+        private Dictionary<String, ViewModel.Application> ApplicationCache;
 
-        public IEnumerable<ViewModel.Application> Applications
+        public ViewModel.Application Application(String Name)
         {
-            get
+            if (!this.ApplicationCache.ContainsKey(Name))
             {
-                if (this.ApplicationCache == null)
+                try
                 {
-                    this.ApplicationCache = new Dictionary<Guid, ViewModel.Application>();
-
-                    foreach (Type applicationtype in this.Database.Server.ApplicationTypes)
-                    {
-                        try
-                        {
-                            Application application = (Application)Activator.CreateInstance(applicationtype, new object[] { this });
-                            this.ApplicationCache[application.ID] = application;
-                            this.AddControlToCache(application);
-                        }
-                        catch (Exception e)
-                        {
-                            this.Log.Message(Common.Logging.Levels.Error, "Failed to create Application: " + applicationtype.FullName + Environment.NewLine + e.Message);
-                        }
-                    }
+                    Application application = (Application)Activator.CreateInstance(this.Database.Server.ApplicationType(Name), new object[] { this });
+                    this.ApplicationCache[Name] = application;
+                    this.AddControlToCache(application);
+                }
+                catch (Exception e)
+                {
+                    this.Log.Message(Common.Logging.Levels.Error, "Failed to create Application: " + Name + Environment.NewLine + e.Message);
                 }
 
-                return this.ApplicationCache.Values;
             }
+
+            return this.ApplicationCache[Name];
         }
 
         private Dictionary<Guid, ViewModel.Control> ControlCache;
@@ -277,6 +270,7 @@ namespace Aras.ViewModel
         {
             this.Database = Database;
             this.Model = Model;
+            this.ApplicationCache = new Dictionary<String, Application>();
             this.ControlCache = new Dictionary<Guid, ViewModel.Control>();
             this.ControlQueue = new Queue<ViewModel.Control>();
             this.CommandCache = new Dictionary<Guid, ViewModel.Command>();

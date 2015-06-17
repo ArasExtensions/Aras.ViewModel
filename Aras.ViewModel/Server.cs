@@ -80,14 +80,19 @@ namespace Aras.ViewModel
             }
         }
 
-        private List<Type> ApplicationTypesCache;
+        private Dictionary<String, Type> ApplicationTypesCache;
 
-        internal IEnumerable<Type> ApplicationTypes
+        public IEnumerable<String> ApplicationTypes
         {
             get
             {
-                return this.ApplicationTypesCache;
+                return this.ApplicationTypesCache.Keys;
             }
+        }
+
+        internal Type ApplicationType(String Name)
+        {
+            return this.ApplicationTypesCache[Name];
         }
 
         public DirectoryInfo AssemblyDirectory { get; set; }
@@ -102,7 +107,7 @@ namespace Aras.ViewModel
             {
                 if (type.IsSubclassOf(typeof(Application)))
                 {
-                    this.ApplicationTypesCache.Add(type);
+                    this.ApplicationTypesCache[type.FullName] = type;
                 }
             }
         }
@@ -182,7 +187,7 @@ namespace Aras.ViewModel
             this.URL = URL;
             this.Log = Log;
             this._sessionCache = new Dictionary<Guid, Session>();
-            this.ApplicationTypesCache = new List<Type>();
+            this.ApplicationTypesCache = new Dictionary<String, Type>();
 
             // Set Default Assembly Directory
             this.AssemblyDirectory = new DirectoryInfo(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
