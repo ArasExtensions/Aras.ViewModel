@@ -154,7 +154,14 @@ namespace Aras.ViewModel
         {
             lock (this._sessionCacheLock)
             {
-                return this._sessionCache[ID];
+                if (this._sessionCache.ContainsKey(ID))
+                {
+                    return this._sessionCache[ID];
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
 

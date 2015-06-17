@@ -47,14 +47,21 @@ namespace Aras.ViewModel
 
         public static Guid StringToGuid(String String)
         {
-            byte[] bytes = new byte[String.Length / 2];
-
-            for (int i = 0; i < String.Length / 2; i++)
+            if (String.IsNullOrEmpty(String))
             {
-                bytes[i] = Convert.ToByte(String.Substring(i * 2, 2), 16);
+                return Guid.Empty;
             }
+            else
+            {
+                byte[] bytes = new byte[String.Length / 2];
 
-            return new Guid(bytes);
+                for (int i = 0; i < String.Length / 2; i++)
+                {
+                    bytes[i] = Convert.ToByte(String.Substring(i * 2, 2), 16);
+                }
+
+                return new Guid(bytes);
+            }
         }
     }
 }
