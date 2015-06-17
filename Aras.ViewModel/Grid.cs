@@ -33,7 +33,7 @@ namespace Aras.ViewModel
     public class Grid : Control
     {
 
-        [Attributes.Property("Columns", true)]
+        [Attributes.Property("Columns", Attributes.PropertyTypes.ControlList, true)]
         public ObservableLists.Column Columns { get; private set; }
 
         public Column AddStringColumn(String Name, String Label, Boolean Editable)
@@ -64,7 +64,7 @@ namespace Aras.ViewModel
             return col;
         }
 
-        [Attributes.Property("Rows", true)]
+        [Attributes.Property("Rows", Attributes.PropertyTypes.ControlList, true)]
         public ObservableLists.Row Rows {get; private set;} 
 
         public System.Int32 NoRows
@@ -135,7 +135,7 @@ namespace Aras.ViewModel
             return row;
         }
 
-        [Attributes.Property("Selected", true)]
+        [Attributes.Property("Selected", Attributes.PropertyTypes.ControlList, true)]
         public ObservableLists.Row Selected { get; private set; }
  
         public Grid(Session Session)

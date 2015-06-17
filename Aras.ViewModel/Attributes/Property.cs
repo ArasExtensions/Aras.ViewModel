@@ -30,16 +30,21 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel.Attributes
 {
+    public enum PropertyTypes { Boolean = 0, Int32 = 1, String = 2, Control = 3, ControlList = 4, NullableInt32 = 5, Float=6 };
+
     [AttributeUsage(AttributeTargets.Property)]
     public class Property : Attribute
     {
         public String Name { get; private set; }
 
+        public PropertyTypes Type { get; private set; }
+
         public Boolean ReadOnly { get; private set; }
 
-        public Property(String Name, Boolean ReadOnly)
+        public Property(String Name, PropertyTypes Type, Boolean ReadOnly)
         {
             this.Name = Name;
+            this.Type = Type;
             this.ReadOnly = ReadOnly;
         }
     }

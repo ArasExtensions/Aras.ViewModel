@@ -32,11 +32,75 @@ namespace Aras.ViewModel.Cells
 {
     public class Float : Cell
     {
+        public override System.String ValueString
+        {
+            get
+            {
+                if (this.Object == null)
+                {
+                    return null;
+                }
+                else
+                {
+                    return this.Object.ToString();
+                }
+            }
+            set
+            {
+                if (value == null)
+                {
+                    this.Object = null;
+                }
+                else
+                {
+                    this.Object = System.Double.Parse(value);
+                }
+            }
+        }
+
+        public override object Object
+        {
+            get
+            {
+                return base.Object;
+            }
+            set
+            {
+                if (value == null)
+                {
+                    base.Object = value;
+                }
+                else
+                {
+                    if (value is System.Double)
+                    {
+                        base.Object = value;
+                    }
+                    else
+                    {
+                        throw new ArgumentException("Object must be type System.Double");
+                    }
+                }
+            }
+        }
+
+        [Attributes.Property("Value", Attributes.PropertyTypes.Float, false)]
+        public System.Double Value
+        {
+            get
+            {
+                return (System.Double)this.Object;
+            }
+            set
+            {
+                this.Object = value;
+            }
+        }
 
         internal Float(Columns.Float Column, Row Row)
             :base(Column, Row)
         {
-
+            this.Value = 0.0;
         }
     }
 }

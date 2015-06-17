@@ -28,20 +28,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Aras.ViewModel
+namespace Aras.ViewModel.ObservableLists
 {
-    public class ObservableList<T> : Model.ObservableList<T> where T : Control
+    public class Cell : ViewModel.ObservableControlList<ViewModel.Cell>
     {
-        public void Replace(IEnumerable<ViewModel.Control> Values)
-        {
-            List<T> list = new List<T>();
 
-            foreach(ViewModel.Control control in Values)
-            {
-                list.Add((T)control);
-            }
-
-            this.Replace(list);
-        }
     }
 }

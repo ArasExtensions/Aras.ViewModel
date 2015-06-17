@@ -34,7 +34,7 @@ namespace Aras.ViewModel
     {
         public Grid Grid { get; private set; }
 
-        [Attributes.Property("Cells", true)]
+        [Attributes.Property("Cells", Attributes.PropertyTypes.ControlList, true)]
         public ObservableLists.Cell Cells { get; private set; }
 
         internal Row(Grid Grid)

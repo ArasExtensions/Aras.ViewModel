@@ -34,14 +34,14 @@ namespace Aras.ViewModel
     {
         public Grid Grid { get; private set; }
 
-        [Attributes.Property("Name", true)]
+        [Attributes.Property("Name", Attributes.PropertyTypes.String, true)]
         public System.String Name { get; private set; }
 
-        [Attributes.Property("Label", true)]
+        [Attributes.Property("Label", Attributes.PropertyTypes.String, true)]
         public System.String Label { get; private set; }
 
         private Boolean _editable;
-        [Attributes.Property("Editable", true)]
+        [Attributes.Property("Editable", Attributes.PropertyTypes.Boolean, true)]
         public System.Boolean Editable 
         { 
             get

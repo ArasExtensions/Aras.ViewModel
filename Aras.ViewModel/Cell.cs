@@ -36,69 +36,45 @@ namespace Aras.ViewModel
 
         public Column Column { get; private set; }
 
-        private String _value;
-        [Attributes.Property("Value", false)]
-        public String Value 
-        { 
+        private object _object;
+        public virtual object Object
+        {
             get
             {
-                return this._value;
+                return this._object;
             }
             set
             {
-                if (this._value != value)
+                if (value == null)
                 {
-                    this._value = value;
-                    this.OnPropertyChanged("Value");
-
-                    // Update Binding
-
-                    if (this.Binding != null)
+                    if (this._object != null)
                     {
-                        if (!(this.Binding is Model.Properties.Item))
+                        this._object = value;
+                        this.OnPropertyChanged("Value");
+
+                        if (this.Binding != null)
                         {
-                            this.Binding.ValueString = value;
+                            this.Binding.Object = this._object;
                         }
-                    }
-                }
-            }
-        }
-
-        private void setValue(Model.Property Property)
-        {
-            if (Property != null)
-            {
-                if (Property is Model.Properties.Item)
-                {
-                    Model.Item propitem = ((Model.Properties.Item)Property).Value;
-
-                    if (propitem != null)
-                    {
-                        if (!propitem.HasProperty("keyed_name"))
-                        {
-                            Model.Requests.Item itemrequest = this.Session.Model.Request(propitem.ItemType.Action("get"));
-                            itemrequest.AddSelection("keyed_name");
-                            itemrequest.ID = propitem.ID;
-                            Model.Response itemresponse = itemrequest.Execute();
-                        }
-
-                        this.Value = propitem.KeyedName;
-                    }
-                    else
-                    {
-                        this.Value = null;
                     }
                 }
                 else
                 {
-                    this.Value = Property.ValueString;
+                    if (!value.Equals(this._object))
+                    {
+                        this._object = value;
+                        this.OnPropertyChanged("Value");
+
+                        if (this.Binding != null)
+                        {
+                            this.Binding.Object = this._object;
+                        }
+                    }
                 }
             }
-            else
-            {
-                this.Value = null;
-            }
         }
+
+        public abstract String ValueString { get; set; }
 
         private Model.Property _binding;
         public Model.Property Binding
@@ -115,7 +91,7 @@ namespace Aras.ViewModel
                     {
                         this._binding.PropertyChanged -= Binding_PropertyChanged;
                         this._binding = null;
-                        this.setValue(null);
+                        this.Object = null;
                     }
                 }
                 else
@@ -135,7 +111,7 @@ namespace Aras.ViewModel
                         }
                     }
 
-                    this.setValue(this._binding);
+                    this.Object = this._binding.Object;
                 }
             }
         }
@@ -143,7 +119,7 @@ namespace Aras.ViewModel
         void Binding_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             Model.Property property = (Model.Property)sender;
-            this.Value = property.ValueString;
+            this.Object = property.Object;
         }
 
         internal Cell(Column Column, Row Row)
@@ -151,7 +127,6 @@ namespace Aras.ViewModel
         {
             this.Row = Row;
             this.Column = Column;
-            this.Value = null;
         }
     }
 }

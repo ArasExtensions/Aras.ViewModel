@@ -33,6 +33,64 @@ namespace Aras.ViewModel.Cells
     public class List : Cell
     {
 
+        public override System.String ValueString
+        {
+            get
+            {
+                if (this.Object == null)
+                {
+                    return null;
+                }
+                else
+                {
+                    return (System.String)this.Object;
+                }
+            }
+            set
+            {
+                this.Object = value;
+            }
+        }
+
+        public override object Object
+        {
+            get
+            {
+                return base.Object;
+            }
+            set
+            {
+                if (value == null)
+                {
+                    base.Object = value;
+                }
+                else
+                {
+                    if (value is System.String)
+                    {
+                        base.Object = value;
+                    }
+                    else
+                    {
+                        throw new ArgumentException("Object must be type System.String");
+                    }
+                }
+            }
+        }
+
+        [Attributes.Property("Value", Attributes.PropertyTypes.String, false)]
+        public System.String Value
+        {
+            get
+            {
+                return (System.String)this.Object;
+            }
+            set
+            {
+                this.Object = value;
+            }
+        }
+
         internal List(Columns.List Column, Row Row)
             :base(Column, Row)
         {

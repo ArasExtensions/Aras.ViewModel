@@ -30,7 +30,7 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel.ObservableLists
 {
-    public class Row : ViewModel.ObservableList<ViewModel.Row>
+    public class Row : ViewModel.ObservableControlList<ViewModel.Row>
     {
 
     }

@@ -32,11 +32,82 @@ namespace Aras.ViewModel.Cells
 {
     public class Boolean : Cell
     {
+        public override System.String ValueString
+        {
+            get
+            {
+                if (this.Object == null)
+                {
+                    return null;
+                }
+                else
+                {
+                    if (((System.Boolean)this.Object).Equals(true))
+                    {
+                        return "1";
+                    }
+                    else
+                    {
+                        return "0";
+                    }
+                }
+            }
+            set
+            {
+                if (value == null)
+                {
+                    this.Object = null;
+                }
+                else
+                {
+                    this.Object = value.Equals("1");
+                }
+            }
+        }
+
+        public override object Object
+        {
+            get
+            {
+                return base.Object;
+            }
+            set
+            {
+                if (value == null)
+                {
+                    base.Object = value;
+                }
+                else
+                {
+                    if (value is System.Boolean)
+                    {
+                        base.Object = value;
+                    }
+                    else
+                    {
+                        throw new ArgumentException("Object must be type System.Boolean");
+                    }
+                }
+            }
+        }
+
+        [Attributes.Property("Value", Attributes.PropertyTypes.Boolean, false)]
+        public System.Boolean Value
+        {
+            get
+            {
+                return (System.Boolean)this.Object;
+            }
+            set
+            {
+                this.Object = value;
+            }
+        }
 
         internal Boolean(Columns.Boolean Column, Row Row)
             :base(Column, Row)
         {
-
+            this.Value = false;
         }
     }
 }

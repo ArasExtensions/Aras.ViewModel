@@ -150,9 +150,9 @@ namespace Aras.ViewModel
             return (this.PropertyInfoCache[Name].Attribute.ReadOnly);
         }
 
-        public Type GetPropertyType(String Name)
+        public Attributes.PropertyTypes GetPropertyType(String Name)
         {
-            return this.PropertyInfoCache[Name].PropertyInfo.PropertyType;
+            return this.PropertyInfoCache[Name].Attribute.Type;
         }
 
         public IEnumerable<Control> Controls
