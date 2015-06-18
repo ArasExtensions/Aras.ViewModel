@@ -80,13 +80,6 @@ namespace Aras.ViewModel
             return this.Execute(null);
         }
 
-        public abstract Task<Boolean> ExecuteAsync(object parameter);
-
-        public async Task<Boolean> ExecuteAsync()
-        {
-            return await this.ExecuteAsync(null);
-        }
-
         public Command()
         {
             this.ID = Guid.NewGuid();

@@ -230,17 +230,6 @@ namespace Aras.ViewModel
                 return true;
             }
 
-            public override async Task<bool> ExecuteAsync(object parameter)
-            {
-                Model.Response response = await this.Search.Request.ExecuteAsync();
-
-                this.Search.Items.NotifyListChanged = false;
-                this.Search.Items.Replace(response);
-                this.Search.Items.NotifyListChanged = true;
-
-                return true;
-            }
-
             internal RefreshCommand(Search Search)
             {
                 this.Search = Search;
