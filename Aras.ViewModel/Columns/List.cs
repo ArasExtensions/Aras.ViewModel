@@ -33,8 +33,8 @@ namespace Aras.ViewModel.Columns
     public class List : Column
     {
 
-        internal List(Grid Grid, System.String Name, System.String Label, System.Boolean Editable)
-            :base(Grid, Name, Label, Editable)
+        internal List(Grid Grid, System.String Name, System.String Label)
+            :base(Grid, Name, Label)
         {
 
         }

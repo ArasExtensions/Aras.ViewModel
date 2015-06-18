@@ -33,8 +33,8 @@ namespace Aras.ViewModel.Columns
     public class String : Column
     {
 
-        internal String(Grid Grid, System.String Name, System.String Label, System.Boolean Editable)
-            :base(Grid, Name, Label, Editable)
+        internal String(Grid Grid, System.String Name, System.String Label)
+            :base(Grid, Name, Label)
         {
 
         }

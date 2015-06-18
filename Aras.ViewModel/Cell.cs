@@ -36,6 +36,24 @@ namespace Aras.ViewModel
 
         public Column Column { get; private set; }
 
+        private Boolean _editable;
+        [Attributes.Property("Editable", Attributes.PropertyTypes.Boolean, true)]
+        public System.Boolean Editable
+        {
+            get
+            {
+                return this._editable;
+            }
+            set
+            {
+                if (this._editable != value)
+                {
+                    this._editable = value;
+                    this.OnPropertyChanged("Editable");
+                }
+            }
+        }
+
         private object _object;
         public virtual object Object
         {
@@ -131,6 +149,7 @@ namespace Aras.ViewModel
         {
             this.Row = Row;
             this.Column = Column;
+            this.Editable = Editable;
         }
     }
 }

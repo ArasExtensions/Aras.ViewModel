@@ -211,7 +211,7 @@ namespace Aras.ViewModel
 
             foreach(Aras.Model.PropertyType proptype in this.GridPropertyTypes)
             {
-                this.Grid.AddStringColumn(proptype.Name, proptype.Label, false);
+                this.Grid.AddStringColumn(proptype.Name, proptype.Label);
             }
         }
 

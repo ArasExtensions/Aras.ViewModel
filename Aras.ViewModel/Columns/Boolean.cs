@@ -33,8 +33,8 @@ namespace Aras.ViewModel.Columns
     public class Boolean : Column
     {
 
-        internal Boolean(Grid Grid, System.String Name, System.String Label, System.Boolean Editable)
-            :base(Grid, Name, Label, Editable)
+        internal Boolean(Grid Grid, System.String Name, System.String Label)
+            :base(Grid, Name, Label)
         {
 
         }

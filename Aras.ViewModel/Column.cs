@@ -40,36 +40,17 @@ namespace Aras.ViewModel
         [Attributes.Property("Label", Attributes.PropertyTypes.String, true)]
         public System.String Label { get; private set; }
 
-        private Boolean _editable;
-        [Attributes.Property("Editable", Attributes.PropertyTypes.Boolean, true)]
-        public System.Boolean Editable 
-        { 
-            get
-            {
-                return this._editable;
-            }
-            set
-            {
-                if (this._editable != value)
-                {
-                    this._editable = value;
-                    this.OnPropertyChanged("Editable");
-                }
-            }
-        }
-
         public override string ToString()
         {
             return this.Label;
         }
 
-        internal Column(Grid Grid, String Name, String Label, Boolean Editable)
+        internal Column(Grid Grid, String Name, String Label)
             :base(Grid.Session)
         {
             this.Grid = Grid;
             this.Name = Name;
             this.Label = Label;
-            this.Editable = Editable;
         }
     }
 }
