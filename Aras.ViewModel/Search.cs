@@ -219,7 +219,7 @@ namespace Aras.ViewModel
         {
             public Search Search { get; private set; }
 
-            public override bool Execute(object parameter)
+            protected override bool Run(object parameter)
             {
                 Model.Response response = this.Search.Request.Execute();
 

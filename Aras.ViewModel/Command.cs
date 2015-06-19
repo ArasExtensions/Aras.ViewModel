@@ -73,7 +73,23 @@ namespace Aras.ViewModel
             this.CanExecute = Value;
         }
 
-        public abstract Boolean Execute(object parameter);
+        protected abstract Boolean Run(object parameter);
+
+
+        public Boolean Execute(object parameter)
+        {
+            if (this.CanExecute)
+            {
+                this.CanExecute = false;
+                Boolean ret = this.Run(parameter);
+                this.CanExecute = true;
+                return ret;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
         public Boolean Execute()
         {
