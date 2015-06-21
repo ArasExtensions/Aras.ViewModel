@@ -91,6 +91,11 @@ namespace Aras.ViewModel.Cells
             }
         }
 
+        public static implicit operator System.String(Cells.String Cell)
+        {
+            return Cell.Value;
+        }
+
         internal String(Columns.String Column, Row Row)
             :base(Column, Row)
         {

@@ -90,6 +90,11 @@ namespace Aras.ViewModel.Cells
             }
         }
 
+        public static implicit operator System.String(Cells.List Cell)
+        {
+            return Cell.Value;
+        }
+
         [Attributes.Property("Values", Attributes.PropertyTypes.StringList, true)]
         public ObservableLists.String Values { get; private set; }
 

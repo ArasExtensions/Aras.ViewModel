@@ -104,6 +104,11 @@ namespace Aras.ViewModel.Cells
             }
         }
 
+        public static implicit operator System.Boolean(Cells.Boolean Cell)
+        {
+            return Cell.Value;
+        }
+
         internal Boolean(Columns.Boolean Column, Row Row)
             :base(Column, Row)
         {

@@ -97,6 +97,11 @@ namespace Aras.ViewModel.Cells
             }
         }
 
+        public static implicit operator System.Double(Cells.Float Cell)
+        {
+            return Cell.Value;
+        }
+
         internal Float(Columns.Float Column, Row Row)
             :base(Column, Row)
         {
