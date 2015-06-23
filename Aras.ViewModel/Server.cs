@@ -95,6 +95,21 @@ namespace Aras.ViewModel
             return this.ApplicationTypesCache[Name];
         }
 
+        private Dictionary<String, Type> PluginTypesCache;
+
+        public IEnumerable<String> PluginTypes
+        {
+            get
+            {
+                return this.PluginTypesCache.Keys;
+            }
+        }
+
+        internal Type PluginType(String Name)
+        {
+            return this.PluginTypesCache[Name];
+        }
+
         public DirectoryInfo AssemblyDirectory { get; set; }
   
         public void LoadAssembly(String Name)
@@ -108,6 +123,10 @@ namespace Aras.ViewModel
                 if (type.IsSubclassOf(typeof(Application)))
                 {
                     this.ApplicationTypesCache[type.FullName] = type;
+                }
+                else if (type.IsSubclassOf(typeof(Plugin)))
+                {
+                    this.PluginTypesCache[type.FullName] = type;
                 }
             }
         }
@@ -188,6 +207,7 @@ namespace Aras.ViewModel
             this.Log = Log;
             this._sessionCache = new Dictionary<Guid, Session>();
             this.ApplicationTypesCache = new Dictionary<String, Type>();
+            this.PluginTypesCache = new Dictionary<String, Type>();
 
             // Set Default Assembly Directory
             this.AssemblyDirectory = new DirectoryInfo(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));

@@ -94,6 +94,7 @@ namespace Aras.ViewModel
         {
             if (!this.ApplicationCache.ContainsKey(Name))
             {
+                
                 try
                 {
                     Application application = (Application)Activator.CreateInstance(this.Database.Server.ApplicationType(Name), new object[] { this });
@@ -108,6 +109,34 @@ namespace Aras.ViewModel
             }
 
             return this.ApplicationCache[Name];
+        }
+
+        private Dictionary<String, Dictionary<String, Plugin>> PluginCache;
+
+        public ViewModel.Plugin Plugin(String Name, String Context)
+        {
+            if (!this.PluginCache.ContainsKey(Name))
+            {
+                this.PluginCache[Name] = new Dictionary<String, Plugin>();
+            }
+
+            if (!this.PluginCache[Name].ContainsKey(Context))
+            {
+
+                try
+                {
+                    Plugin plugin = (Plugin)Activator.CreateInstance(this.Database.Server.PluginType(Name), new object[] { this, Context });
+                    this.PluginCache[Name][Context] = plugin;
+                    this.AddControlToCache(plugin);
+                }
+                catch (Exception e)
+                {
+                    this.Log.Message(Common.Logging.Levels.Error, "Failed to create Plugin: " + Name + "/" + Context + Environment.NewLine + e.Message);
+                }
+
+            }
+
+            return this.PluginCache[Name][Context];
         }
 
         private Dictionary<Guid, ViewModel.Control> ControlCache;
@@ -271,6 +300,7 @@ namespace Aras.ViewModel
             this.Database = Database;
             this.Model = Model;
             this.ApplicationCache = new Dictionary<String, Application>();
+            this.PluginCache = new Dictionary<String, Dictionary<String, Plugin>>();
             this.ControlCache = new Dictionary<Guid, ViewModel.Control>();
             this.ControlQueue = new Queue<ViewModel.Control>();
             this.CommandCache = new Dictionary<Guid, ViewModel.Command>();
