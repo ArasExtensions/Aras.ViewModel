@@ -8,24 +8,27 @@ namespace Aras.ViewModel.Debug
 {
     public class Session
     {
-        private const String URL = "http://localhost/InnovatorServer10SP4";
+        private const String URL = "http://localhost/11SP1";
 
         public Boolean Execute()
         {
+            // Create Logging
+            Common.Logging.ILog log = new Common.Logging.Console.Log();
+
             // Create Server
-            ViewModel.Server server = new Server(URL);
+            ViewModel.Server server = new Server(URL, log);
 
             // Add Applications
             server.LoadAssembly("Aras.ViewModel.Test");
 
             // Get Database
-            ViewModel.Database database = server.Database("Development10SP4");
+            ViewModel.Database database = server.Database("Development11SP1");
 
             // Craete Session
-            ViewModel.Session session = database.Login("admin", "innovator");
+            ViewModel.Session session = database.Login("admin", Model.Database.PasswordHash("innovator"));
 
             // Get Application
-            Aras.ViewModel.Test.TestSearch testsearch = (Aras.ViewModel.Test.TestSearch)session.Applications.First();
+            Aras.ViewModel.Test.TestSearch testsearch = (Aras.ViewModel.Test.TestSearch)session.Application("Aras.ViewModel.Test.TestSearch");
 
             // Run Search
             while (true)
@@ -38,7 +41,7 @@ namespace Aras.ViewModel.Debug
                 {
                     foreach (Cell cell in row.Cells)
                     {
-                        System.Console.Write(cell.Value + " ");
+                        System.Console.Write(cell.Object + " ");
                     }
 
                     System.Console.WriteLine("");

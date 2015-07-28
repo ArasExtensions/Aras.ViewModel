@@ -39,7 +39,7 @@ namespace Aras.ViewModel.Test
         {
             Model.ItemType itemtype = this.Session.Model.ItemType("Part");
             this.Search = new Search(Session, itemtype);
-            this.Search.SelectPropertyTypes.Add("item_number,major_rev,name,viewable_file");
+            this.Search.SelectPropertyTypes.Add("item_number,major_rev,name");
             this.Search.GridPropertyTypes.Add("item_number,major_rev,name");
         }
     }

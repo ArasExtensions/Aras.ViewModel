@@ -50,6 +50,14 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Aras.Common\Aras.Common.Logging.Console\Aras.Common.Logging.Console.csproj">
+      <Project>{ada1688f-9a38-42aa-88cd-e0493972ba68}</Project>
+      <Name>Aras.Common.Logging.Console</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Aras.Common\Aras.Common.Logging\Aras.Common.Logging.csproj">
+      <Project>{95ccb1e3-f2fa-423a-bae6-a5a3ec0cec94}</Project>
+      <Name>Aras.Common.Logging</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Aras.Model\Aras.Model\Aras.Model.csproj">
       <Project>{e5b4196a-00d0-4de7-8104-487a7bc60784}</Project>
       <Name>Aras.Model</Name>
