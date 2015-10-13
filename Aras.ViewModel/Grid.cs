@@ -64,6 +64,8 @@ namespace Aras.ViewModel
             return col;
         }
 
+        private List<Row> RowCache;
+
         [Attributes.Property("Rows", Attributes.PropertyTypes.ControlList, true)]
         public ObservableLists.Row Rows {get; private set;} 
 
@@ -107,26 +109,36 @@ namespace Aras.ViewModel
 
         public Row AddRow()
         {
-            Row row = new Row(this, this.Rows.Count);
+            Row row = null;
 
-            foreach(Column col in this.Columns)
+            if (this.RowCache.Count() > this.Rows.Count())
             {
-                switch (col.GetType().Name)
+                row = this.RowCache[this.Rows.Count()];
+            }
+            else
+            {
+                row = new Row(this, this.Rows.Count);
+                this.RowCache.Add(row);
+
+                foreach (Column col in this.Columns)
                 {
-                    case "String":
-                        row.Cells.Add(new Cells.String((Columns.String)col, row));
-                        break;
-                    case "List":
-                        row.Cells.Add(new Cells.List((Columns.List)col, row));
-                        break;
-                    case "Boolean":
-                        row.Cells.Add(new Cells.Boolean((Columns.Boolean)col, row));
-                        break;
-                    case "Float":
-                        row.Cells.Add(new Cells.Float((Columns.Float)col, row));
-                        break;
-                    default:
-                        throw new NotImplementedException("Column type not implemented: " + col.GetType().FullName);
+                    switch (col.GetType().Name)
+                    {
+                        case "String":
+                            row.Cells.Add(new Cells.String((Columns.String)col, row));
+                            break;
+                        case "List":
+                            row.Cells.Add(new Cells.List((Columns.List)col, row));
+                            break;
+                        case "Boolean":
+                            row.Cells.Add(new Cells.Boolean((Columns.Boolean)col, row));
+                            break;
+                        case "Float":
+                            row.Cells.Add(new Cells.Float((Columns.Float)col, row));
+                            break;
+                        default:
+                            throw new NotImplementedException("Column type not implemented: " + col.GetType().FullName);
+                    }
                 }
             }
 
@@ -141,6 +153,7 @@ namespace Aras.ViewModel
         public Grid(Session Session)
             :base(Session)
         {
+            this.RowCache = new List<Row>();
             this.Columns = new ObservableLists.Column();
             this.Columns.ListChanged += Columns_ListChanged;
             this.Rows = new ObservableLists.Row();
