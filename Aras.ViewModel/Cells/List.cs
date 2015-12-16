@@ -98,6 +98,9 @@ namespace Aras.ViewModel.Cells
         [Attributes.Property("Values", Attributes.PropertyTypes.StringList, true)]
         public ObservableLists.String Values { get; private set; }
 
+        [Attributes.Property("Labels", Attributes.PropertyTypes.StringList, true)]
+        public ObservableLists.String Labels { get; private set; }
+
         protected override void OnBindingChanged()
         {
             base.OnBindingChanged();
@@ -125,6 +128,7 @@ namespace Aras.ViewModel.Cells
             :base(Column, Row)
         {
             this.Values = new ObservableLists.String();
+            this.Labels = new ObservableLists.String();
         }
     }
 }
