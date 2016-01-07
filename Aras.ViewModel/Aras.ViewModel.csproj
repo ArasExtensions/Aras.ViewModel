@@ -44,7 +44,6 @@
     <Compile Include="ControlCache.cs" />
     <Compile Include="Cell.cs" />
     <Compile Include="Props\ListValue.cs" />
-    <Compile Include="Props\VariableList.cs" />
     <Compile Include="Row.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="Control.cs" />

@@ -32,6 +32,27 @@ namespace Aras.ViewModel.Properties
 {
     public class List : Property
     {
+        private System.Int32 _selected;
+        [Attributes.Property("Selected", Attributes.PropertyTypes.Int32, false)]
+        public System.Int32 Selected
+        {
+            get
+            {
+                return this._selected;
+            }
+            set
+            {
+                if (this._selected != value)
+                {
+                    this._selected = value;
+                    this.OnPropertyChanged("Selected");
+                }
+            }
+        }
+
+        [Attributes.Property("Values", Attributes.PropertyTypes.ControlList, true)]
+        public Model.ObservableList<ListValue> Values { get; private set; }
+
         public override object Binding
         {
             get
@@ -46,26 +67,66 @@ namespace Aras.ViewModel.Properties
                 }
                 else
                 {
-                    if (value is Model.Properties.List)
+                    if (value is Model.Properties.List || value is Model.Properties.VariableList)
                     {
                         base.Binding = value;
                     }
                     else
                     {
-                        throw new Model.Exceptions.ArgumentException("Binding must be of type Aras.Model.Properties.List");
+                        throw new Model.Exceptions.ArgumentException("Binding must be of type Aras.Model.Properties.List or Aras.Model.Properties.VariableList");
                     }
                 }
             }
         }
 
-        public System.Int32 Selected { get; set; }
+        protected override void AfterBindingChanged()
+        {
+            base.AfterBindingChanged();
 
-        public Model.ObservableList<ListValue> Values { get; private set; }
+            if (this.Binding != null)
+            {
+                Model.List list = null;
+                Int32 selected = -1;
+
+                if (this.Binding is Model.Properties.List)
+                {
+                    list = ((Model.Properties.List)this.Binding).Values;
+                    selected = ((Model.Properties.List)this.Binding).Selected;
+                }
+                else
+                {
+                    list = ((Model.Properties.VariableList)this.Binding).Values;
+                    selected = ((Model.Properties.VariableList)this.Binding).Selected;
+                }
+
+                this.Values.Clear();
+
+                foreach(Model.ListValue modellistvalue in list.Relationships("Value"))
+                {
+                    ListValue listvalue = new ListValue();
+                    listvalue.Binding = modellistvalue;
+                    this.Values.Add(listvalue);
+                }
+
+                this.Selected = selected;
+            }
+        }
+
+        protected override void BeforeBindingChanged()
+        {
+            base.BeforeBindingChanged();
+
+            if (this.Binding != null)
+            {
+                this.Values.Clear();
+            }
+        }
 
         public List()
             :base()
         {
             this.Values = new Model.ObservableList<ListValue>();
+            this.Selected = -1;
         }
     }
 }

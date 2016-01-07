@@ -72,7 +72,7 @@ namespace Aras.ViewModel.Design
 
         // Configuration Control Caches
         private ControlCache<Model.Design.OrderContext, Properties.String> ConfigQuestionCache;
-        private ControlCache<Model.Design.OrderContext, Properties.VariableList> ConfigValueCache;
+        private ControlCache<Model.Design.OrderContext, Properties.List> ConfigValueCache;
         private ControlCache<Model.Design.OrderContext, Properties.Float> ConfigQuantityCache;
 
         // PartBOM Control Caches
@@ -155,7 +155,7 @@ namespace Aras.ViewModel.Design
                 row.Cells[0].Value = questioncontrol;
                 
                 // Add Values
-                Properties.VariableList valuecontrol = this.ConfigValueCache.Get(ordercontext);
+                Properties.List valuecontrol = this.ConfigValueCache.Get(ordercontext);
                 valuecontrol.Binding = ordercontext.Property("value_list");
                 row.Cells[1].Value = valuecontrol;
 
@@ -176,7 +176,21 @@ namespace Aras.ViewModel.Design
             {
                 this.UpdateConfigurationGrid();
                 this.UpdateBOMGrid();
+
+                // Add Event Handlers
+                this.OrdeModel.Relationships("v_Order Context").QueryChanged += OrderContext_QueryChanged;
+                this.OrdeModel.ConfiguredPart.Relationships("Part BOM").QueryChanged += ConfiguredPart_QueryChanged;
             }
+        }
+
+        void ConfiguredPart_QueryChanged(object sender, EventArgs e)
+        {
+            this.UpdateBOMGrid();
+        }
+
+        void OrderContext_QueryChanged(object sender, EventArgs e)
+        {
+            this.UpdateConfigurationGrid();
         }
 
         protected override void BeforeBindingChanged()
@@ -185,6 +199,10 @@ namespace Aras.ViewModel.Design
 
             if (this.Binding != null)
             {
+                // Remove Event Handlers
+                this.OrdeModel.Relationships("v_Order Context").QueryChanged -= OrderContext_QueryChanged;
+                this.OrdeModel.ConfiguredPart.Relationships("Part BOM").QueryChanged -= ConfiguredPart_QueryChanged;
+
                 // Clear Grids
                 this.Configuration.Rows.Clear();
                 this.BOM.Rows.Clear();
@@ -195,7 +213,7 @@ namespace Aras.ViewModel.Design
             :base()
         {
             this.ConfigQuestionCache = new ControlCache<Model.Design.OrderContext, Properties.String>();
-            this.ConfigValueCache = new ControlCache<Model.Design.OrderContext, Properties.VariableList>();
+            this.ConfigValueCache = new ControlCache<Model.Design.OrderContext, Properties.List>();
             this.ConfigQuantityCache = new ControlCache<Model.Design.OrderContext, Properties.Float>();
 
             this.PartBOMNumberCache = new ControlCache<Model.Design.PartBOM, Properties.String>();
@@ -224,6 +242,7 @@ namespace Aras.ViewModel.Design
 
             protected override bool Run(object parameter)
             {
+                this.Order.OrdeModel.Refresh();
                 return true;
             }
 
@@ -240,6 +259,11 @@ namespace Aras.ViewModel.Design
 
             protected override bool Run(object parameter)
             {
+                if (this.Order.OrdeModel.Locked)
+                {
+                    this.Order.OrdeModel.Transaction.Commit(true);
+                }
+
                 return true;
             }
 
@@ -247,9 +271,6 @@ namespace Aras.ViewModel.Design
             {
                 this.Order = Order;
             }
-
-
-
         }
     }
 }

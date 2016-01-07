@@ -30,16 +30,93 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel.Properties
 {
-    public class ListValue
+    public class ListValue : Control
     {
-        public String Value { get; private set; }
+        private System.String _value;
+        [Attributes.Property("Value", Attributes.PropertyTypes.String, true)]
+        public System.String Value 
+        { 
+            get
+            {
+                return this._value;
+            }
+            set 
+            { 
+                if (System.String.Compare(this._value, value) != 0)
+                {
+                    this._value = value;
+                    this.OnPropertyChanged("Value");
+                }
+            }
+        }
 
-        public String Label { get; private set; }
-
-        public ListValue(String Value, String Label)
+        private System.String _label;
+        [Attributes.Property("Label", Attributes.PropertyTypes.String, true)]
+        public System.String Label
         {
-            this.Value = Value;
-            this.Label = Label;
+            get
+            {
+                return this._label;
+            }
+            set
+            {
+                if (System.String.Compare(this._label, value) != 0)
+                {
+                    this._label = value;
+                    this.OnPropertyChanged("Label");
+                }
+            }
+        }
+
+        public override object Binding
+        {
+            get
+            {
+                return base.Binding;
+            }
+            set
+            {
+                if (value == null)
+                {
+                    base.Binding = value;
+                }
+                else
+                {
+                    if (value is Model.ListValue)
+                    {
+                        base.Binding = value;
+                    }
+                    else
+                    {
+                        throw new Model.Exceptions.ArgumentException("Binding must be of type Aras.Model.ListValue");
+                    }
+                }
+            }
+        }
+
+        protected override void AfterBindingChanged()
+        {
+            base.AfterBindingChanged();
+
+            if (this.Binding != null)
+            {
+                this.Value = ((Model.ListValue)this.Binding).Value;
+            }
+        }
+
+        protected override void BeforeBindingChanged()
+        {
+            base.BeforeBindingChanged();
+
+            if (this.Binding != null)
+            {
+                this.Value = ((Model.ListValue)this.Binding).Label;
+            }
+        }
+
+        public ListValue()
+        {
+
         }
     }
 }

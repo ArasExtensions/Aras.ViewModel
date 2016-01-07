@@ -56,7 +56,7 @@ namespace Aras.ViewModel.Design.Debug
                 Order ordercontrol = new Order();
                 ordercontrol.Binding = order;
 
-                transaction.Commit();
+                //transaction.Commit(false);
             }
         }
     }
