@@ -32,152 +32,47 @@ namespace Aras.ViewModel
 {
     public class Grid : Control
     {
+        [ViewModel.Attributes.Property("Columns", Aras.ViewModel.Attributes.PropertyTypes.ControlList, true)]
+        public Model.ObservableList<Column> Columns { get; private set; }
 
-        [Attributes.Property("Columns", Attributes.PropertyTypes.ControlList, true)]
-        public ObservableLists.Column Columns { get; private set; }
+        [ViewModel.Attributes.Property("Rows", Aras.ViewModel.Attributes.PropertyTypes.ControlList, true)]
+        public Model.ObservableList<Row> Rows { get; private set; }
 
-        public Columns.String AddStringColumn(String Name, String Label)
+        public Column AddColumn(String Name, String Label)
         {
-            Columns.String col = new Columns.String(this, Name, Label);
-            this.Columns.Add(col);
-            return col;
-        }
-
-        public Columns.List AddListColumn(String Name, String Label)
-        {
-            Columns.List col = new Columns.List(this, Name, Label);
-            this.Columns.Add(col);
-            return col;
-        }
-
-        public Columns.Float AddFloatColumn(String Name, String Label)
-        {
-            Columns.Float col = new Columns.Float(this, Name, Label);
-            this.Columns.Add(col);
-            return col;
-        }
-
-        public Columns.Boolean AddBooleanColumn(String Name, String Label)
-        {
-            Columns.Boolean col = new Columns.Boolean(this, Name, Label);
+            Column col = new Column(this, Name, Label);
             this.Columns.Add(col);
             return col;
         }
 
         private List<Row> RowCache;
 
-        [Attributes.Property("Rows", Attributes.PropertyTypes.ControlList, true)]
-        public ObservableLists.Row Rows {get; private set;} 
-
-        public System.Int32 NoRows
-        {
-            get
-            {
-                return this.Rows.Count();
-            }
-            set
-            {
-                if (value >= 0)
-                {
-                    if (value == 0)
-                    {
-                        this.Rows.Clear();
-                    }
-                    else
-                    {
-                        if (value > this.Rows.Count())
-                        {
-                            Int32 diff = value - this.Rows.Count();
-
-                            for (int i=0; i < diff; i++)
-                            {
-                                this.AddRow();
-                            }
-                        }
-                        else if (value < this.Rows.Count())
-                        {
-                            this.Rows.RemoveRange(value, (this.Rows.Count() - value));
-                        }
-                    }
-                }
-                else
-                {
-                    throw new ArgumentException("Number of Rows must be greater than or equal to 0");
-                }
-            }
-        }
-
         public Row AddRow()
         {
-            Row row = null;
-
             if (this.RowCache.Count() > this.Rows.Count())
             {
-                row = this.RowCache[this.Rows.Count()];
+                // Use Row from Cache and clear values
+                Row row = this.RowCache[this.Rows.Count()];
+                row.ClearCellValues();
+                this.Rows.Add(row);
+                return row;
             }
             else
             {
-                row = new Row(this, this.Rows.Count);
+                // Create new Row
+                Row row = new Row(this);
+                this.Rows.Add(row);
                 this.RowCache.Add(row);
-
-                foreach (Column col in this.Columns)
-                {
-                    switch (col.GetType().Name)
-                    {
-                        case "String":
-                            row.Cells.Add(new Cells.String((Columns.String)col, row));
-                            break;
-                        case "List":
-                            row.Cells.Add(new Cells.List((Columns.List)col, row));
-                            break;
-                        case "Boolean":
-                            row.Cells.Add(new Cells.Boolean((Columns.Boolean)col, row));
-                            break;
-                        case "Float":
-                            row.Cells.Add(new Cells.Float((Columns.Float)col, row));
-                            break;
-                        default:
-                            throw new NotImplementedException("Column type not implemented: " + col.GetType().FullName);
-                    }
-                }
+                return row;
             }
-
-            this.Rows.Add(row);
-
-            return row;
         }
 
-        [Attributes.Property("Selected", Attributes.PropertyTypes.ControlList, true)]
-        public ObservableLists.Row Selected { get; private set; }
- 
-        public Grid(Session Session)
-            :base(Session)
+        public Grid()
+            :base()
         {
+            this.Columns = new Model.ObservableList<Column>();
+            this.Rows = new Model.ObservableList<Row>();
             this.RowCache = new List<Row>();
-            this.Columns = new ObservableLists.Column();
-            this.Columns.ListChanged += Columns_ListChanged;
-            this.Rows = new ObservableLists.Row();
-            this.Rows.ListChanged += Rows_ListChanged;
-            this.Selected = new ObservableLists.Row();
-            this.Selected.ListChanged += Selected_ListChanged;
-        }
-
-        void Selected_ListChanged(object sender, EventArgs e)
-        {
-            this.OnPropertyChanged("Selected");
-        }
-
-        void Rows_ListChanged(object sender, EventArgs e)
-        {
-            this.OnPropertyChanged("Rows");
-        }
-
-        void Columns_ListChanged(object sender, EventArgs e)
-        {
-            this.OnPropertyChanged("Columns");
-
-            // Clear Rows
-            this.Rows.Clear();
         }
     }
 }

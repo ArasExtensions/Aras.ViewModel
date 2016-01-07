@@ -1,5 +1,5 @@
 ﻿/*  
-  Aras.ViewModel provides a .NET library for building Aras Innovator Applications
+  Aras.Model provides a .NET cient library for Aras Innovator
 
   Copyright (C) 2015 Processwall Limited.
 
@@ -28,78 +28,57 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Aras.ViewModel.Cells
+namespace Aras.ViewModel.Properties
 {
-    public class String : Cell
+    public class List : Property
     {
-
-        public override System.String ValueString
+        public override object Binding
         {
             get
             {
-                if (this.Object == null)
-                {
-                    return null;
-                }
-                else
-                {
-                    return (System.String)this.Object;
-                }
-            }
-            set
-            {
-                this.Object = value;
-            }
-        }
-
-        public override object Object
-        {
-            get
-            {
-                return base.Object;
+                return base.Binding;
             }
             set
             {
                 if (value == null)
                 {
-                    base.Object = value;
+                    base.Binding = value;
                 }
                 else
                 {
-                    if (value is System.String)
+                    if (value is Model.Properties.List)
                     {
-                        base.Object = value;
+                        base.Binding = value;
                     }
                     else
                     {
-                        throw new ArgumentException("Object must be type System.String");
+                        throw new Model.Exceptions.ArgumentException("Binding must be of type Aras.Model.Properties.List");
                     }
                 }
             }
         }
 
-        [Attributes.Property("Value", Attributes.PropertyTypes.String, false)]
-        public System.String Value
+        public System.Int32 Selected { get; set; }
+
+        public Model.ObservableList<ListValue> Values { get; private set; }
+
+        public List()
+            :base()
         {
-            get
-            {
-                return (System.String)this.Object;
-            }
-            set
-            {
-                this.Object = value;
-            }
+            this.Values = new Model.ObservableList<ListValue>();
         }
 
-        public static implicit operator System.String(Cells.String Cell)
+        public class ListValue
         {
-            return Cell.Value;
-        }
+            public String Value { get; private set; }
 
-        internal String(Columns.String Column, Row Row)
-            :base(Column, Row)
-        {
+            public String Label { get; private set; }
 
+            public ListValue(String Value, String Label)
+            {
+                this.Value = Value;
+                this.Label = Label;
+            }
         }
     }
 }

@@ -33,8 +33,6 @@ namespace Aras.ViewModel
 {
     public abstract class Control : IEquatable<Control>, INotifyPropertyChanged
     {
-        public Session Session { get; private set; }
-
         public Guid ID { get; private set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -48,13 +46,62 @@ namespace Aras.ViewModel
             }
         }
 
-        protected void OnAllPropertiesChanged()
+        private Boolean _readOnly;
+        [Attributes.Property("ReadOnly", Attributes.PropertyTypes.Boolean, false)]
+        public Boolean ReadOnly
         {
-            if (this.PropertyChanged != null)
+            get
             {
-                PropertyChangedEventArgs args = new PropertyChangedEventArgs(String.Empty);
-                this.PropertyChanged(this, args);
+                return this._readOnly;
             }
+            set
+            {
+                if (this._readOnly != value)
+                {
+                    this._readOnly = value;
+                    this.OnPropertyChanged("ReadOnly");
+                }
+            }
+        }
+
+        private Object _binding;
+        public virtual Object Binding
+        {
+            get
+            {
+                return this._binding;
+            }
+            set
+            {
+                if (this._binding == null)
+                {
+                    if (value != null)
+                    {
+                        this.BeforeBindingChanged();
+                        this._binding = value;
+                        this.AfterBindingChanged();
+                    }
+                }
+                else
+                {
+                    if (!this._binding.Equals(value))
+                    {
+                        this.BeforeBindingChanged();
+                        this._binding = value;
+                        this.AfterBindingChanged();
+                    }
+                }
+            }
+        }
+
+        protected virtual void AfterBindingChanged()
+        {
+
+        }
+
+        protected virtual void BeforeBindingChanged()
+        {
+
         }
 
         private Dictionary<String, System.Reflection.PropertyInfo> _commandInfoCache;
@@ -161,7 +208,7 @@ namespace Aras.ViewModel
             {
                 List<Control> controls = new List<Control>();
 
-                foreach(String property in this.Properties)
+                foreach (String property in this.Properties)
                 {
                     object propertyvalue = this.GetPropertyValue(property);
 
@@ -178,7 +225,7 @@ namespace Aras.ViewModel
                     {
                         IEnumerable<Control> thiscontrols = (IEnumerable<Control>)propertyvalue;
 
-                        foreach(Control thiscontrol in thiscontrols)
+                        foreach (Control thiscontrol in thiscontrols)
                         {
                             if (!controls.Contains(thiscontrol))
                             {
@@ -214,7 +261,7 @@ namespace Aras.ViewModel
             {
                 if (obj is Control)
                 {
-                    return this.Equals((Control)obj);
+                    return this.ID.Equals(((Control)obj).ID);
                 }
                 else
                 {
@@ -228,9 +275,8 @@ namespace Aras.ViewModel
             return this.ID.GetHashCode();
         }
 
-        public Control(Session Session)
+        public Control()
         {
-            this.Session = Session;
             this.ID = Guid.NewGuid();
         }
     }

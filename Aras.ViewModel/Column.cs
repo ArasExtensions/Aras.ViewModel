@@ -30,15 +30,67 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel
 {
-    public abstract class Column : Control
+    public class Column : Control
     {
         public Grid Grid { get; private set; }
 
+        private String _name;
         [Attributes.Property("Name", Attributes.PropertyTypes.String, true)]
-        public System.String Name { get; private set; }
+        public String Name
+        {
+            get
+            {
+                return this._name;
+            }
+            private set
+            {
+                if (this._name == null)
+                {
+                    if (value != null)
+                    {
+                        this._name = value;
+                        this.OnPropertyChanged("Name");
+                    }
+                }
+                else
+                {
+                    if (!this._name.Equals(value))
+                    {
+                        this._name = value;
+                        this.OnPropertyChanged("Name");
+                    }
+                }
+            }
+        }
 
+        private String _label;
         [Attributes.Property("Label", Attributes.PropertyTypes.String, true)]
-        public System.String Label { get; private set; }
+        public String Label
+        {
+            get
+            {
+                return this._label;
+            }
+            set
+            {
+                if (this._label == null)
+                {
+                    if (value != null)
+                    {
+                        this._label = value;
+                        this.OnPropertyChanged("Label");
+                    }
+                }
+                else
+                {
+                    if (!this._label.Equals(value))
+                    {
+                        this._label = value;
+                        this.OnPropertyChanged("Label");
+                    }
+                }
+            }
+        }
 
         public override string ToString()
         {
@@ -46,11 +98,12 @@ namespace Aras.ViewModel
         }
 
         internal Column(Grid Grid, String Name, String Label)
-            :base(Grid.Session)
+            :base()
         {
             this.Grid = Grid;
             this.Name = Name;
             this.Label = Label;
         }
+
     }
 }

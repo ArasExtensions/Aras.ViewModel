@@ -1,5 +1,5 @@
 ﻿/*  
-  Aras.ViewModel provides a .NET library for building Aras Innovator Applications
+  Aras.Model provides a .NET cient library for Aras Innovator
 
   Copyright (C) 2015 Processwall Limited.
 
@@ -28,12 +28,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Aras.ViewModel.Fields
+namespace Aras.ViewModel.Properties
 {
-    public class String : Field
+    public class String : Property
     {
         private const System.Int32 MinLength = 1;
-        private const System.Int32 MaxLength = System.Int32.MaxValue;
+        private const System.Int32 MaxLength = 4000;
         private const System.Int32 DefaultLength = 32;
 
         private System.Int32 _length;
@@ -104,48 +104,80 @@ namespace Aras.ViewModel.Fields
             }
         }
 
-        protected override void Property_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        public override object Binding
         {
-            base.Property_PropertyChanged(sender, e);
-
-            if (e.PropertyName == "Binding")
+            get
             {
-                if (this.Binding != null && this.Binding is Model.Properties.String)
+                return base.Binding;
+            }
+            set
+            {
+                if (value == null)
                 {
-                    Model.Properties.String prop = (Model.Properties.String)this.Binding;
-                    Model.PropertyTypes.String proptype = (Model.PropertyTypes.String)prop.PropertyType;
-                    this.Length = proptype.Length;
-                    this.Value = prop.Value;
-                    this.Binding.PropertyChanged += Binding_PropertyChanged;
+                    base.Binding = value;
+                }
+                else
+                {
+                    if (value is Model.Properties.String)
+                    {
+                        base.Binding = value;
+                    }
+                    else
+                    {
+                        throw new Model.Exceptions.ArgumentException("Binding must be of type Aras.Model.Properties.String");
+                    }
                 }
             }
         }
 
-        void Binding_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        protected override void AfterBindingChanged()
         {
-            if (e.PropertyName == "Value")
+            base.AfterBindingChanged();
+
+            if (this.Binding != null)
             {
-                Model.Properties.String prop = (Model.Properties.String)this.Binding;
-                this.Value = prop.Value;
+                ((Model.Properties.String)this.Binding).PropertyChanged += Model_PropertyChanged;
             }
         }
 
-        public String(Session Session, Boolean Required, Boolean ReadOnly, System.Int32 Length, System.String Default)
-            : base(Session, Required, ReadOnly)
+        protected override void BeforeBindingChanged()
         {
-            this.Length = Length;
-            this.Value = Default;
+            base.BeforeBindingChanged();
+
+            if (this.Binding != null)
+            {
+                ((Model.Properties.String)this.Binding).PropertyChanged -= Model_PropertyChanged;
+            }
         }
 
-        public String(Session Session, Boolean Required, Boolean ReadOnly, System.Int32 Length)
-            : this(Session, Required, ReadOnly, Length, null)
+        void Model_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
+            switch (e.PropertyName)
+            {
+                case "Value":
+                    this.Value = (System.String)((Model.Properties.String)this.Binding).Value;
+                    break;
+                default:
+                    break;
+            }
         }
 
-        public String(Session Session, Boolean Required, Boolean ReadOnly)
-            : this(Session, Required, ReadOnly, DefaultLength, null)
+        void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
+            switch (e.PropertyName)
+            {
+                case "Value":
+                    ((Model.Properties.String)this.Binding).Value = this.Value;
+                    break;
+                default:
+                    break;
+            }
         }
 
+        public String()
+            : base()
+        {
+            this.PropertyChanged += ViewModel_PropertyChanged;
+        }
     }
 }

@@ -4,15 +4,17 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A2A07C6C-6E00-49AF-AD48-6F4E0F192136}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{DFD7EEAB-66DC-4F64-A3C7-24CD2D38B4A4}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Aras.ViewModel.Test</RootNamespace>
-    <AssemblyName>Aras.ViewModel.Test</AssemblyName>
+    <RootNamespace>Aras.ViewModel.Design.Debug</RootNamespace>
+    <AssemblyName>Aras.ViewModel.Design.Debug</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -22,6 +24,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -39,16 +42,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Search.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Aras.Model\Aras.Model.Design\Aras.Model.Design.csproj">
+      <Project>{d99031a4-f91e-4d94-8080-be0375d3e83b}</Project>
+      <Name>Aras.Model.Design</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Aras.Model\Aras.Model\Aras.Model.csproj">
       <Project>{e5b4196a-00d0-4de7-8104-487a7bc60784}</Project>
       <Name>Aras.Model</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Aras.ViewModel.Design\Aras.ViewModel.Design.csproj">
+      <Project>{6e26fc31-50b0-402e-aabe-1974fefb4d6c}</Project>
+      <Name>Aras.ViewModel.Design</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Aras.ViewModel\Aras.ViewModel.csproj">
-      <Project>{103ce8d0-a7ea-47b1-adb3-4be57c02db18}</Project>
+      <Project>{684c534e-dfee-4a66-8355-94bceae34dad}</Project>
       <Name>Aras.ViewModel</Name>
     </ProjectReference>
   </ItemGroup>

@@ -34,23 +34,52 @@ namespace Aras.ViewModel
     {
         public Grid Grid { get; private set; }
 
-        public System.Int32 Index { get; private set; }
+        [ViewModel.Attributes.Property("Cells", Aras.ViewModel.Attributes.PropertyTypes.ControlList, true)]
+        public Model.ObservableList<Cell> Cells { get; private set; }
 
-        [Attributes.Property("Cells", Attributes.PropertyTypes.ControlList, true)]
-        public ObservableLists.Cell Cells { get; private set; }
-
-        internal Row(Grid Grid, System.Int32 Index)
-            :base(Grid.Session)
+        private void UpdateCells()
         {
-            this.Grid = Grid;
-            this.Index = Index;
-            this.Cells = new ObservableLists.Cell();
-            this.Cells.ListChanged += Cells_ListChanged;
+            for (int i = 0; i < this.Grid.Columns.Count(); i++)
+            {
+                if (i == this.Cells.Count())
+                {
+                    this.Cells.Add(new Cell(this.Grid.Columns[i], this));
+                }
+                else
+                {
+                    if (!this.Cells[i].Column.Equals(this.Grid.Columns[i]))
+                    {
+                        this.Cells[i] = new Cell(this.Grid.Columns[i], this);
+                    }
+                }
+            }
+
+            if (this.Cells.Count() > this.Grid.Columns.Count())
+            {
+                this.Cells.RemoveRange(this.Grid.Columns.Count(), this.Cells.Count() - this.Grid.Columns.Count());
+            }
         }
 
-        void Cells_ListChanged(object sender, EventArgs e)
+        internal void ClearCellValues()
         {
-            this.OnPropertyChanged("Cells");
+            foreach(Cell cell in this.Cells)
+            {
+                cell.Value = null;
+            }
+        }
+
+        void Columns_ListChanged(object sender, EventArgs e)
+        {
+            this.UpdateCells();
+        }
+
+        internal Row(Grid Grid)
+            :base()
+        {
+            this.Grid = Grid;
+            this.Cells = new Model.ObservableList<Cell>();
+            this.UpdateCells();
+            this.Grid.Columns.ListChanged += Columns_ListChanged;
         }
     }
 }

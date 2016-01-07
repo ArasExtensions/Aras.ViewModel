@@ -28,91 +28,92 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Aras.ViewModel.Cells
+namespace Aras.ViewModel
 {
-    public class Boolean : Cell
+    public abstract class Property : Control
     {
-        public override System.String ValueString
+        private Boolean _required;
+        [Attributes.Property("Required", Attributes.PropertyTypes.Boolean, true)]
+        public Boolean Required
         {
             get
             {
-                if (this.Object == null)
+                return this._required;
+            }
+            set
+            {
+                if (this._required != value)
                 {
-                    return null;
+                    this._required = value;
+                    this.OnPropertyChanged("Required");
                 }
-                else
-                {
-                    if (((System.Boolean)this.Object).Equals(true))
-                    {
-                        return "1";
-                    }
-                    else
-                    {
-                        return "0";
-                    }
-                }
+            }
+        }
+
+        public override object Binding
+        {
+            get
+            {
+                return base.Binding;
             }
             set
             {
                 if (value == null)
                 {
-                    this.Object = null;
+                    base.Binding = value;
                 }
                 else
                 {
-                    this.Object = value.Equals("1");
-                }
-            }
-        }
-
-        public override object Object
-        {
-            get
-            {
-                return base.Object;
-            }
-            set
-            {
-                if (value == null)
-                {
-                    base.Object = value;
-                }
-                else
-                {
-                    if (value is System.Boolean)
+                    if (value is Model.Property)
                     {
-                        base.Object = value;
+                        base.Binding = value;
                     }
                     else
                     {
-                        throw new ArgumentException("Object must be type System.Boolean");
+                        throw new Model.Exceptions.ArgumentException("Binding must be of type Aras.Model.Property");
                     }
                 }
             }
         }
 
-        [Attributes.Property("Value", Attributes.PropertyTypes.Boolean, false)]
-        public System.Boolean Value
+        protected override void AfterBindingChanged()
         {
-            get
+            base.AfterBindingChanged();
+
+            if (this.Binding != null)
             {
-                return (System.Boolean)this.Object;
-            }
-            set
-            {
-                this.Object = value;
+                ((Model.Property)this.Binding).PropertyChanged += Property_PropertyChanged;
+                this.ReadOnly = ((Model.Property)this.Binding).ReadOnly;
+                
             }
         }
 
-        public static implicit operator System.Boolean(Cells.Boolean Cell)
+        protected override void BeforeBindingChanged()
         {
-            return Cell.Value;
+            base.BeforeBindingChanged();
+
+            if (this.Binding != null)
+            {
+                ((Model.Property)this.Binding).PropertyChanged -= Property_PropertyChanged;
+            }
         }
 
-        internal Boolean(Columns.Boolean Column, Row Row)
-            :base(Column, Row)
+        void Property_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            this.Value = false;
+            switch (e.PropertyName)
+            {
+                case "ReadOnly":
+                    this.ReadOnly = ((Model.Property)sender).ReadOnly;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public Property()
+            :base()
+        {
+            this.Required = false;
         }
     }
 }

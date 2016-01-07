@@ -30,126 +30,47 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel
 {
-    public abstract class Cell : Control
+    public class Cell : Control
     {
-        public Row Row { get; private set; }
-
         public Column Column { get; private set; }
 
-        private Boolean _editable;
-        [Attributes.Property("Editable", Attributes.PropertyTypes.Boolean, true)]
-        public System.Boolean Editable
-        {
-            get
-            {
-                return this._editable;
-            }
-            set
-            {
-                if (this._editable != value)
-                {
-                    this._editable = value;
-                    this.OnPropertyChanged("Editable");
-                }
-            }
-        }
+        public Row Row { get; private set; }
 
-        private object _object;
-        public virtual object Object
+        private String _value;
+        [Attributes.Property("Value", Attributes.PropertyTypes.Control, true)]
+        public String Value
         {
             get
             {
-                return this._object;
+                return this._value;
             }
             set
             {
-                if (value == null)
+                if (this._value == null)
                 {
-                    if (this._object != null)
+                    if (value != null)
                     {
-                        this._object = value;
+                        this._value = value;
                         this.OnPropertyChanged("Value");
-
-                        if (this.Binding != null)
-                        {
-                            this.Binding.Object = this._object;
-                        }
                     }
                 }
                 else
                 {
-                    if (!value.Equals(this._object))
+                    if (!this._value.Equals(value))
                     {
-                        this._object = value;
+                        this._value = value;
                         this.OnPropertyChanged("Value");
-
-                        if (this.Binding != null)
-                        {
-                            this.Binding.Object = this._object;
-                        }
                     }
                 }
             }
-        }
-
-        public abstract String ValueString { get; set; }
-
-        private Model.Property _binding;
-        public Model.Property Binding
-        {
-            get
-            {
-                return this._binding;
-            }
-            set
-            {
-                if (value == null)
-                {
-                    if (this._binding != null)
-                    {
-                        this._binding.PropertyChanged -= Binding_PropertyChanged;
-                        this._binding = null;
-                        this.OnBindingChanged();
-                    }
-                }
-                else
-                {
-                    if (this._binding == null)
-                    {
-                        this._binding = value;
-                        this._binding.PropertyChanged += Binding_PropertyChanged;
-                        this.OnBindingChanged();
-                    }
-                    else
-                    {
-                        if(!this._binding.Equals(value))
-                        {
-                            this._binding.PropertyChanged -= Binding_PropertyChanged;
-                            this._binding = value;
-                            this._binding.PropertyChanged += Binding_PropertyChanged;
-                            this.OnBindingChanged();
-                        }
-                    }
-                }
-            }
-        }
-
-        protected virtual void OnBindingChanged()
-        {
-            this.Object = this.Binding.Object;
-        }
-
-        void Binding_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            this.OnBindingChanged();
         }
 
         internal Cell(Column Column, Row Row)
-            :base(Column.Session)
+            :base()
         {
-            this.Row = Row;
             this.Column = Column;
-            this.Editable = Editable;
+            this.Row = Row;
         }
+
     }
 }

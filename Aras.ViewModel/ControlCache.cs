@@ -28,10 +28,27 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Aras.ViewModel.ObservableLists
+namespace Aras.ViewModel
 {
-    public class String : Model.ObservableList<System.String>
+    public class ControlCache<I,C> : Dictionary<I,C> where I:Model.Item where C:Control, new()
     {
+        public C Get(I Item)
+        {
+            if (this.ContainsKey(Item))
+            {
+                return this[Item];
+            }
+            else
+            {
+                return new C();
+            }
+        }
+
+        public ControlCache()
+            :base()
+        {
+       
+        }
 
     }
 }

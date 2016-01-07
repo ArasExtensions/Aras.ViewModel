@@ -4,14 +4,13 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{103CE8D0-A7EA-47B1-ADB3-4BE57C02DB18}</ProjectGuid>
+    <ProjectGuid>{684C534E-DFEE-4A66-8355-94BCEAE34DAD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Aras.ViewModel</RootNamespace>
     <AssemblyName>Aras.ViewModel</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -40,58 +39,28 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Plugin.cs" />
-    <Compile Include="Application.cs" />
-    <Compile Include="Attributes\Property.cs" />
     <Compile Include="Attributes\Command.cs" />
+    <Compile Include="Attributes\Property.cs" />
+    <Compile Include="ControlCache.cs" />
     <Compile Include="Cell.cs" />
-    <Compile Include="Cells\Boolean.cs" />
-    <Compile Include="Cells\Float.cs" />
-    <Compile Include="Cells\List.cs" />
-    <Compile Include="Cells\String.cs" />
-    <Compile Include="Column.cs" />
-    <Compile Include="Columns\Float.cs" />
-    <Compile Include="Columns\Boolean.cs" />
-    <Compile Include="Columns\List.cs" />
-    <Compile Include="Columns\String.cs" />
+    <Compile Include="Row.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="Control.cs" />
-    <Compile Include="Database.cs" />
-    <Compile Include="Exceptions\ValueReadOnlyException.cs" />
-    <Compile Include="Exceptions\CommandNameException.cs" />
-    <Compile Include="Exceptions\DuplicateCommandNameException.cs" />
-    <Compile Include="Exceptions\PropertyNameException.cs" />
-    <Compile Include="Exceptions\ValueRangeException.cs" />
-    <Compile Include="Exceptions\ValueTypeException.cs" />
-    <Compile Include="Exceptions\DuplicatePropertyNameException.cs" />
+    <Compile Include="Column.cs" />
     <Compile Include="Grid.cs" />
-    <Compile Include="ObservableControlList.cs" />
-    <Compile Include="ObservableLists\String.cs" />
-    <Compile Include="ObservableLists\Column.cs" />
-    <Compile Include="ObservableLists\Cell.cs" />
-    <Compile Include="ObservableLists\Row.cs" />
-    <Compile Include="PropertyDetails.cs" />
-    <Compile Include="Server.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Row.cs" />
-    <Compile Include="Search.cs" />
-    <Compile Include="Field.cs" />
-    <Compile Include="Fields\Int32.cs" />
-    <Compile Include="Fields\String.cs" />
-    <Compile Include="Session.cs" />
-    <Compile Include="Utilities.cs" />
+    <Compile Include="Property.cs" />
+    <Compile Include="PropertyDetails.cs" />
+    <Compile Include="Props\String.cs" />
+    <Compile Include="Props\Float.cs" />
+    <Compile Include="Props\List.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Aras.Common\Aras.Common.Logging\Aras.Common.Logging.csproj">
-      <Project>{95ccb1e3-f2fa-423a-bae6-a5a3ec0cec94}</Project>
-      <Name>Aras.Common.Logging</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Aras.Model\Aras.Model\Aras.Model.csproj">
       <Project>{e5b4196a-00d0-4de7-8104-487a7bc60784}</Project>
       <Name>Aras.Model</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
