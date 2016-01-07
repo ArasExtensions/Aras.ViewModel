@@ -44,6 +44,8 @@ namespace Aras.ViewModel.Design.Debug
             session.ItemType("Variant Context").AddToSelect("name,keyed_name,context_type,list,method,question");
             session.ItemType("Part Variants").AddToSelect("quantity");
             session.ItemType("Part Variant Rule").AddToSelect("value");
+            session.ItemType("Part").AddToSelect("item_number,major_rev,name");
+            session.ItemType("Part BOM").AddToSelect("quantity");
 
             Model.Design.Order order = (Model.Design.Order)session.Query("v_Order", Aras.Conditions.Eq("item_number", "0002")).First();
 

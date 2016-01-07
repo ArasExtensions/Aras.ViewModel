@@ -88,7 +88,7 @@ namespace Aras.ViewModel.Properties
                 }
                 else
                 {
-                    if (!this._value.Equals(value))
+                    if (System.String.Compare(this._value, value) != 0)
                     {
                         if (value == null || value.Length <= this.Length)
                         {
@@ -136,6 +136,9 @@ namespace Aras.ViewModel.Properties
 
             if (this.Binding != null)
             {
+                
+                this.Length = ((Model.Properties.String)this.Binding).Length;
+                this.Value = (System.String)((Model.Properties.String)this.Binding).Value;
                 ((Model.Properties.String)this.Binding).PropertyChanged += Model_PropertyChanged;
             }
         }
@@ -177,6 +180,7 @@ namespace Aras.ViewModel.Properties
         public String()
             : base()
         {
+            this._length = DefaultLength;
             this.PropertyChanged += ViewModel_PropertyChanged;
         }
     }

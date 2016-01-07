@@ -30,42 +30,16 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel.Properties
 {
-    public class List : Property
+    public class ListValue
     {
-        public override object Binding
+        public String Value { get; private set; }
+
+        public String Label { get; private set; }
+
+        public ListValue(String Value, String Label)
         {
-            get
-            {
-                return base.Binding;
-            }
-            set
-            {
-                if (value == null)
-                {
-                    base.Binding = value;
-                }
-                else
-                {
-                    if (value is Model.Properties.List)
-                    {
-                        base.Binding = value;
-                    }
-                    else
-                    {
-                        throw new Model.Exceptions.ArgumentException("Binding must be of type Aras.Model.Properties.List");
-                    }
-                }
-            }
-        }
-
-        public System.Int32 Selected { get; set; }
-
-        public Model.ObservableList<ListValue> Values { get; private set; }
-
-        public List()
-            :base()
-        {
-            this.Values = new Model.ObservableList<ListValue>();
+            this.Value = Value;
+            this.Label = Label;
         }
     }
 }

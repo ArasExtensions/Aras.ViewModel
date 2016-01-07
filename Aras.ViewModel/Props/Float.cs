@@ -94,6 +94,7 @@ namespace Aras.ViewModel.Properties
 
             if (this.Binding != null)
             {
+                this.Value = (System.Double?)((Model.Properties.Float)this.Binding).Value;
                 ((Model.Properties.Float)this.Binding).PropertyChanged += Model_PropertyChanged;
             }
         }

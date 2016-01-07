@@ -70,17 +70,73 @@ namespace Aras.ViewModel.Design
             }
         }
 
-        private ControlCache<Model.Design.OrderContext, Properties.String> QuestionCache;
+        // Configuration Control Caches
+        private ControlCache<Model.Design.OrderContext, Properties.String> ConfigQuestionCache;
+        private ControlCache<Model.Design.OrderContext, Properties.VariableList> ConfigValueCache;
+        private ControlCache<Model.Design.OrderContext, Properties.Float> ConfigQuantityCache;
 
-        private void UpdateGrids()
+        // PartBOM Control Caches
+        private ControlCache<Model.Design.PartBOM, Properties.String> PartBOMNumberCache;
+        private ControlCache<Model.Design.PartBOM, Properties.String> PartBOMRevisionCache;
+        private ControlCache<Model.Design.PartBOM, Properties.String> PartBOMNameCache;
+        private ControlCache<Model.Design.PartBOM, Properties.Float> PartBOMQuantityCache;
+
+        private Model.Design.Order OrdeModel
         {
-            // Get Order
-            Model.Design.Order ordermodel = (Model.Design.Order)this.Binding;
+            get
+            {
+                return (Model.Design.Order)this.Binding;
+            }
+        }
 
+        private void UpdateBOMGrid()
+        {
+            // Update BOM Grid
+            int cnt = 0;
+
+            foreach (Model.Design.PartBOM partbom in this.OrdeModel.ConfiguredPart.Relationships("Part BOM"))
+            {
+                Row row = null;
+
+                if (this.BOM.Rows.Count() < (cnt + 1))
+                {
+                    row = this.BOM.AddRow();
+                }
+                else
+                {
+                    row = this.BOM.Rows[cnt];
+                }
+
+                // Add Part Number
+                Properties.String numbercontrol = this.PartBOMNumberCache.Get(partbom);
+                numbercontrol.Binding = partbom.Related.Property("item_number");
+                row.Cells[0].Value = numbercontrol;
+
+                // Add Part Revision
+                Properties.String revisioncontrol = this.PartBOMRevisionCache.Get(partbom);
+                revisioncontrol.Binding = partbom.Related.Property("major_rev");
+                row.Cells[1].Value = revisioncontrol;
+
+                // Add Part Name
+                Properties.String namecontrol = this.PartBOMNameCache.Get(partbom);
+                namecontrol.Binding = partbom.Related.Property("name");
+                row.Cells[2].Value = namecontrol;
+
+                // Add Quantity
+                Properties.Float quantitycontrol = this.PartBOMQuantityCache.Get(partbom);
+                quantitycontrol.Binding = partbom.Property("quantity");
+                row.Cells[3].Value = quantitycontrol;
+
+                cnt++;
+            }
+        }
+
+        private void UpdateConfigurationGrid()
+        {
             // Update Configuration Grid
             int cnt = 0;
 
-            foreach (Model.Design.OrderContext ordercontext in ordermodel.Relationships("v_Order Context"))
+            foreach (Model.Design.OrderContext ordercontext in this.OrdeModel.Relationships("v_Order Context"))
             {
                 Row row = null;
 
@@ -94,36 +150,22 @@ namespace Aras.ViewModel.Design
                 }
 
                 // Add Question
-                Properties.String questioncontrol = this.QuestionCache.Get(ordercontext);
+                Properties.String questioncontrol = this.ConfigQuestionCache.Get(ordercontext);
                 questioncontrol.Binding = ordercontext.VariantContext.Property("question");
+                row.Cells[0].Value = questioncontrol;
                 
+                // Add Values
+                Properties.VariableList valuecontrol = this.ConfigValueCache.Get(ordercontext);
+                valuecontrol.Binding = ordercontext.Property("value_list");
+                row.Cells[1].Value = valuecontrol;
 
-
-                cnt++;
-            }
-
-            // Update BOM Grid
-            cnt = 0;
-
-            foreach (Model.Design.PartBOM partbom in ordermodel.ConfiguredPart.Relationships("Part BOM"))
-            {
-                Row row = null;
-
-                if (this.BOM.Rows.Count() < (cnt + 1))
-                {
-                    row = this.BOM.AddRow();
-                }
-                else
-                {
-                    row = this.BOM.Rows[cnt];
-                }
-
-
-
+                // Add Quantity
+                Properties.Float quantitycontrol = this.ConfigQuantityCache.Get(ordercontext);
+                quantitycontrol.Binding = ordercontext.Property("quantity");
+                row.Cells[2].Value = quantitycontrol;
 
                 cnt++;
             }
-
         }
 
         protected override void AfterBindingChanged()
@@ -132,7 +174,8 @@ namespace Aras.ViewModel.Design
 
             if (this.Binding != null)
             {
-                this.UpdateGrids();
+                this.UpdateConfigurationGrid();
+                this.UpdateBOMGrid();
             }
         }
 
@@ -151,7 +194,14 @@ namespace Aras.ViewModel.Design
         public Order()
             :base()
         {
-            this.QuestionCache = new ControlCache<Model.Design.OrderContext, Properties.String>();
+            this.ConfigQuestionCache = new ControlCache<Model.Design.OrderContext, Properties.String>();
+            this.ConfigValueCache = new ControlCache<Model.Design.OrderContext, Properties.VariableList>();
+            this.ConfigQuantityCache = new ControlCache<Model.Design.OrderContext, Properties.Float>();
+
+            this.PartBOMNumberCache = new ControlCache<Model.Design.PartBOM, Properties.String>();
+            this.PartBOMRevisionCache = new ControlCache<Model.Design.PartBOM, Properties.String>();
+            this.PartBOMNameCache = new ControlCache<Model.Design.PartBOM, Properties.String>();
+            this.PartBOMQuantityCache = new ControlCache<Model.Design.PartBOM, Properties.Float>();
 
             this.Refresh = new RefreshCommand(this);
             this.Save = new SaveCommand(this);

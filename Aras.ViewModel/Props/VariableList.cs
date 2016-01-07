@@ -30,7 +30,7 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel.Properties
 {
-    public class List : Property
+    public class VariableList : Property
     {
         public override object Binding
         {
@@ -46,13 +46,13 @@ namespace Aras.ViewModel.Properties
                 }
                 else
                 {
-                    if (value is Model.Properties.List)
+                    if (value is Model.Properties.VariableList)
                     {
                         base.Binding = value;
                     }
                     else
                     {
-                        throw new Model.Exceptions.ArgumentException("Binding must be of type Aras.Model.Properties.List");
+                        throw new Model.Exceptions.ArgumentException("Binding must be of type Aras.Model.Properties.VariableList");
                     }
                 }
             }
@@ -62,7 +62,7 @@ namespace Aras.ViewModel.Properties
 
         public Model.ObservableList<ListValue> Values { get; private set; }
 
-        public List()
+        public VariableList()
             :base()
         {
             this.Values = new Model.ObservableList<ListValue>();

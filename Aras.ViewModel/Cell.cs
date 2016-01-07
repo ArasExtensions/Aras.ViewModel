@@ -36,9 +36,9 @@ namespace Aras.ViewModel
 
         public Row Row { get; private set; }
 
-        private String _value;
+        private Control _value;
         [Attributes.Property("Value", Attributes.PropertyTypes.Control, true)]
-        public String Value
+        public Control Value
         {
             get
             {
