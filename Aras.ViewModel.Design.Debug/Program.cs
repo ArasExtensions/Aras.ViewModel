@@ -49,15 +49,10 @@ namespace Aras.ViewModel.Design.Debug
 
             Model.Design.Order order = (Model.Design.Order)session.Query("v_Order", Aras.Conditions.Eq("item_number", "0002")).First();
 
-            using (Model.Transaction transaction = session.BeginTransaction())
-            {
-                order.Update(transaction);
-
-                Order ordercontrol = new Order();
-                ordercontrol.Binding = order;
-
-                //transaction.Commit(false);
-            }
+            Order ordercontrol = new Order();
+            ordercontrol.Binding = order;
+            ((Properties.List)ordercontrol.Configuration.Rows[0].Cells[1].Value).Selected = 2;
+            ordercontrol.Save.Execute();
         }
     }
 }

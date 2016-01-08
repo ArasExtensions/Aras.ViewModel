@@ -168,12 +168,35 @@ namespace Aras.ViewModel.Design
             }
         }
 
+        private Model.Transaction Transaction;
+
         protected override void AfterBindingChanged()
         {
             base.AfterBindingChanged();
 
             if (this.Binding != null)
             {
+                // Create Transaction if Order Locked
+                if (this.OrdeModel.Locked(true))
+                {
+                    if (this.OrdeModel.Transaction == null)
+                    {
+                        this.Transaction = this.OrdeModel.Session.BeginTransaction();
+                        this.OrdeModel.Update(this.Transaction);
+                    }
+                    else
+                    {
+                        this.Transaction = this.OrdeModel.Transaction;
+                    }
+
+                    this.Save.UpdateCanExecute(true);
+                }
+                else
+                {
+                    this.Save.UpdateCanExecute(false);
+                }
+
+                // Update Grids
                 this.UpdateConfigurationGrid();
                 this.UpdateBOMGrid();
 
@@ -199,6 +222,14 @@ namespace Aras.ViewModel.Design
 
             if (this.Binding != null)
             {
+                // Rollbck Transaction
+
+                if (this.Transaction != null)
+                {
+                    this.Transaction.RollBack();
+                    this.Transaction = null;
+                }
+
                 // Remove Event Handlers
                 this.OrdeModel.Relationships("v_Order Context").QueryChanged -= OrderContext_QueryChanged;
                 this.OrdeModel.ConfiguredPart.Relationships("Part BOM").QueryChanged -= ConfiguredPart_QueryChanged;
@@ -257,11 +288,21 @@ namespace Aras.ViewModel.Design
         {
             public Order Order { get; private set; }
 
+            internal void UpdateCanExecute(Boolean CanExecute)
+            {
+                this.SetCanExecute(CanExecute);
+            }
+
             protected override bool Run(object parameter)
             {
-                if (this.Order.OrdeModel.Locked)
+                if (this.Order.Transaction != null)
                 {
-                    this.Order.OrdeModel.Transaction.Commit(true);
+                    // Committ current transaction
+                    this.Order.OrdeModel.Transaction.Commit();
+
+                    // Create new Transaction
+                    this.Order.Transaction = this.Order.OrdeModel.Session.BeginTransaction();
+                    this.Order.OrdeModel.Update(this.Order.Transaction);
                 }
 
                 return true;
@@ -270,6 +311,7 @@ namespace Aras.ViewModel.Design
             internal SaveCommand(Order Order)
             {
                 this.Order = Order;
+                this.SetCanExecute(false);
             }
         }
     }

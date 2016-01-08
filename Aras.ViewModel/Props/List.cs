@@ -42,7 +42,7 @@ namespace Aras.ViewModel.Properties
             }
             set
             {
-                if (this._selected != value)
+                if ((this._selected != value) && (value >= -1) && (value < this.Values.Count()))
                 {
                     this._selected = value;
                     this.OnPropertyChanged("Selected");
@@ -109,6 +109,19 @@ namespace Aras.ViewModel.Properties
                 }
 
                 this.Selected = selected;
+
+                this.PropertyChanged += List_PropertyChanged;
+            }
+        }
+
+        void List_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (this.Binding != null)
+            {
+                if (e.PropertyName == "Selected")
+                {
+                    ((Model.Properties.VariableList)this.Binding).Selected = this.Selected;
+                }
             }
         }
 
