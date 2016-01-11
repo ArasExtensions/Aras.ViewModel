@@ -55,8 +55,13 @@
     <Compile Include="Props\String.cs" />
     <Compile Include="Props\Float.cs" />
     <Compile Include="Props\List.cs" />
+    <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Aras.Common\Aras.Logging\Aras.Logging.csproj">
+      <Project>{95ccb1e3-f2fa-423a-bae6-a5a3ec0cec94}</Project>
+      <Name>Aras.Logging</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Aras.Model\Aras.Model\Aras.Model.csproj">
       <Project>{e5b4196a-00d0-4de7-8104-487a7bc60784}</Project>
       <Name>Aras.Model</Name>

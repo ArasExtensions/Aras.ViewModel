@@ -115,6 +115,7 @@ namespace Aras.ViewModel.Properties
         }
 
         public ListValue()
+            :base()
         {
 
         }

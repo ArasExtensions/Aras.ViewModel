@@ -34,6 +34,7 @@ namespace Aras.ViewModel.Design.Debug
     {
         static void Main(string[] args)
         {
+            Logging.Console log = new Logging.Console();
             Model.Server server = new Model.Server("http://localhost/11SP1");
             Model.Database database = server.Database("VariantsDemo11SP1");
             database.LoadAssembly(Environment.CurrentDirectory + "\\Aras.Model.Design.dll");
@@ -49,10 +50,12 @@ namespace Aras.ViewModel.Design.Debug
 
             Model.Design.Order order = (Model.Design.Order)session.Query("v_Order", Aras.Conditions.Eq("item_number", "0002")).First();
 
+
             Order ordercontrol = new Order();
             ordercontrol.Binding = order;
             ((Properties.List)ordercontrol.Configuration.Rows[0].Cells[1].Value).Selected = 2;
             ordercontrol.Save.Execute();
+   
         }
     }
 }

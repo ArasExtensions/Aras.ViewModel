@@ -25,27 +25,43 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Aras.ViewModel
 {
-    public class ControlCache<I,C> : Dictionary<I,C> where I:Model.Item where C:Control
+    public static class Utilities
     {
-        public C Get(I Item)
+        public static String GuidToString(Guid Guid)
         {
-            if (!this.ContainsKey(Item))
+            byte[] bytes = Guid.ToByteArray();
+            StringBuilder result = new StringBuilder(bytes.Length * 2);
+
+            for (int i = 0; i < bytes.Length; i++)
             {
-                this[Item] = (C)Activator.CreateInstance(typeof(C), new object[] { });
+                result.Append(bytes[i].ToString("X2"));
             }
 
-            return this[Item];
+            return result.ToString();
         }
 
-        public ControlCache()
-            :base()
+        public static Guid StringToGuid(String String)
         {
-        }
+            if (String.IsNullOrEmpty(String))
+            {
+                return Guid.Empty;
+            }
+            else
+            {
+                byte[] bytes = new byte[String.Length / 2];
 
+                for (int i = 0; i < String.Length / 2; i++)
+                {
+                    bytes[i] = Convert.ToByte(String.Substring(i * 2, 2), 16);
+                }
+
+                return new Guid(bytes);
+            }
+        }
     }
 }
