@@ -64,6 +64,24 @@ namespace Aras.ViewModel
             }
         }
 
+        public void SetBinding(Model.Session Session, String Context)
+        {
+            Model.Item item = this.GetContext(Session, Context);
+
+            if (item.Locked(true))
+            {
+                Model.Transaction transaction = Session.BeginTransaction();
+                item.Update(transaction);
+            }
+
+            this.Binding = item;
+        }
+
+        protected virtual Model.Item GetContext(Model.Session Sesison, String ID)
+        {
+            throw new NotImplementedException();
+        }
+
         private Object _binding;
         public virtual Object Binding
         {

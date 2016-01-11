@@ -44,6 +44,20 @@ namespace Aras.ViewModel.Design
         [ViewModel.Attributes.Property("Configuration", Aras.ViewModel.Attributes.PropertyTypes.Control, true)]
         public ViewModel.Grid Configuration { get; private set; }
 
+        protected override Model.Item GetContext(Model.Session Sesison, string ID)
+        {
+            Model.Queries.Item query = Sesison.Query("v_Order", Aras.Conditions.Eq("id", ID));
+            
+            if (query.Count() == 1)
+            {
+                return query.First();
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         public override object Binding
         {
             get
