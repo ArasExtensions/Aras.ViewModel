@@ -115,6 +115,27 @@ namespace Aras.ViewModel.Manager
             return this.PluginCache[Name][Context];
         }
 
+        private Dictionary<String, Control> ApplicationCache;
+
+        public ViewModel.Control Application(String Name)
+        {
+            if (!this.ApplicationCache.ContainsKey(Name))
+            {
+                try
+                {
+                    Control application = (Control)Activator.CreateInstance(this.Database.Server.ControlType(Name), new object[] { });
+                    this.ApplicationCache[Name] = application;
+                    this.AddControlToCache(application);
+                }
+                catch (Exception e)
+                {
+                    this.Log.Add(Logging.Log.Levels.Error, "Failed to create Application: " + Name + " " + Environment.NewLine + e.Message);
+                }
+            }
+
+            return this.ApplicationCache[Name];
+        }
+
         private Dictionary<Guid, ViewModel.Control> ControlCache;
 
         private void AddControlToCache(ViewModel.Control Control)
@@ -273,7 +294,8 @@ namespace Aras.ViewModel.Manager
 
         internal Session(Database Database, Model.Session Model)
         {
-            this.PluginCache = new Dictionary<string, Dictionary<String, Control>>();
+            this.PluginCache = new Dictionary<String, Dictionary<String, Control>>();
+            this.ApplicationCache = new Dictionary<String, Control>();
             this.Database = Database;
             this.Model = Model;
             this.ControlCache = new Dictionary<Guid, ViewModel.Control>();

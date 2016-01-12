@@ -43,6 +43,7 @@
     <Compile Include="Attributes\Property.cs" />
     <Compile Include="ControlCache.cs" />
     <Compile Include="Cell.cs" />
+    <Compile Include="ObservableControlList.cs" />
     <Compile Include="Props\ListValue.cs" />
     <Compile Include="Row.cs" />
     <Compile Include="Command.cs" />

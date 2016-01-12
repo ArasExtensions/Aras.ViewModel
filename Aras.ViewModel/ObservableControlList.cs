@@ -28,55 +28,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Aras.ViewModel.Manager
+namespace Aras.ViewModel
 {
-    public class Database
+    public class ObservableControlList<T> : Model.ObservableList<T> where T : Control
     {
-        public Server Server { get; private set; }
-
-        public Logging.Log Log
+        public void Replace(IEnumerable<ViewModel.Control> Values)
         {
-            get
+            List<T> list = new List<T>();
+
+            foreach(ViewModel.Control control in Values)
             {
-                return this.Server.Log;
+                list.Add((T)control);
             }
-        }
 
-        public Model.Database Model { get; private set; }
-
-        public String ID
-        {
-            get
-            {
-                return this.Model.ID;
-            }
-        }
-
-        public String Name
-        {
-            get
-            {
-                return this.Model.Name;
-            }
-        }
-
-        public Session Login(String Username, String Password)
-        {
-            Model.Session modelsession = this.Model.Login(Username, Password);
-            Session session = new Session(this, modelsession);
-            this.Server.AddSessionToCache(session);
-            return session;
-        }
-
-        public override string ToString()
-        {
-            return this.Name;
-        }
-
-        internal Database(Server Server, Model.Database Model)
-        {
-            this.Server = Server;
-            this.Model = Model;
+            this.Replace(list);
         }
     }
 }
