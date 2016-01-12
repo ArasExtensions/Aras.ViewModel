@@ -127,16 +127,19 @@ namespace Aras.ViewModel.Manager
 
         private void LoadAssembly(FileInfo AssemblyFile)
         {
-            // Load Controls
-            Assembly assembly = Assembly.LoadFrom(AssemblyFile.FullName);
-
-            // Find all Controls
-
-            foreach (Type type in assembly.GetTypes())
+            if (AssemblyFile.Exists)
             {
-                if (type.IsSubclassOf(typeof(Control)) && !type.IsAbstract)
+                // Load Controls
+                Assembly assembly = Assembly.LoadFrom(AssemblyFile.FullName);
+
+                // Find all Controls
+
+                foreach (Type type in assembly.GetTypes())
                 {
-                    this.ControlCache[type.FullName] = type;
+                    if (type.IsSubclassOf(typeof(Control)) && !type.IsAbstract)
+                    {
+                        this.ControlCache[type.FullName] = type;
+                    }
                 }
             }
         }
