@@ -34,7 +34,7 @@ namespace Aras.ViewModel.Properties
     {
 
         private System.Double? _value;
-        [Attributes.Property("Value", Attributes.PropertyTypes.Float, true)]
+        [Attributes.Property("Value", Attributes.PropertyTypes.Float, false)]
         public System.Double? Value
         {
             get

@@ -46,20 +46,20 @@ namespace Aras.ViewModel
             }
         }
 
-        private Boolean _readOnly;
-        [Attributes.Property("ReadOnly", Attributes.PropertyTypes.Boolean, false)]
-        public Boolean ReadOnly
+        private Boolean _enabled;
+        [Attributes.Property("Enabled", Attributes.PropertyTypes.Boolean, true)]
+        public Boolean Enabled
         {
             get
             {
-                return this._readOnly;
+                return this._enabled;
             }
             set
             {
-                if (this._readOnly != value)
+                if (this._enabled != value)
                 {
-                    this._readOnly = value;
-                    this.OnPropertyChanged("ReadOnly");
+                    this._enabled = value;
+                    this.OnPropertyChanged("Enabled");
                 }
             }
         }
