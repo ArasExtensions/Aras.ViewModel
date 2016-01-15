@@ -101,6 +101,7 @@ namespace Aras.ViewModel.Properties
             if (this.Binding != null)
             {
                 this.Value = ((Model.ListValue)this.Binding).Value;
+                this.Label = ((Model.ListValue)this.Binding).Label;
             }
         }
 
@@ -110,7 +111,8 @@ namespace Aras.ViewModel.Properties
 
             if (this.Binding != null)
             {
-                this.Value = ((Model.ListValue)this.Binding).Label;
+                this.Value = null;
+                this.Label = null;
             }
         }
 

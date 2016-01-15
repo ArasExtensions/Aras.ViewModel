@@ -32,20 +32,31 @@ namespace Aras.ViewModel.Properties
 {
     public class List : Property
     {
-        private System.Int32 _selected;
-        [Attributes.Property("Selected", Attributes.PropertyTypes.Int32, false)]
-        public System.Int32 Selected
+        private System.String _value;
+        [Attributes.Property("Value", Attributes.PropertyTypes.String, false)]
+        public System.String Value
         {
             get
             {
-                return this._selected;
+                return this._value;
             }
             set
             {
-                if ((this._selected != value) && (value >= -1) && (value < this.Values.Count()))
+                if (value == null)
                 {
-                    this._selected = value;
-                    this.OnPropertyChanged("Selected");
+                    if (this._value != null)
+                    {
+                        this._value = null;
+                        this.OnPropertyChanged("Value");
+                    }
+                }
+                else
+                {
+                    if (!value.Equals(this._value))
+                    {
+                        this._value = value;
+                        this.OnPropertyChanged("Value");
+                    }
                 }
             }
         }
@@ -101,14 +112,19 @@ namespace Aras.ViewModel.Properties
 
                 this.Values.Clear();
 
+                int cnt = 0;
+
                 foreach(Model.ListValue modellistvalue in list.Relationships("Value"))
                 {
                     ListValue listvalue = new ListValue();
                     listvalue.Binding = modellistvalue;
                     this.Values.Add(listvalue);
-                }
 
-                this.Selected = selected;
+                    if (selected == cnt)
+                    {
+                        this.Value = listvalue.Value;
+                    }
+                }
 
                 this.PropertyChanged += List_PropertyChanged;
             }
@@ -120,7 +136,7 @@ namespace Aras.ViewModel.Properties
             {
                 if (e.PropertyName == "Selected")
                 {
-                    ((Model.Properties.VariableList)this.Binding).Selected = this.Selected;
+                    ((Model.Properties.VariableList)this.Binding).Value = this.Value;
                 }
             }
         }
@@ -139,7 +155,7 @@ namespace Aras.ViewModel.Properties
             :base()
         {
             this.Values = new Model.ObservableList<ListValue>();
-            this.Selected = -1;
+            this.Value = null;
         }
     }
 }
