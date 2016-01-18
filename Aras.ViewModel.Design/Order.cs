@@ -105,21 +105,15 @@ namespace Aras.ViewModel.Design
 
         private void UpdateBOMGrid()
         {
+            // Set No of Roes
+            this.BOM.NoRows = this.OrderModel.ConfiguredPart.Relationships("Part BOM").Count();
+
             // Update BOM Grid
             int cnt = 0;
 
             foreach (Model.Design.PartBOM partbom in this.OrderModel.ConfiguredPart.Relationships("Part BOM"))
             {
-                Row row = null;
-
-                if (this.BOM.Rows.Count() < (cnt + 1))
-                {
-                    row = this.BOM.AddRow();
-                }
-                else
-                {
-                    row = this.BOM.Rows[cnt];
-                }
+                Row row = this.BOM.Rows[cnt];
 
                 // Add Part Number
                 Properties.String numbercontrol = this.PartBOMNumberCache.Get(partbom);
@@ -143,25 +137,21 @@ namespace Aras.ViewModel.Design
 
                 cnt++;
             }
+
+            this.OnPropertyChanged("BOM");
         }
 
         private void UpdateConfigurationGrid()
         {
+            // Update number of Rows
+            this.Configuration.NoRows = this.OrderModel.Relationships("v_Order Context").Count();
+
             // Update Configuration Grid
             int cnt = 0;
 
             foreach (Model.Design.OrderContext ordercontext in this.OrderModel.Relationships("v_Order Context"))
             {
-                Row row = null;
-
-                if (this.Configuration.Rows.Count() < (cnt + 1))
-                {
-                    row = this.Configuration.AddRow();
-                }
-                else
-                {
-                    row = this.Configuration.Rows[cnt];
-                }
+                Row row = this.Configuration.Rows[cnt];
 
                 // Add Question
                 Properties.String questioncontrol = this.ConfigQuestionCache.Get(ordercontext);
@@ -180,6 +170,8 @@ namespace Aras.ViewModel.Design
 
                 cnt++;
             }
+
+            this.OnPropertyChanged("Configuration");
         }
 
         private Model.Transaction Transaction;

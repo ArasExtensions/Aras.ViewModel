@@ -47,7 +47,7 @@ namespace Aras.ViewModel
 
         private List<Row> RowCache;
 
-        public Row AddRow()
+        private Row AddRow()
         {
             if (this.RowCache.Count() > this.Rows.Count())
             {
@@ -67,11 +67,54 @@ namespace Aras.ViewModel
             }
         }
 
+        public System.Int32 NoRows
+        {
+            get
+            {
+                return this.Rows.Count();
+            }
+            set
+            {
+                if (value > -1)
+                {
+                    if (this.Rows.Count() > value)
+                    {
+                        this.Rows.RemoveRange(value, (this.Rows.Count() - value));
+                    }
+                    else if (this.Rows.Count() < value)
+                    {
+                        this.Rows.NotifyListChanged = false;
+
+                        Int32 notoadd = value - this.Rows.Count();
+                        
+                        for(int i=0; i<notoadd; i++)
+                        {
+                            this.AddRow();
+                        }
+
+                        this.Rows.NotifyListChanged = true;
+                    }
+                }
+            }
+        }
+
+        void Rows_ListChanged(object sender, EventArgs e)
+        {
+            this.OnPropertyChanged("Rows");
+        }
+
+        void Columns_ListChanged(object sender, EventArgs e)
+        {
+            this.OnPropertyChanged("Columns");
+        }
+
         public Grid()
             :base()
         {
             this.Columns = new Model.ObservableList<Column>();
+            this.Columns.ListChanged += Columns_ListChanged;
             this.Rows = new Model.ObservableList<Row>();
+            this.Rows.ListChanged += Rows_ListChanged;
             this.RowCache = new List<Row>();
         }
     }

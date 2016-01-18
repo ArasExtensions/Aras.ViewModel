@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{684C534E-DFEE-4A66-8355-94BCEAE34DAD}</ProjectGuid>
+    <ProjectGuid>{103CE8D0-A7EA-47B1-ADB3-4BE57C02DB18}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Aras.ViewModel</RootNamespace>
