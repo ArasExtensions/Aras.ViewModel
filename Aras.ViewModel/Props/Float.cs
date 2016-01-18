@@ -47,18 +47,27 @@ namespace Aras.ViewModel.Properties
                 {
                     if (value != null)
                     {
-                        this._value = value;
-                        this.OnPropertyChanged("Value");
+                        this.SetValue(value);
                     }
                 }
                 else
                 {
                     if (!this._value.Equals(value))
                     {
-                        this._value = value;
-                        this.OnPropertyChanged("Value");
+                        this.SetValue(value);     
                     }
                 }
+            }
+        }
+
+        private void SetValue(System.Double? Value)
+        {
+            this._value = Value;
+            this.OnPropertyChanged("Value");
+
+            if (this.Binding != null)
+            {
+                ((Model.Properties.Float)this.Binding).Value = this.Value;
             }
         }
 
@@ -95,48 +104,35 @@ namespace Aras.ViewModel.Properties
             if (this.Binding != null)
             {
                 this.Value = (System.Double?)((Model.Properties.Float)this.Binding).Value;
-                ((Model.Properties.Float)this.Binding).PropertyChanged += Model_PropertyChanged;
             }
         }
 
         protected override void BeforeBindingChanged()
         {
             base.BeforeBindingChanged();
+        }
+
+        protected override void Property_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            base.Property_PropertyChanged(sender, e);
 
             if (this.Binding != null)
             {
-                ((Model.Properties.Float)this.Binding).PropertyChanged -= Model_PropertyChanged;
-            }
-        }
-
-        void Model_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            switch(e.PropertyName)
-            {
-                case "Value":
-                    this.Value = (System.Double?)((Model.Properties.Float)this.Binding).Value;
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            switch(e.PropertyName)
-            {
-                case "Value":
-                    ((Model.Properties.Float)this.Binding).Value = this.Value;
-                    break;
-                default:
-                    break;
+                switch (e.PropertyName)
+                {
+                    case "Value":
+                        this.Value = (System.Double?)((Model.Properties.Float)this.Binding).Value;
+                        break;
+                    default:
+                        break;
+                }
             }
         }
 
         public Float()
             : base()
         {
-            this.PropertyChanged += ViewModel_PropertyChanged;
+         
         }
     }
 }

@@ -34,11 +34,10 @@ namespace Aras.ViewModel.Design.Debug
     {
         static void Main(string[] args)
         {
-            Logging.Console log = new Logging.Console();
-            Manager manager = new Manager("http://localhost/11SP1", log);
-            manager.LoadAssembly("Aras.Model.Design.dll");
-            Model.Database database = manager.Server.Database("VariantsDemo11SP1");
-            Model.Session session = manager.Login(database, "admin", Model.Server.PasswordHash("innovator"));
+            Model.Server server = new Model.Server("http://localhost/11SP1");
+            server.LoadAssembly("Aras.Model.Design");
+            Model.Database database = server.Database("VariantsDemo11SP1");
+            Model.Session session = database.Login("admin", Model.Server.PasswordHash("innovator"));
 
             session.ItemType("v_Order").AddToSelect("keyed_name,item_number,name,part,locked_by_id,configured_part");
             session.ItemType("v_Order Context").AddToSelect("quantity");
@@ -52,7 +51,7 @@ namespace Aras.ViewModel.Design.Debug
 
             Order ordercontrol = new Order();
             ordercontrol.Binding = order;
-            ((Properties.List)ordercontrol.Configuration.Rows[0].Cells[1].Value).Selected = 0;
+            ((Properties.List)ordercontrol.Configuration.Rows[0].Cells[1].Value).Value = "Gas";
             ordercontrol.Save.Execute();
    
         }

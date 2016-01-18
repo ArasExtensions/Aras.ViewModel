@@ -97,7 +97,7 @@ namespace Aras.ViewModel
             }
         }
 
-        void Property_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        protected virtual void Property_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
             {

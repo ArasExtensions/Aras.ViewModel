@@ -95,7 +95,7 @@ namespace Aras.ViewModel.Design
         private ControlCache<Model.Design.PartBOM, Properties.String> PartBOMNameCache;
         private ControlCache<Model.Design.PartBOM, Properties.Float> PartBOMQuantityCache;
 
-        private Model.Design.Order OrdeModel
+        private Model.Design.Order OrderModel
         {
             get
             {
@@ -108,7 +108,7 @@ namespace Aras.ViewModel.Design
             // Update BOM Grid
             int cnt = 0;
 
-            foreach (Model.Design.PartBOM partbom in this.OrdeModel.ConfiguredPart.Relationships("Part BOM"))
+            foreach (Model.Design.PartBOM partbom in this.OrderModel.ConfiguredPart.Relationships("Part BOM"))
             {
                 Row row = null;
 
@@ -150,7 +150,7 @@ namespace Aras.ViewModel.Design
             // Update Configuration Grid
             int cnt = 0;
 
-            foreach (Model.Design.OrderContext ordercontext in this.OrdeModel.Relationships("v_Order Context"))
+            foreach (Model.Design.OrderContext ordercontext in this.OrderModel.Relationships("v_Order Context"))
             {
                 Row row = null;
 
@@ -191,16 +191,16 @@ namespace Aras.ViewModel.Design
             if (this.Binding != null)
             {
                 // Create Transaction if Order Locked
-                if (this.OrdeModel.Locked(true))
+                if (this.OrderModel.Locked(true))
                 {
-                    if (this.OrdeModel.Transaction == null)
+                    if (this.OrderModel.Transaction == null)
                     {
-                        this.Transaction = this.OrdeModel.Session.BeginTransaction();
-                        this.OrdeModel.Update(this.Transaction);
+                        this.Transaction = this.OrderModel.Session.BeginTransaction();
+                        this.OrderModel.Update(this.Transaction);
                     }
                     else
                     {
-                        this.Transaction = this.OrdeModel.Transaction;
+                        this.Transaction = this.OrderModel.Transaction;
                     }
 
                     this.Save.UpdateCanExecute(true);
@@ -215,8 +215,8 @@ namespace Aras.ViewModel.Design
                 this.UpdateBOMGrid();
 
                 // Add Event Handlers
-                this.OrdeModel.Relationships("v_Order Context").QueryChanged += OrderContext_QueryChanged;
-                this.OrdeModel.ConfiguredPart.Relationships("Part BOM").QueryChanged += ConfiguredPart_QueryChanged;
+                this.OrderModel.Relationships("v_Order Context").QueryChanged += OrderContext_QueryChanged;
+                this.OrderModel.ConfiguredPart.Relationships("Part BOM").QueryChanged += ConfiguredPart_QueryChanged;
             }
         }
 
@@ -245,8 +245,8 @@ namespace Aras.ViewModel.Design
                 }
 
                 // Remove Event Handlers
-                this.OrdeModel.Relationships("v_Order Context").QueryChanged -= OrderContext_QueryChanged;
-                this.OrdeModel.ConfiguredPart.Relationships("Part BOM").QueryChanged -= ConfiguredPart_QueryChanged;
+                this.OrderModel.Relationships("v_Order Context").QueryChanged -= OrderContext_QueryChanged;
+                this.OrderModel.ConfiguredPart.Relationships("Part BOM").QueryChanged -= ConfiguredPart_QueryChanged;
 
                 // Clear Grids
                 this.Configuration.Rows.Clear();
@@ -287,7 +287,7 @@ namespace Aras.ViewModel.Design
 
             protected override bool Run(object parameter)
             {
-                this.Order.OrdeModel.Refresh();
+                this.Order.OrderModel.Refresh();
                 return true;
             }
 
@@ -312,11 +312,11 @@ namespace Aras.ViewModel.Design
                 if (this.Order.Transaction != null)
                 {
                     // Committ current transaction
-                    this.Order.OrdeModel.Transaction.Commit();
+                    this.Order.OrderModel.Transaction.Commit();
 
                     // Create new Transaction
-                    this.Order.Transaction = this.Order.OrdeModel.Session.BeginTransaction();
-                    this.Order.OrdeModel.Update(this.Order.Transaction);
+                    this.Order.Transaction = this.Order.OrderModel.Session.BeginTransaction();
+                    this.Order.OrderModel.Update(this.Order.Transaction);
                 }
 
                 return true;

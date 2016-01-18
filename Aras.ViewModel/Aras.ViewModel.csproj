@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{103CE8D0-A7EA-47B1-ADB3-4BE57C02DB18}</ProjectGuid>
+    <ProjectGuid>{684C534E-DFEE-4A66-8355-94BCEAE34DAD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Aras.ViewModel</RootNamespace>
@@ -59,10 +59,6 @@
     <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Aras.Common\Aras.Logging\Aras.Logging.csproj">
-      <Project>{95ccb1e3-f2fa-423a-bae6-a5a3ec0cec94}</Project>
-      <Name>Aras.Logging</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Aras.Model\Aras.Model\Aras.Model.csproj">
       <Project>{e5b4196a-00d0-4de7-8104-487a7bc60784}</Project>
       <Name>Aras.Model</Name>

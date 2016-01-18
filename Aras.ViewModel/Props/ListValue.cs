@@ -116,6 +116,11 @@ namespace Aras.ViewModel.Properties
             }
         }
 
+        public override string ToString()
+        {
+            return this.Value;
+        }
+
         public ListValue()
             :base()
         {

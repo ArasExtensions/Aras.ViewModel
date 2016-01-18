@@ -104,6 +104,24 @@ namespace Aras.ViewModel.Properties
             }
         }
 
+        private void SetValue(System.String Value)
+        {
+            if (Value == null || Value.Length <= this.Length)
+            {
+                this._value = Value;
+                this.OnPropertyChanged("Value");
+
+                if (this.Binding != null)
+                {
+                    ((Model.Properties.String)this.Binding).Value = this.Value;
+                }
+            }
+            else
+            {
+                throw new ArgumentException("Length must be no greater than " + this.Length.ToString());
+            }
+        }
+
         public override object Binding
         {
             get
@@ -135,45 +153,31 @@ namespace Aras.ViewModel.Properties
             base.AfterBindingChanged();
 
             if (this.Binding != null)
-            {
-                
+            {     
                 this.Length = ((Model.Properties.String)this.Binding).Length;
                 this.Value = (System.String)((Model.Properties.String)this.Binding).Value;
-                ((Model.Properties.String)this.Binding).PropertyChanged += Model_PropertyChanged;
             }
         }
 
         protected override void BeforeBindingChanged()
         {
             base.BeforeBindingChanged();
+        }
+
+        protected override void Property_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            base.Property_PropertyChanged(sender, e);
 
             if (this.Binding != null)
             {
-                ((Model.Properties.String)this.Binding).PropertyChanged -= Model_PropertyChanged;
-            }
-        }
-
-        void Model_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            switch (e.PropertyName)
-            {
-                case "Value":
-                    this.Value = (System.String)((Model.Properties.String)this.Binding).Value;
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            switch (e.PropertyName)
-            {
-                case "Value":
-                    ((Model.Properties.String)this.Binding).Value = this.Value;
-                    break;
-                default:
-                    break;
+                switch (e.PropertyName)
+                {
+                    case "Value":
+                        this.Value = (System.String)((Model.Properties.String)this.Binding).Value;
+                        break;
+                    default:
+                        break;
+                }
             }
         }
 
@@ -181,7 +185,6 @@ namespace Aras.ViewModel.Properties
             : base()
         {
             this._length = DefaultLength;
-            this.PropertyChanged += ViewModel_PropertyChanged;
         }
     }
 }
