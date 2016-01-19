@@ -131,21 +131,25 @@ namespace Aras.ViewModel.Design
                     Properties.String numbercontrol = this.PartBOMNumberCache.Get(partbom);
                     numbercontrol.Binding = partbom.Related.Property("item_number");
                     row.Cells[0].Value = numbercontrol;
+                    numbercontrol.Enabled = false;
 
                     // Add Part Revision
                     Properties.String revisioncontrol = this.PartBOMRevisionCache.Get(partbom);
                     revisioncontrol.Binding = partbom.Related.Property("major_rev");
                     row.Cells[1].Value = revisioncontrol;
+                    revisioncontrol.Enabled = false;
 
                     // Add Part Name
                     Properties.String namecontrol = this.PartBOMNameCache.Get(partbom);
                     namecontrol.Binding = partbom.Related.Property("name");
                     row.Cells[2].Value = namecontrol;
+                    namecontrol.Enabled = false;
 
                     // Add Quantity
                     Properties.Float quantitycontrol = this.PartBOMQuantityCache.Get(partbom);
                     quantitycontrol.Binding = partbom.Property("quantity");
                     row.Cells[3].Value = quantitycontrol;
+                    quantitycontrol.Enabled = false;
 
                     cnt++;
                 }

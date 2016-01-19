@@ -83,7 +83,7 @@ namespace Aras.ViewModel
             if (this.Binding != null)
             {
                 ((Model.Property)this.Binding).PropertyChanged += Property_PropertyChanged;
-                this.Enabled = ((Model.Property)this.Binding).ReadOnly;
+                this.Enabled = !((Model.Property)this.Binding).ReadOnly;
             }
         }
 
@@ -102,7 +102,7 @@ namespace Aras.ViewModel
             switch (e.PropertyName)
             {
                 case "ReadOnly":
-                    this.Enabled = ((Model.Property)sender).ReadOnly;
+                    this.Enabled = !((Model.Property)sender).ReadOnly;
                     break;
                 default:
                     break;
