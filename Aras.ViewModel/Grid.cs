@@ -53,7 +53,6 @@ namespace Aras.ViewModel
             {
                 // Use Row from Cache and clear values
                 Row row = this.RowCache[this.Rows.Count()];
-                row.ClearCellValues();
                 this.Rows.Add(row);
                 return row;
             }

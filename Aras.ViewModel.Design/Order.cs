@@ -105,37 +105,50 @@ namespace Aras.ViewModel.Design
 
         private void UpdateBOMGrid()
         {
-            // Set No of Roes
-            this.BOM.NoRows = this.OrderModel.ConfiguredPart.Relationships("Part BOM").Count();
+            // Set No of Rows
+            int cnt = 0;
+
+            foreach (Model.Design.PartBOM partbom in this.OrderModel.ConfiguredPart.Relationships("Part BOM"))
+            {
+                if (partbom.Action != Model.Item.Actions.Deleted)
+                {
+                    cnt++;
+                }
+            }
+
+            this.BOM.NoRows = cnt;
 
             // Update BOM Grid
-            int cnt = 0;
+            cnt = 0;
 
             foreach (Model.Design.PartBOM partbom in this.OrderModel.ConfiguredPart.Relationships("Part BOM"))
             {
                 Row row = this.BOM.Rows[cnt];
 
-                // Add Part Number
-                Properties.String numbercontrol = this.PartBOMNumberCache.Get(partbom);
-                numbercontrol.Binding = partbom.Related.Property("item_number");
-                row.Cells[0].Value = numbercontrol;
+                if (partbom.Action != Model.Item.Actions.Deleted)
+                {
+                    // Add Part Number
+                    Properties.String numbercontrol = this.PartBOMNumberCache.Get(partbom);
+                    numbercontrol.Binding = partbom.Related.Property("item_number");
+                    row.Cells[0].Value = numbercontrol;
 
-                // Add Part Revision
-                Properties.String revisioncontrol = this.PartBOMRevisionCache.Get(partbom);
-                revisioncontrol.Binding = partbom.Related.Property("major_rev");
-                row.Cells[1].Value = revisioncontrol;
+                    // Add Part Revision
+                    Properties.String revisioncontrol = this.PartBOMRevisionCache.Get(partbom);
+                    revisioncontrol.Binding = partbom.Related.Property("major_rev");
+                    row.Cells[1].Value = revisioncontrol;
 
-                // Add Part Name
-                Properties.String namecontrol = this.PartBOMNameCache.Get(partbom);
-                namecontrol.Binding = partbom.Related.Property("name");
-                row.Cells[2].Value = namecontrol;
+                    // Add Part Name
+                    Properties.String namecontrol = this.PartBOMNameCache.Get(partbom);
+                    namecontrol.Binding = partbom.Related.Property("name");
+                    row.Cells[2].Value = namecontrol;
 
-                // Add Quantity
-                Properties.Float quantitycontrol = this.PartBOMQuantityCache.Get(partbom);
-                quantitycontrol.Binding = partbom.Property("quantity");
-                row.Cells[3].Value = quantitycontrol;
+                    // Add Quantity
+                    Properties.Float quantitycontrol = this.PartBOMQuantityCache.Get(partbom);
+                    quantitycontrol.Binding = partbom.Property("quantity");
+                    row.Cells[3].Value = quantitycontrol;
 
-                cnt++;
+                    cnt++;
+                }
             }
 
             this.OnPropertyChanged("BOM");

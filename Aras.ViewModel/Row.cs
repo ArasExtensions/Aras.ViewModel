@@ -60,14 +60,6 @@ namespace Aras.ViewModel
             }
         }
 
-        internal void ClearCellValues()
-        {
-            foreach(Cell cell in this.Cells)
-            {
-                cell.Value = null;
-            }
-        }
-
         void Columns_ListChanged(object sender, EventArgs e)
         {
             this.UpdateCells();
