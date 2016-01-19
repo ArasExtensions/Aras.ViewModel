@@ -123,10 +123,10 @@ namespace Aras.ViewModel.Design
 
             foreach (Model.Design.PartBOM partbom in this.OrderModel.ConfiguredPart.Relationships("Part BOM"))
             {
-                Row row = this.BOM.Rows[cnt];
-
                 if (partbom.Action != Model.Item.Actions.Deleted)
                 {
+                    Row row = this.BOM.Rows[cnt];
+
                     // Add Part Number
                     Properties.String numbercontrol = this.PartBOMNumberCache.Get(partbom);
                     numbercontrol.Binding = partbom.Related.Property("item_number");
@@ -220,14 +220,21 @@ namespace Aras.ViewModel.Design
                 this.UpdateBOMGrid();
 
                 // Add Event Handlers
+                this.OrderModel.PropertyChanged += OrderModel_PropertyChanged;
                 this.OrderModel.Relationships("v_Order Context").QueryChanged += OrderContext_QueryChanged;
-                this.OrderModel.ConfiguredPart.Relationships("Part BOM").QueryChanged += ConfiguredPart_QueryChanged;
             }
         }
 
-        void ConfiguredPart_QueryChanged(object sender, EventArgs e)
+        void OrderModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            this.UpdateBOMGrid();
+            switch(e.PropertyName)
+            {
+                case "ConfiguredPart":
+                    this.UpdateBOMGrid();
+                    break;
+                default:
+                    break;
+            }
         }
 
         void OrderContext_QueryChanged(object sender, EventArgs e)
@@ -251,7 +258,7 @@ namespace Aras.ViewModel.Design
 
                 // Remove Event Handlers
                 this.OrderModel.Relationships("v_Order Context").QueryChanged -= OrderContext_QueryChanged;
-                this.OrderModel.ConfiguredPart.Relationships("Part BOM").QueryChanged -= ConfiguredPart_QueryChanged;
+                this.OrderModel.PropertyChanged -= OrderModel_PropertyChanged;
 
                 // Clear Grids
                 this.Configuration.Rows.Clear();

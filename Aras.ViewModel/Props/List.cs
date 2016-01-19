@@ -184,7 +184,7 @@ namespace Aras.ViewModel.Properties
 
             if (this.Binding != null)
             {
-                if (e.PropertyName == "Selected")
+                if (e.PropertyName.Equals("Selected") || e.PropertyName.Equals("Value"))
                 {
                     if (this.Binding is Model.Properties.VariableList)
                     {

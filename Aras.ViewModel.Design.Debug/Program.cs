@@ -32,6 +32,16 @@ namespace Aras.ViewModel.Design.Debug
 {
     class Program
     {
+        static void OutputOrder(Order Order)
+        {
+            foreach(Row row in Order.BOM.Rows)
+            {
+                System.Console.WriteLine(((Properties.String)row.Cells[2].Value).Value);
+            }
+
+            System.Console.WriteLine();
+        }
+
         static void Main(string[] args)
         {
             Model.Server server = new Model.Server("http://localhost/11SP1");
@@ -51,8 +61,29 @@ namespace Aras.ViewModel.Design.Debug
 
             Order ordercontrol = new Order();
             ordercontrol.Binding = order;
-            ((Properties.List)ordercontrol.Configuration.Rows[0].Cells[1].Value).Value = "Gas";
-            ordercontrol.Save.Execute();
+
+            OutputOrder(ordercontrol);
+            System.Threading.Thread.Sleep(1000);
+
+            while (true)
+            {
+                ((Properties.List)ordercontrol.Configuration.Rows[0].Cells[1].Value).Value = "Gas";
+                OutputOrder(ordercontrol);
+                System.Threading.Thread.Sleep(1000);
+
+                ((Properties.List)ordercontrol.Configuration.Rows[0].Cells[1].Value).Value = "Diesel";
+                OutputOrder(ordercontrol);
+                System.Threading.Thread.Sleep(1000);
+
+                ((Properties.List)ordercontrol.Configuration.Rows[0].Cells[1].Value).Value = "Electric";
+                OutputOrder(ordercontrol);
+                System.Threading.Thread.Sleep(1000);
+            }
+            
+            
+            
+            
+            // ordercontrol.Save.Execute();
    
         }
     }
