@@ -141,7 +141,7 @@ namespace Aras.ViewModel.Design
 
                     // Add Part Name
                     Properties.String namecontrol = this.PartBOMNameCache.Get(partbom);
-                    namecontrol.Binding = partbom.Related.Property("name");
+                    namecontrol.Binding = partbom.Related.Property("cmb_name");
                     row.Cells[2].Value = namecontrol;
                     namecontrol.Enabled = false;
 
@@ -180,10 +180,20 @@ namespace Aras.ViewModel.Design
                 valuecontrol.Binding = ordercontext.Property("value_list");
                 row.Cells[1].Value = valuecontrol;
 
+                if (ordercontext.VariantContext.IsMethod)
+                {
+                    valuecontrol.Enabled = false;
+                }
+
                 // Add Quantity
                 Properties.Float quantitycontrol = this.ConfigQuantityCache.Get(ordercontext);
                 quantitycontrol.Binding = ordercontext.Property("quantity");
                 row.Cells[2].Value = quantitycontrol;
+
+                if (ordercontext.VariantContext.IsMethod)
+                {
+                    quantitycontrol.Enabled = false;
+                }
 
                 cnt++;
             }
