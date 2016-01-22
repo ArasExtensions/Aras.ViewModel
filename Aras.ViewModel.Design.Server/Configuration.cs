@@ -75,7 +75,7 @@ namespace Aras.ViewModel.Design.Server
             get
             {
                 Double ret = 0.0;
-                Double.TryParse(this.Item.getProperty("cmb_quantity"), out ret);
+                Double.TryParse(this.Item.getProperty("quantity"), out ret);
                 return ret;
             }
         }
