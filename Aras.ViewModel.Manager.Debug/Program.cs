@@ -35,18 +35,19 @@ namespace Aras.ViewModel.Manager.Debug
         static void Main(string[] args)
         {
             Logging.Console log = new Logging.Console();
-            Server server = new Server("http://localhost/11SP1", log);
+            Server server = new Server("http://localhost/InnovatorServer10SP4", log);
             server.LoadAssembly("Aras.Model.Design");
             server.LoadAssembly("Aras.ViewModel.Design");
-            Database database = server.Database("VariantsDemo11SP1");
+            Database database = server.Database("CMB");
             Session session = database.Login("admin", Model.Server.PasswordHash("innovator"));
 
-            ViewModel.Design.Order order = (ViewModel.Design.Order)session.Plugin("Aras.ViewModel.Design.Order", "AF665CB5BFCD4E3B8E01A2B7686CC088");
-            String test1 = ((ViewModel.Properties.String)order.BOM.Rows[6].Cells[2].Value).Value;
-            Cell cell = order.Configuration.Rows[0].Cells[1];
-            ViewModel.Properties.List list = (ViewModel.Properties.List)cell.Value;
-            list.Value = list.Values[2].Value;
-            String test2 = ((ViewModel.Properties.String)order.BOM.Rows[6].Cells[2].Value).Value;
+            ViewModel.Design.Order order = (ViewModel.Design.Order)session.Plugin("Aras.ViewModel.Design.Order", "B4F27233C77C4E768D85984CCD5C4CBA");
+            order.Refresh.Execute();
+            //String test1 = ((ViewModel.Properties.String)order.BOM.Rows[6].Cells[2].Value).Value;
+            //Cell cell = order.Configuration.Rows[0].Cells[1];
+            //ViewModel.Properties.List list = (ViewModel.Properties.List)cell.Value;
+            //list.Value = list.Values[2].Value;
+            //String test2 = ((ViewModel.Properties.String)order.BOM.Rows[6].Cells[2].Value).Value;
 
 
         }

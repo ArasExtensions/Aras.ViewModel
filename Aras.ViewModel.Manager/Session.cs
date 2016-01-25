@@ -109,6 +109,7 @@ namespace Aras.ViewModel.Manager
                 catch (Exception e)
                 {
                     this.Log.Add(Logging.Log.Levels.Error, "Failed to create Plugin: " + Name + "/" + Context + Environment.NewLine + e.Message);
+                    this.Log.Add(Logging.Log.Levels.Debug, "Failed to create Plugin: " + Name + "/" + Context + Environment.NewLine + e.Message + Environment.NewLine + e.StackTrace);
                 }
             }
 
