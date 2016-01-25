@@ -180,9 +180,13 @@ namespace Aras.ViewModel.Design
                 valuecontrol.Binding = ordercontext.Property("value_list");
                 row.Cells[1].Value = valuecontrol;
 
-                if (ordercontext.VariantContext.IsMethod)
+                if (ordercontext.VariantContext.IsMethod || !this.OrderModel.Locked(false))
                 {
                     valuecontrol.Enabled = false;
+                }
+                else
+                {
+                    valuecontrol.Enabled = true;
                 }
 
                 // Add Quantity
@@ -190,9 +194,13 @@ namespace Aras.ViewModel.Design
                 quantitycontrol.Binding = ordercontext.Property("quantity");
                 row.Cells[2].Value = quantitycontrol;
 
-                if (ordercontext.VariantContext.IsMethod)
+                if (ordercontext.VariantContext.IsMethod || !this.OrderModel.Locked(false))
                 {
                     quantitycontrol.Enabled = false;
+                }
+                else
+                {
+                    quantitycontrol.Enabled = true;
                 }
 
                 cnt++;
@@ -209,29 +217,7 @@ namespace Aras.ViewModel.Design
 
             if (this.Binding != null)
             {
-                // Create Transaction if Order Locked
-                if (this.OrderModel.Locked(true))
-                {
-                    if (this.OrderModel.Transaction == null)
-                    {
-                        this.Transaction = this.OrderModel.Session.BeginTransaction();
-                        this.OrderModel.Update(this.Transaction);
-                    }
-                    else
-                    {
-                        this.Transaction = this.OrderModel.Transaction;
-                    }
-
-                    this.Save.UpdateCanExecute(true);
-                }
-                else
-                {
-                    this.Save.UpdateCanExecute(false);
-                }
-
-                // Update Grids
-                this.UpdateConfigurationGrid();
-                this.UpdateBOMGrid();
+                this.Update();
 
                 // Add Event Handlers
                 this.OrderModel.PropertyChanged += OrderModel_PropertyChanged;
@@ -280,6 +266,35 @@ namespace Aras.ViewModel.Design
             }
         }
 
+        private void Update()
+        {
+            this.OrderModel.Refresh();
+
+            // Create Transaction if Order Locked
+            if (this.OrderModel.Locked(true))
+            {
+                if (this.OrderModel.Transaction == null)
+                {
+                    this.Transaction = this.OrderModel.Session.BeginTransaction();
+                    this.OrderModel.Update(this.Transaction);
+                }
+                else
+                {
+                    this.Transaction = this.OrderModel.Transaction;
+                }
+
+                this.Save.UpdateCanExecute(true);
+            }
+            else
+            {
+                this.Save.UpdateCanExecute(false);
+            }
+
+            // Update Grids
+            this.UpdateConfigurationGrid();
+            this.UpdateBOMGrid();
+        }
+
         public Order()
             :base()
         {
@@ -313,7 +328,7 @@ namespace Aras.ViewModel.Design
 
             protected override bool Run(object parameter)
             {
-                this.Order.OrderModel.Refresh();
+                this.Order.Update();
                 return true;
             }
 
