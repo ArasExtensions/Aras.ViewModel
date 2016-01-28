@@ -179,7 +179,16 @@ namespace Aras.ViewModel.Design
 
                 // Add Question
                 Properties.String questioncontrol = this.ConfigQuestionCache.Get(ordercontext);
-                questioncontrol.Binding = ordercontext.VariantContext.Property("question");
+
+                if (!String.IsNullOrEmpty((String)ordercontext.VariantContext.Property("question").Value))
+                {
+                    questioncontrol.Binding = ordercontext.VariantContext.Property("question");
+                }
+                else
+                {
+                    questioncontrol.Binding = ordercontext.VariantContext.Property("name");
+                }
+
                 row.Cells[0].Value = questioncontrol;
                 
                 // Add Values
