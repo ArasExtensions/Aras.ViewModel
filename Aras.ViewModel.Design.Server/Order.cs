@@ -97,7 +97,7 @@ namespace Aras.ViewModel.Design.Server
         {
             get
             {
-                // The Active Configuration if always the firt in the list
+                // The Active Configuration if always the first in the list
                 return this.ConfigurationsCache.First();
             }
         }
