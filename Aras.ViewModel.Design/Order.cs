@@ -333,8 +333,8 @@ namespace Aras.ViewModel.Design
             this.BOM.AddColumn("quantity", "Qty");
 
             this.Configuration = new Grid();
-            this.Configuration.AddColumn("rule", "Rule");
-            this.Configuration.AddColumn("value", "Value");
+            this.Configuration.AddColumn("rule", "Item");
+            this.Configuration.AddColumn("value", "Required");
             this.Configuration.AddColumn("quantity", "Qty");
         }
 
