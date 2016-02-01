@@ -44,15 +44,13 @@ namespace Aras.ViewModel.Design
         [ViewModel.Attributes.Property("Configuration", Aras.ViewModel.Attributes.PropertyTypes.Control, true)]
         public ViewModel.Grid Configuration { get; private set; }
 
-        protected override Model.Item GetContext(Model.Session Sesison, string ID)
+        protected override Model.Item GetContext(Model.Session Sesison, String ID)
         {
-            Model.Queries.Item query = Sesison.Query("v_Order", Aras.Conditions.Eq("id", ID));
-            
-            if (query.Count() == 1)
+            try
             {
-                return query.First();
+                return Sesison.Store("v_Order").Get(ID);
             }
-            else
+            catch (Exception)
             {
                 return null;
             }
@@ -110,7 +108,7 @@ namespace Aras.ViewModel.Design
                 // Set No of Rows
                 int cnt = 0;
 
-                foreach (Model.Design.PartBOM partbom in this.OrderModel.ConfiguredPart.Relationships("Part BOM"))
+                foreach (Model.Design.PartBOM partbom in this.OrderModel.ConfiguredPart.Store("Part BOM"))
                 {
                     if (partbom.Action != Model.Item.Actions.Deleted)
                     {
@@ -123,7 +121,7 @@ namespace Aras.ViewModel.Design
                 // Update BOM Grid
                 cnt = 0;
 
-                foreach (Model.Design.PartBOM partbom in this.OrderModel.ConfiguredPart.Relationships("Part BOM"))
+                foreach (Model.Design.PartBOM partbom in this.OrderModel.ConfiguredPart.Store("Part BOM"))
                 {
                     if (partbom.Action != Model.Item.Actions.Deleted)
                     {
@@ -168,12 +166,12 @@ namespace Aras.ViewModel.Design
         private void UpdateConfigurationGrid()
         {
             // Update number of Rows
-            this.Configuration.NoRows = this.OrderModel.Relationships("v_Order Context").Count();
+            this.Configuration.NoRows = this.OrderModel.Store("v_Order Context").Count();
 
             // Update Configuration Grid
             int cnt = 0;
 
-            foreach (Model.Design.OrderContext ordercontext in this.OrderModel.Relationships("v_Order Context"))
+            foreach (Model.Design.OrderContext ordercontext in this.OrderModel.Store("v_Order Context"))
             {
                 Row row = this.Configuration.Rows[cnt];
 
@@ -237,8 +235,13 @@ namespace Aras.ViewModel.Design
 
                 // Add Event Handlers
                 this.OrderModel.PropertyChanged += OrderModel_PropertyChanged;
-                this.OrderModel.Relationships("v_Order Context").QueryChanged += OrderContext_QueryChanged;
+                this.OrderModel.Store("v_Order Context").StoreChanged += OrderContext_StoreChanged;
             }
+        }
+
+        void OrderContext_StoreChanged(object sender, EventArgs e)
+        {
+            this.UpdateConfigurationGrid();
         }
 
         void OrderModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -251,11 +254,6 @@ namespace Aras.ViewModel.Design
                 default:
                     break;
             }
-        }
-
-        void OrderContext_QueryChanged(object sender, EventArgs e)
-        {
-            this.UpdateConfigurationGrid();
         }
 
         protected override void BeforeBindingChanged()
@@ -273,7 +271,7 @@ namespace Aras.ViewModel.Design
                 }
 
                 // Remove Event Handlers
-                this.OrderModel.Relationships("v_Order Context").QueryChanged -= OrderContext_QueryChanged;
+                this.OrderModel.Store("v_Order Context").StoreChanged -= OrderContext_StoreChanged;
                 this.OrderModel.PropertyChanged -= OrderModel_PropertyChanged;
 
                 // Clear Grids

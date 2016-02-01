@@ -74,7 +74,7 @@ namespace Aras.ViewModel.Properties
                     }
                     else
                     {
-                        foreach(Model.ListValue listvalue in ((Model.Properties.List)this.Binding).Values.Relationships("Value"))
+                        foreach(Model.ListValue listvalue in ((Model.Properties.List)this.Binding).Values.Store("Value"))
                         {
                             if (listvalue.Value.Equals(Value))
                             {
@@ -92,7 +92,7 @@ namespace Aras.ViewModel.Properties
                     }
                     else
                     {
-                        foreach (Model.ListValue listvalue in ((Model.Properties.VariableList)this.Binding).Values.Relationships("Value"))
+                        foreach (Model.ListValue listvalue in ((Model.Properties.VariableList)this.Binding).Values.Store("Value"))
                         {
                             if (listvalue.Value.Equals(Value))
                             {
@@ -160,7 +160,7 @@ namespace Aras.ViewModel.Properties
 
                 this.Values.NotifyListChanged = false;
 
-                foreach(Model.ListValue modellistvalue in list.Relationships("Value"))
+                foreach(Model.ListValue modellistvalue in list.Store("Value"))
                 {
                     ListValue listvalue = new ListValue();
                     listvalue.Binding = modellistvalue;
