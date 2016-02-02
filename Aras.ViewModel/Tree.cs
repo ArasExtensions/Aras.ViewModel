@@ -28,33 +28,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Aras.ViewModel.Design.Debug
+namespace Aras.ViewModel
 {
-    class Program
+    public abstract class Tree : Control
     {
-        static void OutputOrder(Order Order)
+        public TreeNode Node { get; set; }
+
+        public Tree()
+            :base()
         {
-            foreach(Row row in Order.BOM.Rows)
-            {
-                System.Console.WriteLine(((Properties.String)row.Cells[2].Value).Value);
-            }
 
-            System.Console.WriteLine();
-        }
-
-        static void Main(string[] args)
-        {
-            Model.Server server = new Model.Server("http://localhost/11SP1");
-            server.LoadAssembly("Aras.Model.Design");
-            server.LoadAssembly("Aras.ViewModel.Design");
-            Model.Database database = server.Database("VariantsDemo11SP1");
-            Model.Session session = database.Login("admin", Model.Server.PasswordHash("innovator"));
-
-            session.ItemType("Part").AddToSelect("item_number,major_rev,name");
-            session.ItemType("Part BOM").AddToSelect("quantity");
-
-            Model.Design.Part toplevel = (Model.Design.Part)session.Store("Part").Query(Aras.Conditions.Eq("item_number", "DX-0000000001")).First();
-   
         }
     }
 }

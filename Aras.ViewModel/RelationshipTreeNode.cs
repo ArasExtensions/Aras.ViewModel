@@ -30,53 +30,56 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel
 {
-    public class Row : Control
+    public class RelationshipTreeNode : TreeNode
     {
-        public Grid Grid { get; private set; }
-
-        [ViewModel.Attributes.Property("Cells", Aras.ViewModel.Attributes.PropertyTypes.ControlList, true)]
-        public Model.ObservableList<Cell> Cells { get; private set; }
-
-        private void UpdateCells()
+        public RelationshipTree RelationshipTree
         {
-            for (int i = 0; i < this.Grid.Columns.Count(); i++)
+            get
             {
-                if (i == this.Cells.Count())
+                return (RelationshipTree)this.Tree;
+            }
+        }
+
+        protected override void LoadChildren()
+        {
+            base.LoadChildren();
+
+
+        }
+
+        protected override void AfterBindingChanged()
+        {
+            base.AfterBindingChanged();
+
+            if (this.Binding != null)
+            {
+                if (this.Binding is Model.Item)
                 {
-                    this.Cells.Add(new Cell(this.Grid.Columns[i], this));
+                    this.SetNameFromBinding();
                 }
                 else
                 {
-                    if (!this.Cells[i].Column.Equals(this.Grid.Columns[i]))
-                    {
-                        this.Cells[i] = new Cell(this.Grid.Columns[i], this);
-                    }
+                    throw new Model.Exceptions.ArgumentException("Binding must be of type Model.Item");
                 }
             }
-
-            if (this.Cells.Count() > this.Grid.Columns.Count())
+            else
             {
-                this.Cells.RemoveRange(this.Grid.Columns.Count(), this.Cells.Count() - this.Grid.Columns.Count());
+                this.Name = "";
             }
         }
 
-        void Columns_ListChanged(object sender, EventArgs e)
+        public virtual void SetNameFromBinding()
         {
-            this.UpdateCells();
+            if (this.Binding != null && this.Binding is Model.Item)
+            {
+                this.Name = (String)((Model.Item)this.Binding).Property("keyed_name").Value;
+            }
         }
 
-        protected override void RefreshControl()
+        public RelationshipTreeNode(RelationshipTree RelationshipTree)
+            :base(RelationshipTree)
         {
-           
-        }
 
-        internal Row(Grid Grid)
-            :base()
-        {
-            this.Grid = Grid;
-            this.Cells = new Model.ObservableList<Cell>();
-            this.UpdateCells();
-            this.Grid.Columns.ListChanged += Columns_ListChanged;
         }
     }
 }

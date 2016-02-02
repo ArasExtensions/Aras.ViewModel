@@ -46,6 +46,9 @@ namespace Aras.ViewModel
             }
         }
 
+        [ViewModel.Attributes.Command("Refresh")]
+        public RefreshCommand Refresh { get; private set; }
+
         private Boolean _enabled;
         [Attributes.Property("Enabled", Attributes.PropertyTypes.Boolean, true)]
         public Boolean Enabled
@@ -257,6 +260,11 @@ namespace Aras.ViewModel
             }
         }
 
+        protected virtual void RefreshControl()
+        {
+
+        }
+
         public bool Equals(Control other)
         {
             if (other == null)
@@ -296,6 +304,24 @@ namespace Aras.ViewModel
         public Control()
         {
             this.ID = Guid.NewGuid();
+            this.Refresh = new RefreshCommand(this);
+        }
+
+        public class RefreshCommand : Aras.ViewModel.Command
+        {
+            public Control Control { get; private set; }
+
+            protected override bool Run(object parameter)
+            {
+                this.Control.RefreshControl();
+                return true;
+            }
+
+            internal RefreshCommand(Control Control)
+            {
+                this.Control = Control;
+                this.SetCanExecute(true);
+            }
         }
     }
 }

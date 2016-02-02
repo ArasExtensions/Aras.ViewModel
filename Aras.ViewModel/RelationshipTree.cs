@@ -30,53 +30,34 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel
 {
-    public class Row : Control
+    public class RelationshipTree : Tree
     {
-        public Grid Grid { get; private set; }
-
-        [ViewModel.Attributes.Property("Cells", Aras.ViewModel.Attributes.PropertyTypes.ControlList, true)]
-        public Model.ObservableList<Cell> Cells { get; private set; }
-
-        private void UpdateCells()
+        protected override void AfterBindingChanged()
         {
-            for (int i = 0; i < this.Grid.Columns.Count(); i++)
+            base.AfterBindingChanged();
+
+            if (this.Binding != null)
             {
-                if (i == this.Cells.Count())
+                if (this.Binding is Model.Item)
                 {
-                    this.Cells.Add(new Cell(this.Grid.Columns[i], this));
+                    this.Node = new RelationshipTreeNode(this);
+                    this.Node.Binding = this.Binding;
                 }
                 else
                 {
-                    if (!this.Cells[i].Column.Equals(this.Grid.Columns[i]))
-                    {
-                        this.Cells[i] = new Cell(this.Grid.Columns[i], this);
-                    }
+                    throw new Model.Exceptions.ArgumentException("Binding must be of type Model.Item");
                 }
             }
-
-            if (this.Cells.Count() > this.Grid.Columns.Count())
+            else
             {
-                this.Cells.RemoveRange(this.Grid.Columns.Count(), this.Cells.Count() - this.Grid.Columns.Count());
+                this.Node = null;
             }
         }
 
-        void Columns_ListChanged(object sender, EventArgs e)
-        {
-            this.UpdateCells();
-        }
-
-        protected override void RefreshControl()
-        {
-           
-        }
-
-        internal Row(Grid Grid)
+        public RelationshipTree()
             :base()
         {
-            this.Grid = Grid;
-            this.Cells = new Model.ObservableList<Cell>();
-            this.UpdateCells();
-            this.Grid.Columns.ListChanged += Columns_ListChanged;
+
         }
     }
 }

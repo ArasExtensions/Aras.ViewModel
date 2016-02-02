@@ -32,9 +32,6 @@ namespace Aras.ViewModel.Design
 {
     public class Order : Control
     {
-        [ViewModel.Attributes.Command("Refresh")]
-        public RefreshCommand Refresh { get; private set; }
-
         [ViewModel.Attributes.Command("Save")]
         public SaveCommand Save { get; private set; }
 
@@ -321,7 +318,7 @@ namespace Aras.ViewModel.Design
             this.PartBOMNameCache = new ControlCache<Model.Design.PartBOM, Properties.String>();
             this.PartBOMQuantityCache = new ControlCache<Model.Design.PartBOM, Properties.Float>();
 
-            this.Refresh = new RefreshCommand(this);
+           
             this.Save = new SaveCommand(this);
 
             this.BOM = new Grid();
@@ -336,21 +333,10 @@ namespace Aras.ViewModel.Design
             this.Configuration.AddColumn("quantity", "Qty");
         }
 
-        public class RefreshCommand : Aras.ViewModel.Command
+        protected override void RefreshControl()
         {
-            public Order Order { get; private set; }
-
-            protected override bool Run(object parameter)
-            {
-                this.Order.Update();
-                return true;
-            }
-
-            internal RefreshCommand(Order Order)
-            {
-                this.Order = Order;
-                this.SetCanExecute(true);
-            }
+            base.RefreshControl();
+            this.Update();
         }
 
         public class SaveCommand : Aras.ViewModel.Command

@@ -45,6 +45,8 @@
     <Compile Include="Cell.cs" />
     <Compile Include="ObservableControlList.cs" />
     <Compile Include="Props\ListValue.cs" />
+    <Compile Include="RelationshipTree.cs" />
+    <Compile Include="RelationshipTreeNode.cs" />
     <Compile Include="Row.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="Control.cs" />
@@ -56,6 +58,8 @@
     <Compile Include="Props\String.cs" />
     <Compile Include="Props\Float.cs" />
     <Compile Include="Props\List.cs" />
+    <Compile Include="Tree.cs" />
+    <Compile Include="TreeNode.cs" />
     <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
