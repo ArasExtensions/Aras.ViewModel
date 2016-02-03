@@ -42,6 +42,12 @@ namespace Aras.ViewModel
             }
         }
 
+        public void SetPropertyNames(String Names)
+        {
+            this._propertyNames.Clear();
+            this.AddToPropertyNames(Names);
+        }
+
         public void AddToPropertyNames(String Names)
         {
             String[] parts = Names.Split(',');

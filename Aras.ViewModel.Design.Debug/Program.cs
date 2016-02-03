@@ -50,26 +50,8 @@ namespace Aras.ViewModel.Design.Debug
             Model.Database database = server.Database("VariantsDemo11SP1");
             Model.Session session = database.Login("admin", Model.Server.PasswordHash("innovator"));
 
-            session.ItemType("Part").AddToSelect("item_number,major_rev,name,keyed_name");
-
-            Model.Stores.Item storeitem = session.Store("Part");
-
-            Searches.Item partsearch = new Searches.Item();
-            partsearch.AddToPropertyNames("item_number,major_rev,name");
-
-            partsearch.Binding = storeitem;
-
-            /*
-            session.ItemType("Part").AddToSelect("item_number,major_rev,name,keyed_name");
-            session.ItemType("Part BOM").AddToSelect("quantity");
-
-            Model.Design.Part toplevel = (Model.Design.Part)session.Store("Part").Query(Aras.Conditions.Eq("item_number", "DX-0000000001")).First();
-            ViewModel.RelationshipTree tree = new RelationshipTree();
-            tree.AddRelationshipType(session.ItemType("Part").RelationshipType("Part BOM"));
-            tree.LazyLoad = false;
-            tree.Binding = toplevel;
-            IEnumerable<TreeNode> children = tree.Node.Children;
-            */
+            Design.PartEditor parteditor = new Design.PartEditor();
+            parteditor.Binding = session;
         }
     }
 }

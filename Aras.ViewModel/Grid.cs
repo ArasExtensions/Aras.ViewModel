@@ -1,4 +1,4 @@
-﻿/*  
+﻿/*
   Aras.ViewModel provides a .NET library for building Aras Innovator Applications
 
   Copyright (C) 2015 Processwall Limited.
@@ -32,11 +32,19 @@ namespace Aras.ViewModel
 {
     public class Grid : Control
     {
+        [ViewModel.Attributes.Command("Select")]
+        public SelectCommand Select { get; private set; }
+
+        [ViewModel.Attributes.Command("DeSelect")]
+        public DeSelectCommand DeSelect { get; private set; }
+
         [ViewModel.Attributes.Property("Columns", Aras.ViewModel.Attributes.PropertyTypes.ControlList, true)]
         public Model.ObservableList<Column> Columns { get; private set; }
 
         [ViewModel.Attributes.Property("Rows", Aras.ViewModel.Attributes.PropertyTypes.ControlList, true)]
         public Model.ObservableList<Row> Rows { get; private set; }
+
+        public Model.ObservableList<Row> SelectedRows { get; private set; }
 
         public Column AddColumn(String Name, String Label)
         {
@@ -107,6 +115,11 @@ namespace Aras.ViewModel
             this.OnPropertyChanged("Columns");
         }
 
+        void SelectedRows_ListChanged(object sender, EventArgs e)
+        {
+            this.OnPropertyChanged("SelectedRows");
+        }
+
         public Grid()
             :base()
         {
@@ -114,7 +127,75 @@ namespace Aras.ViewModel
             this.Columns.ListChanged += Columns_ListChanged;
             this.Rows = new Model.ObservableList<Row>();
             this.Rows.ListChanged += Rows_ListChanged;
+            this.SelectedRows = new Model.ObservableList<Row>();
+            this.SelectedRows.ListChanged += SelectedRows_ListChanged;
             this.RowCache = new List<Row>();
+        }
+
+        public class SelectCommand : Aras.ViewModel.Command
+        {
+            public Grid Grid { get; private set; }
+
+            internal void UpdateCanExecute(Boolean CanExecute)
+            {
+                this.SetCanExecute(CanExecute);
+            }
+
+            protected override bool Run(object parameter)
+            {
+                if ((parameter != null) && (parameter is IEnumerable<Row>))
+                {
+                    foreach (Row row in (IEnumerable<Row>)parameter)
+                    {
+                        if (!this.Grid.Rows.Contains(row))
+                        {
+                            this.Grid.SelectedRows.Add(row);
+                        }
+                    }
+                }
+
+                return true;
+            }
+
+            internal SelectCommand(Grid Grid)
+            {
+                this.Grid = Grid;
+                this.SetCanExecute(true);
+            }
+        }
+
+        public class DeSelectCommand : Aras.ViewModel.Command
+        {
+            public Grid Grid { get; private set; }
+
+            internal void UpdateCanExecute(Boolean CanExecute)
+            {
+                this.SetCanExecute(CanExecute);
+            }
+
+            protected override bool Run(object parameter)
+            {
+                if ((parameter != null) && (parameter is IEnumerable<Row>))
+                {
+                    foreach(Row row in (IEnumerable<Row>)parameter)
+                    {
+                        int index = this.Grid.SelectedRows.IndexOf(row);
+
+                        if (index > -1)
+                        {
+                            this.Grid.SelectedRows.RemoveAt(index);
+                        }
+                    }
+                }
+
+                return true;
+            }
+
+            internal DeSelectCommand(Grid Grid)
+            {
+                this.Grid = Grid;
+                this.SetCanExecute(true);
+            }
         }
     }
 }
