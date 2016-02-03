@@ -123,6 +123,8 @@ namespace Aras.ViewModel
         public Grid()
             :base()
         {
+            this.Select = new SelectCommand(this);
+            this.DeSelect = new DeSelectCommand(this);
             this.Columns = new Model.ObservableList<Column>();
             this.Columns.ListChanged += Columns_ListChanged;
             this.Rows = new Model.ObservableList<Row>();
