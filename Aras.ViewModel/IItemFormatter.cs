@@ -30,32 +30,8 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel
 {
-    public abstract class Tree : Control
+    public interface IItemFormatter
     {
-        private Boolean _lazyLoad;
-        [ViewModel.Attributes.Property("Name", Aras.ViewModel.Attributes.PropertyTypes.Boolean, true)]
-        public Boolean LazyLoad
-        {
-            get
-            {
-                return this._lazyLoad;
-            }
-            set
-            {
-                if (this._lazyLoad != value)
-                {
-                    this._lazyLoad = value;
-                    this.OnPropertyChanged("LazyLoad");
-                }
-            }
-        }
-
-        public TreeNode Node { get; set; }
-
-        public Tree()
-            :base()
-        {
-            this._lazyLoad = true;
-        }
+        String DisplayName(Model.Item Item);
     }
 }

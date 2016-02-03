@@ -55,7 +55,7 @@ namespace Aras.ViewModel
             {
                 if (this.Binding is Model.Item)
                 {
-                    this.SetNameFromBinding();
+                    this.Name = this.RelationshipTree.ItemFormatter.DisplayName((Model.Item)this.Binding);
                 }
                 else
                 {
@@ -68,11 +68,17 @@ namespace Aras.ViewModel
             }
         }
 
-        public virtual void SetNameFromBinding()
+        protected override void RefreshControl()
         {
+            base.RefreshControl();
+
             if (this.Binding != null && this.Binding is Model.Item)
             {
-                this.Name = (String)((Model.Item)this.Binding).Property("keyed_name").Value;
+                this.Name = this.RelationshipTree.ItemFormatter.DisplayName((Model.Item)this.Binding);
+            }
+            else
+            {
+                this.Name = "";
             }
         }
 

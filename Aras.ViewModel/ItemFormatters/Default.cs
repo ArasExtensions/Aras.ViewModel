@@ -28,34 +28,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Aras.ViewModel
+namespace Aras.ViewModel.ItemFormatters
 {
-    public abstract class Tree : Control
+    public class Default : IItemFormatter
     {
-        private Boolean _lazyLoad;
-        [ViewModel.Attributes.Property("Name", Aras.ViewModel.Attributes.PropertyTypes.Boolean, true)]
-        public Boolean LazyLoad
+        public String DisplayName(Model.Item Item)
         {
-            get
-            {
-                return this._lazyLoad;
-            }
-            set
-            {
-                if (this._lazyLoad != value)
-                {
-                    this._lazyLoad = value;
-                    this.OnPropertyChanged("LazyLoad");
-                }
-            }
-        }
-
-        public TreeNode Node { get; set; }
-
-        public Tree()
-            :base()
-        {
-            this._lazyLoad = true;
+            return (String)Item.Property("keyed_name").Value;
         }
     }
 }

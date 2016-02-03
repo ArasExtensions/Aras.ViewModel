@@ -32,6 +32,41 @@ namespace Aras.ViewModel
 {
     public class RelationshipTree : Tree
     {
+        private IItemFormatter _itemFormatter;
+        public IItemFormatter ItemFormatter 
+        { 
+            get
+            {
+                return this._itemFormatter;
+            }
+            set
+            {
+                if (this._itemFormatter != value)
+                {
+                    this._itemFormatter = value;
+                    this.Refresh.Execute();
+                }
+            }
+        }
+
+        private List<Model.RelationshipType> _relationshipTypes;
+        public IEnumerable<Model.RelationshipType> RelationshipTypes
+        {
+            get
+            {
+                return this._relationshipTypes;
+            }
+        }
+
+        public void AddRelationshipType(Model.RelationshipType RelationshipType)
+        {
+            if (!this._relationshipTypes.Contains(RelationshipType))
+            {
+                this._relationshipTypes.Add(RelationshipType);
+                this.Refresh.Execute();
+            }
+        }
+
         protected override void AfterBindingChanged()
         {
             base.AfterBindingChanged();
@@ -54,10 +89,21 @@ namespace Aras.ViewModel
             }
         }
 
+        protected override void RefreshControl()
+        {
+            base.RefreshControl();
+
+            if (this.Node != null)
+            {
+                this.Node.Refresh.Execute();
+            }
+        }
+
         public RelationshipTree()
             :base()
         {
-
+            this._relationshipTypes = new List<Model.RelationshipType>();
+            this._itemFormatter = new ItemFormatters.Default();
         }
     }
 }

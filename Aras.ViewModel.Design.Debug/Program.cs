@@ -50,10 +50,12 @@ namespace Aras.ViewModel.Design.Debug
             Model.Database database = server.Database("VariantsDemo11SP1");
             Model.Session session = database.Login("admin", Model.Server.PasswordHash("innovator"));
 
-            session.ItemType("Part").AddToSelect("item_number,major_rev,name");
+            session.ItemType("Part").AddToSelect("item_number,major_rev,name,keyed_name");
             session.ItemType("Part BOM").AddToSelect("quantity");
 
             Model.Design.Part toplevel = (Model.Design.Part)session.Store("Part").Query(Aras.Conditions.Eq("item_number", "DX-0000000001")).First();
+            ViewModel.RelationshipTree tree = new RelationshipTree();
+            tree.Binding = toplevel;
    
         }
     }

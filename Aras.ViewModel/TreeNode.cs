@@ -63,8 +63,25 @@ namespace Aras.ViewModel
             }
         }
 
+        private ObservableControlList<TreeNode> _children;
         [ViewModel.Attributes.Property("Name", Aras.ViewModel.Attributes.PropertyTypes.ControlList, true)]
-        public ObservableControlList<TreeNode> Children { get; private set; }
+        public ObservableControlList<TreeNode> Children
+        {
+            get
+            {
+                if (this._children == null)
+                {
+                    this._children = new ObservableControlList<TreeNode>();
+
+                    if (!this.Tree.LazyLoad)
+                    {
+                        this.Load.Execute();
+                    }
+                }
+
+                return this._children;
+            }
+        }
 
         [ViewModel.Attributes.Property("Loaded", Aras.ViewModel.Attributes.PropertyTypes.Boolean, true)]
         public Boolean Loaded { get; private set; }
@@ -87,7 +104,6 @@ namespace Aras.ViewModel
             :base()
         {
             this.Tree = Tree;
-            this.Children = new ObservableControlList<TreeNode>();
             this.Loaded = false;
         }
 
