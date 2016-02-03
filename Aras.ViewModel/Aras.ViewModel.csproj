@@ -60,6 +60,9 @@
     <Compile Include="Props\String.cs" />
     <Compile Include="Props\Float.cs" />
     <Compile Include="Props\List.cs" />
+    <Compile Include="Search.cs" />
+    <Compile Include="Searches\Item.cs" />
+    <Compile Include="Searches\Relationship.cs" />
     <Compile Include="Tree.cs" />
     <Compile Include="TreeNode.cs" />
     <Compile Include="Utilities.cs" />
