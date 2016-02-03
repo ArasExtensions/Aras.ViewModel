@@ -55,7 +55,10 @@ namespace Aras.ViewModel.Design.Debug
 
             Model.Design.Part toplevel = (Model.Design.Part)session.Store("Part").Query(Aras.Conditions.Eq("item_number", "DX-0000000001")).First();
             ViewModel.RelationshipTree tree = new RelationshipTree();
+            tree.AddRelationshipType(session.ItemType("Part").RelationshipType("Part BOM"));
+            tree.LazyLoad = false;
             tree.Binding = toplevel;
+            IEnumerable<TreeNode> children = tree.Node.Children;
    
         }
     }

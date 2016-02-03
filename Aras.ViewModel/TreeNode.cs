@@ -97,6 +97,8 @@ namespace Aras.ViewModel
         protected override void RefreshControl()
         {
             base.RefreshControl();
+
+            // Load Children
             this.LoadChildren();
         }
 
@@ -105,6 +107,7 @@ namespace Aras.ViewModel
         {
             this.Tree = Tree;
             this.Loaded = false;
+            this.Load = new LoadCommand(this);
         }
 
         public class LoadCommand : Aras.ViewModel.Command

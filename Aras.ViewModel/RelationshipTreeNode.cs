@@ -44,7 +44,41 @@ namespace Aras.ViewModel
         {
             base.LoadChildren();
 
+            if ((this.Binding != null) && (this.Binding is Model.Item))
+            {
+                // Build List of Children
+                IEnumerable<Model.Item> childitems = ((Model.Item)this.Binding).RelatedItems(this.RelationshipTree.RelationshipTypes);
 
+                if (childitems.Count() == 0)
+                {
+                    this.Children.Clear();
+                }
+                else
+                {
+                    int childitemcount = childitems.Count();
+                    int childrencount = this.Children.Count();
+
+                    if (childitemcount > childrencount)
+                    {            
+                        // Add Children
+                        for (int i = 0; i < (childitemcount - childrencount); i++)
+                        {
+                            this.Children.Add(new RelationshipTreeNode(this.RelationshipTree));
+                        }
+                    }
+                    else if (childitems.Count() < this.Children.Count())
+                    {
+                        // Remove Children
+                        this.Children.RemoveRange(childitemcount, (childrencount - childitemcount));
+                    }
+
+                    // Set Bindings
+                    for(int i=0; i<childitemcount; i++)
+                    {
+                        this.Children[i].Binding = childitems.ElementAt(i);
+                    }
+                }
+            }
         }
 
         protected override void AfterBindingChanged()
