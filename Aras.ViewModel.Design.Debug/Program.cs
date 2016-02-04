@@ -50,8 +50,11 @@ namespace Aras.ViewModel.Design.Debug
             Model.Database database = server.Database("VariantsDemo11SP1");
             Model.Session session = database.Login("admin", Model.Server.PasswordHash("innovator"));
 
-            Design.PartEditor parteditor = new Design.PartEditor();
-            parteditor.Binding = session;
+            //Model.Item order = session.Store("").Query(Aras.Conditions.Eq("item_number", "400_1111")).First();
+            Design.Order ordercontrol = new Order();
+            ordercontrol.SetBinding(session, "72EFACFB322A4F1FA4C5B9FE78102AF6");
+
+
         }
     }
 }
