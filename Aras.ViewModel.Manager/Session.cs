@@ -101,10 +101,14 @@ namespace Aras.ViewModel.Manager
             {
                 try
                 {
+                    // Create Control
                     Control plugin = (Control)Activator.CreateInstance(this.Database.Server.ControlType(Name), new object[] { });
+                    
+                    // Set Context
                     plugin.SetBinding(this.Model, Context);
+                    
                     this.PluginCache[Name][Context] = plugin;
-                    this.AddControlToCache(plugin);
+                    this.AddControlToCache(plugin, false);
                 }
                 catch (Exception e)
                 {
@@ -124,9 +128,13 @@ namespace Aras.ViewModel.Manager
             {
                 try
                 {
+                    // Create Control
                     Control application = (Control)Activator.CreateInstance(this.Database.Server.ControlType(Name), new object[] { });
                     this.ApplicationCache[Name] = application;
-                    this.AddControlToCache(application);
+                    
+                    // Set Binding to Session
+                    application.Binding = this.Model;
+                    this.AddControlToCache(application, false);
                 }
                 catch (Exception e)
                 {
@@ -139,7 +147,7 @@ namespace Aras.ViewModel.Manager
 
         private Dictionary<Guid, ViewModel.Control> ControlCache;
 
-        private void AddControlToCache(ViewModel.Control Control)
+        private void AddControlToCache(ViewModel.Control Control, Boolean Queue)
         {
             if (Control != null)
             {
@@ -161,7 +169,12 @@ namespace Aras.ViewModel.Manager
                 // Add Child Controls to Cache
                 foreach (Control thiscontrol in Control.Controls)
                 {
-                    this.AddControlToCache(thiscontrol);
+                    this.AddControlToCache(thiscontrol, true);
+                }
+
+                if (Queue)
+                {
+                    this.AddControlToQueue(Control);
                 }
             }
         }
@@ -184,13 +197,13 @@ namespace Aras.ViewModel.Manager
 
                 if (property is Control)
                 {
-                    this.AddControlToCache((Control)property);
+                    this.AddControlToCache((Control)property, true);
                 }
                 else if (property is IEnumerable<Control>)
                 {
                     foreach (Control childcontrol in ((IEnumerable<Control>)property))
                     {
-                        this.AddControlToCache(childcontrol);
+                        this.AddControlToCache(childcontrol, true);
                     }
                 }
             }

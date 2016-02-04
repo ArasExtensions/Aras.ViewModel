@@ -109,7 +109,7 @@ namespace Aras.ViewModel.Manager
                 this.Model.AssemblyDirectory = value;
 
                 // Reset ControlCache
-                this.ControlCache = new Dictionary<String, Type>();
+                this.ControlTypeCache = new Dictionary<String, Type>();
 
                 // Load Base Control Library
                 this.LoadAssembly("Aras.ViewModel");
@@ -138,19 +138,19 @@ namespace Aras.ViewModel.Manager
                 {
                     if (type.IsSubclassOf(typeof(Control)) && !type.IsAbstract)
                     {
-                        this.ControlCache[type.FullName] = type;
+                        this.ControlTypeCache[type.FullName] = type;
                     }
                 }
             }
         }
 
-        private Dictionary<String, Type> ControlCache;
+        private Dictionary<String, Type> ControlTypeCache;
 
         internal Type ControlType(String Name)
         {
-            if (this.ControlCache.ContainsKey(Name))
+            if (this.ControlTypeCache.ContainsKey(Name))
             {
-                return this.ControlCache[Name];
+                return this.ControlTypeCache[Name];
             }
             else
             {
