@@ -44,15 +44,20 @@ namespace Aras.ViewModel.Design.Debug
 
         static void Main(string[] args)
         {
-            Model.Server server = new Model.Server("http://localhost/11SP1");
+            Model.Server server = new Model.Server("http://localhost/InnovatorServer10SP4");
             server.LoadAssembly("Aras.Model.Design");
             server.LoadAssembly("Aras.ViewModel.Design");
-            Model.Database database = server.Database("VariantsDemo11SP1");
+            Model.Database database = server.Database("CMB");
             Model.Session session = database.Login("admin", Model.Server.PasswordHash("innovator"));
 
-            //Model.Item order = session.Store("").Query(Aras.Conditions.Eq("item_number", "400_1111")).First();
             Design.Order ordercontrol = new Order();
-            ordercontrol.SetBinding(session, "72EFACFB322A4F1FA4C5B9FE78102AF6");
+            ordercontrol.SetBinding(session, "1B64E595A3E44AFB8FCC59C30FFD3C01");
+
+            ViewModel.Properties.List list2 = (ViewModel.Properties.List)ordercontrol.Configuration.Rows[0].Cells[1].Controls.First();
+            list2.Value = "1";
+
+            ordercontrol.Save.Execute();
+
 
 
         }
