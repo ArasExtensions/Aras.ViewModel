@@ -44,10 +44,10 @@ namespace Aras.ViewModel.Design.Debug
 
         static void Main(string[] args)
         {
-            Model.Server server = new Model.Server("http://localhost/InnovatorServer10SP4");
+            Model.Server server = new Model.Server("http://localhost/11SP1");
             server.LoadAssembly("Aras.Model.Design");
             server.LoadAssembly("Aras.ViewModel.Design");
-            Model.Database database = server.Database("CMB");
+            Model.Database database = server.Database("VariantsDemo11SP1");
             Model.Session session = database.Login("admin", Model.Server.PasswordHash("innovator"));
 
             Design.Order ordercontrol = new Order();

@@ -61,6 +61,72 @@ namespace Aras.ViewModel
             }
         }
 
+        private Int32 _page;
+        [ViewModel.Attributes.Property("Page", Aras.ViewModel.Attributes.PropertyTypes.Int32, false)]
+        public Int32 Page
+        {
+            get
+            {
+                return this._page;
+            }
+            set
+            {
+                if (this._page != value)
+                {
+                    this._page = value;
+
+                    if (this.Query != null)
+                    {
+                        this.Query.Page = value;
+                        this.RefreshControl();
+                        this.OnPropertyChanged("Page");
+                    }
+                }
+            }
+        }
+
+        private Int32 _pageSize;
+        [ViewModel.Attributes.Property("PageSize", Aras.ViewModel.Attributes.PropertyTypes.Int32, false)]
+        public Int32 PageSize
+        {
+            get
+            {
+                return this._pageSize;
+            }
+            set
+            {
+                if (this._pageSize != value)
+                {
+                    this._pageSize = value;
+
+                    if (this.Query != null)
+                    {
+                        this.Query.PageSize = this._pageSize;
+                        this.RefreshControl();
+                        this.OnPropertyChanged("PageSize");
+                    }
+                }
+            }
+        }
+
+        private Int32 _noPages;
+        [ViewModel.Attributes.Property("NoPages", Aras.ViewModel.Attributes.PropertyTypes.Int32, true)]
+        public Int32 NoPages
+        {
+            get
+            {
+                return this._noPages;
+            }
+            set
+            {
+                if (this._noPages != value)
+                {
+                    this._noPages = value;
+                    this.OnPropertyChanged("NoPages");
+                }
+            }
+        }
+
         [ViewModel.Attributes.Property("Grid", Aras.ViewModel.Attributes.PropertyTypes.Control, true)]
         public Grid Grid { get; private set; }
 
@@ -79,10 +145,10 @@ namespace Aras.ViewModel
         {
             base.RefreshControl();
 
-            // Refresh Store
-            if ((this.Binding != null) && (this.Binding is Model.Store<T>))
+            // Refresh Query
+            if (this.Query != null)
             {
-                ((Model.Store<T>)this.Binding).Refresh();
+                this.Query.Refresh();
             }
 
             // Load Grid
@@ -120,15 +186,42 @@ namespace Aras.ViewModel
             }
         }
 
+        private Model.Query<T> _query;
+        private Model.Query<T> Query
+        {
+            get
+            {
+                if (this._query == null)
+                {
+                    if (this.Binding != null && this.Binding is Model.Store<T>)
+                    {
+                        // Create Query
+                        this._query = ((Model.Store<T>)this.Binding).Query();
+                        
+                        // Switch on Paging
+                        this._query.Paging = true;
+
+                        // Update Page Size on Control
+                        this.PageSize = this._query.PageSize;
+
+                        // Update Page on Control
+                        this.Page = this._query.Page;
+                    }
+                }
+
+                return this._query;
+            }
+        }
+
         private void LoadRows()
         {
-            if (this.Binding != null && this.Binding is Model.Store<T>)
+            if (this.Query != null)
             {
-                this.Grid.NoRows = ((Model.Store<T>)this.Binding).Count();
+                this.Grid.NoRows = this.Query.Count();
 
                 for(int i=0; i<this.Grid.NoRows; i++)
                 {
-                    T item = ((Model.Store<T>)this.Binding).ElementAt(i);
+                    T item = this.Query[i];
 
                     for(int j=0; j<this.PropertyTypes.Count(); j++)
                     {

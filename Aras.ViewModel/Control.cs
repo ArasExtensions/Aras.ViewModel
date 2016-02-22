@@ -71,13 +71,20 @@ namespace Aras.ViewModel
         {
             Model.Item item = this.GetContext(Session, Context);
 
-            if (item.Locked(true))
+            if (item != null)
             {
-                Model.Transaction transaction = Session.BeginTransaction();
-                item.Update(transaction);
-            }
+                if (item.Locked(true))
+                {
+                    Model.Transaction transaction = Session.BeginTransaction();
+                    item.Update(transaction);
+                }
 
-            this.Binding = item;
+                this.Binding = item;
+            }
+            else
+            {
+                this.Binding = null;
+            }
         }
 
         protected virtual Model.Item GetContext(Model.Session Sesison, String ID)
