@@ -35,9 +35,6 @@ namespace Aras.ViewModel
         [ViewModel.Attributes.Command("Select")]
         public SelectCommand Select { get; private set; }
 
-        [ViewModel.Attributes.Command("DeSelect")]
-        public DeSelectCommand DeSelect { get; private set; }
-
         [ViewModel.Attributes.Property("Columns", Aras.ViewModel.Attributes.PropertyTypes.ControlList, true)]
         public Model.ObservableList<Column> Columns { get; private set; }
 
@@ -124,7 +121,6 @@ namespace Aras.ViewModel
             :base()
         {
             this.Select = new SelectCommand(this);
-            this.DeSelect = new DeSelectCommand(this);
             this.Columns = new Model.ObservableList<Column>();
             this.Columns.ListChanged += Columns_ListChanged;
             this.Rows = new Model.ObservableList<Row>();
@@ -143,18 +139,23 @@ namespace Aras.ViewModel
                 this.CanExecute = CanExecute;
             }
 
-            protected override bool Run(object parameter)
+            protected override bool Run(IEnumerable<Control> Parameters)
             {
-                if ((parameter != null) && (parameter is IEnumerable<Row>))
+                this.Grid.SelectedRows.NotifyListChanged = false;
+                this.Grid.SelectedRows.Clear();
+
+                if (Parameters != null)
                 {
-                    foreach (Row row in (IEnumerable<Row>)parameter)
+                    foreach (Control row in Parameters)
                     {
-                        if (!this.Grid.Rows.Contains(row))
+                        if (row is Row && this.Grid.Rows.Contains((Row)row))
                         {
-                            this.Grid.SelectedRows.Add(row);
+                            this.Grid.SelectedRows.Add((Row)row);
                         }
                     }
                 }
+
+                this.Grid.SelectedRows.NotifyListChanged = true;
 
                 return true;
             }
@@ -166,38 +167,5 @@ namespace Aras.ViewModel
             }
         }
 
-        public class DeSelectCommand : Aras.ViewModel.Command
-        {
-            public Grid Grid { get; private set; }
-
-            internal void UpdateCanExecute(Boolean CanExecute)
-            {
-                this.CanExecute = CanExecute;
-            }
-
-            protected override bool Run(object parameter)
-            {
-                if ((parameter != null) && (parameter is IEnumerable<Row>))
-                {
-                    foreach(Row row in (IEnumerable<Row>)parameter)
-                    {
-                        int index = this.Grid.SelectedRows.IndexOf(row);
-
-                        if (index > -1)
-                        {
-                            this.Grid.SelectedRows.RemoveAt(index);
-                        }
-                    }
-                }
-
-                return true;
-            }
-
-            internal DeSelectCommand(Grid Grid)
-            {
-                this.Grid = Grid;
-                this.CanExecute = true;
-            }
-        }
     }
 }

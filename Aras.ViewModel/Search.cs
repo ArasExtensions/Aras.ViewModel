@@ -61,6 +61,8 @@ namespace Aras.ViewModel
             }
         }
 
+        public Model.ObservableList<T> Selected { get; private set; }
+
         [ViewModel.Attributes.Command("NextPage")]
         public NextPageCommand NextPage { get; private set; }
 
@@ -272,16 +274,41 @@ namespace Aras.ViewModel
             :base()
         {
             this.Grid = new Grid();
+            this.Grid.SelectedRows.ListChanged += SelectedRows_ListChanged;
+            this.Selected = new Model.ObservableList<T>();
             this.NextPage = new NextPageCommand(this);
             this.PreviousPage = new PreviousPageCommand(this);
             this._propertyNames = new List<String>();
+        }
+
+        void SelectedRows_ListChanged(object sender, EventArgs e)
+        {
+            this.Selected.NotifyListChanged = false;
+            this.Selected.Clear();
+
+            if (this.Query != null)
+            {
+                Model.ObservableList<Row> SelectedRows = (Model.ObservableList<Row>)sender;
+
+                foreach (Row row in SelectedRows)
+                {
+                    Int32 rowindex = this.Grid.Rows.IndexOf(row);
+
+                    if (rowindex >= 0 && rowindex < this.Query.Count())
+                    {
+                        this.Selected.Add(this.Query[rowindex]);
+                    }
+                }
+            }
+
+            this.Selected.NotifyListChanged = true;
         }
 
         public class NextPageCommand : Aras.ViewModel.Command
         {
             public Search<T> Search { get; private set; }
 
-            protected override bool Run(object parameter)
+            protected override bool Run(IEnumerable<Control> Parameters)
             {
                 if (this.Search.Page < this.Search.NoPages)
                 {
@@ -315,7 +342,7 @@ namespace Aras.ViewModel
         {
             public Search<T> Search { get; private set; }
 
-            protected override bool Run(object parameter)
+            protected override bool Run(IEnumerable<Control> Parameters)
             {
                 if (this.Search.Page > 1)
                 {
@@ -343,5 +370,6 @@ namespace Aras.ViewModel
                 this.Refesh();
             }
         }
+
     }
 }

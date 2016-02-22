@@ -114,7 +114,7 @@ namespace Aras.ViewModel
         {
             public TreeNode TreeNode { get; private set; }
 
-            protected override bool Run(object parameter)
+            protected override bool Run(IEnumerable<Control> Parameters)
             {
                 if (!this.TreeNode.Loaded)
                 {

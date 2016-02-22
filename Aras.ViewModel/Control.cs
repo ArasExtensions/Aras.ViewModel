@@ -320,7 +320,7 @@ namespace Aras.ViewModel
         {
             public Control Control { get; private set; }
 
-            protected override bool Run(object parameter)
+            protected override bool Run(IEnumerable<Control> Parameters)
             {
                 this.Control.RefreshControl();
                 return true;

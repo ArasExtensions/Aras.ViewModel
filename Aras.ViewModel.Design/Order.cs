@@ -348,7 +348,7 @@ namespace Aras.ViewModel.Design
                 this.CanExecute = CanExecute;
             }
 
-            protected override bool Run(object parameter)
+            protected override bool Run(IEnumerable<Control> Parameters)
             {
                 if (this.Order.Transaction != null)
                 {
