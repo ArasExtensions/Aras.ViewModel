@@ -55,7 +55,7 @@ namespace Aras.ViewModel
                     return this._canExecute;
                 }
             }
-            private set
+            protected set
             {
                 lock (this._canExecuteLock)
                 {
@@ -68,22 +68,13 @@ namespace Aras.ViewModel
             }
         }
 
-        protected void SetCanExecute(Boolean Value)
-        {
-            this.CanExecute = Value;
-        }
-
         protected abstract Boolean Run(object parameter);
-
 
         public Boolean Execute(object parameter)
         {
             if (this.CanExecute)
             {
-                this.CanExecute = false;
-                Boolean ret = this.Run(parameter);
-                this.CanExecute = true;
-                return ret;
+                return this.Run(parameter);
             }
             else
             {

@@ -140,7 +140,7 @@ namespace Aras.ViewModel
 
             internal void UpdateCanExecute(Boolean CanExecute)
             {
-                this.SetCanExecute(CanExecute);
+                this.CanExecute = CanExecute;
             }
 
             protected override bool Run(object parameter)
@@ -162,7 +162,7 @@ namespace Aras.ViewModel
             internal SelectCommand(Grid Grid)
             {
                 this.Grid = Grid;
-                this.SetCanExecute(true);
+                this.CanExecute = true;
             }
         }
 
@@ -172,7 +172,7 @@ namespace Aras.ViewModel
 
             internal void UpdateCanExecute(Boolean CanExecute)
             {
-                this.SetCanExecute(CanExecute);
+                this.CanExecute = CanExecute;
             }
 
             protected override bool Run(object parameter)
@@ -196,7 +196,7 @@ namespace Aras.ViewModel
             internal DeSelectCommand(Grid Grid)
             {
                 this.Grid = Grid;
-                this.SetCanExecute(true);
+                this.CanExecute = true;
             }
         }
     }

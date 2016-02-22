@@ -345,7 +345,7 @@ namespace Aras.ViewModel.Design
 
             internal void UpdateCanExecute(Boolean CanExecute)
             {
-                this.SetCanExecute(CanExecute);
+                this.CanExecute = CanExecute;
             }
 
             protected override bool Run(object parameter)
@@ -366,7 +366,7 @@ namespace Aras.ViewModel.Design
             internal SaveCommand(Order Order)
             {
                 this.Order = Order;
-                this.SetCanExecute(false);
+                this.CanExecute = false;
             }
         }
     }

@@ -61,6 +61,12 @@ namespace Aras.ViewModel
             }
         }
 
+        [ViewModel.Attributes.Command("NextPage")]
+        public NextPageCommand NextPage { get; private set; }
+
+        [ViewModel.Attributes.Command("PreviousPage")]
+        public PreviousPageCommand PreviousPage { get; private set; }
+
         private Int32 _page;
         [ViewModel.Attributes.Property("Page", Aras.ViewModel.Attributes.PropertyTypes.Int32, false)]
         public Int32 Page
@@ -77,7 +83,7 @@ namespace Aras.ViewModel
 
                     if (this.Query != null)
                     {
-                        this.Query.Page = value;
+                        this.Query.Page = this._page;
                         this.RefreshControl();
                         this.OnPropertyChanged("Page");
                     }
@@ -98,10 +104,12 @@ namespace Aras.ViewModel
                 if (this._pageSize != value)
                 {
                     this._pageSize = value;
+                    this._page = 1;
 
                     if (this.Query != null)
                     {
                         this.Query.PageSize = this._pageSize;
+                        this.Query.Page = this._page;
                         this.RefreshControl();
                         this.OnPropertyChanged("PageSize");
                     }
@@ -117,7 +125,7 @@ namespace Aras.ViewModel
             {
                 return this._noPages;
             }
-            set
+            private set
             {
                 if (this._noPages != value)
                 {
@@ -149,10 +157,19 @@ namespace Aras.ViewModel
             if (this.Query != null)
             {
                 this.Query.Refresh();
+                this.NoPages = this.Query.NoPages;
+            }
+            else
+            {
+                this.NoPages = 0;
             }
 
             // Load Grid
             this.LoadRows();
+
+            // Refresh Buttons
+            this.NextPage.Refesh();
+            this.PreviousPage.Refesh();
         }
 
         private List<Model.PropertyType> PropertyTypes;
@@ -255,7 +272,76 @@ namespace Aras.ViewModel
             :base()
         {
             this.Grid = new Grid();
+            this.NextPage = new NextPageCommand(this);
+            this.PreviousPage = new PreviousPageCommand(this);
             this._propertyNames = new List<String>();
+        }
+
+        public class NextPageCommand : Aras.ViewModel.Command
+        {
+            public Search<T> Search { get; private set; }
+
+            protected override bool Run(object parameter)
+            {
+                if (this.Search.Page < this.Search.NoPages)
+                {
+                    this.Search.Page = this.Search.Page + 1;
+                }
+
+                return true;
+            }
+
+            internal void Refesh()
+            {
+                if (this.Search.Page < this.Search.NoPages)
+                {
+                    this.CanExecute = true;
+                }
+                else
+                {
+                    this.CanExecute = false;
+                }
+            
+            }
+
+            internal NextPageCommand(Search<T> Search)
+            {
+                this.Search = Search;
+                this.Refesh();
+            }
+        }
+
+        public class PreviousPageCommand : Aras.ViewModel.Command
+        {
+            public Search<T> Search { get; private set; }
+
+            protected override bool Run(object parameter)
+            {
+                if (this.Search.Page > 1)
+                {
+                    this.Search.Page = this.Search.Page - 1;
+                }
+            
+                return true;
+            }
+
+            internal void Refesh()
+            {
+                if (this.Search.Page > 1)
+                {
+                    this.CanExecute = true;
+                }
+                else
+                {
+                    this.CanExecute = false;
+                }
+            }
+
+            internal PreviousPageCommand(Search<T> Search)
+            {
+                this.Search = Search;
+                this.Refesh();
+            }
         }
     }
 }

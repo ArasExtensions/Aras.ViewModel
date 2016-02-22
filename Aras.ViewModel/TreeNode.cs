@@ -120,7 +120,7 @@ namespace Aras.ViewModel
                 {
                     this.TreeNode.LoadChildren();
                     this.TreeNode.Loaded = true;
-                    this.SetCanExecute(false);
+                    this.CanExecute = false;
                 }
 
                 return true;
@@ -129,7 +129,7 @@ namespace Aras.ViewModel
             internal LoadCommand(TreeNode TreeNode)
             {
                 this.TreeNode = TreeNode;
-                this.SetCanExecute(true);
+                this.CanExecute = true;
             }
         }
     }

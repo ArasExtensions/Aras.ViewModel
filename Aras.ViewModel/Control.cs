@@ -108,6 +108,7 @@ namespace Aras.ViewModel
                         this.BeforeBindingChanged();
                         this._binding = value;
                         this.AfterBindingChanged();
+                        this.OnPropertyChanged("Binding");
                     }
                 }
                 else
@@ -117,6 +118,7 @@ namespace Aras.ViewModel
                         this.BeforeBindingChanged();
                         this._binding = value;
                         this.AfterBindingChanged();
+                        this.OnPropertyChanged("Binding");
                     }
                 }
             }
@@ -327,7 +329,7 @@ namespace Aras.ViewModel
             internal RefreshCommand(Control Control)
             {
                 this.Control = Control;
-                this.SetCanExecute(true);
+                this.CanExecute = true;
             }
         }
     }
