@@ -50,7 +50,33 @@ namespace Aras.ViewModel
             }
         }
 
-        public TreeNode Node { get; set; }
+        private TreeNode _node;
+        [ViewModel.Attributes.Property("Node", Aras.ViewModel.Attributes.PropertyTypes.Control, true)]
+        public TreeNode Node 
+        { get
+            {
+                return this._node;
+            }
+            protected set
+            {
+                if (this._node == null)
+                {
+                    if (value != null)
+                    {
+                        this._node = value;
+                        this.OnPropertyChanged("Node");
+                    }
+                }
+                else
+                {
+                    if (!this._node.Equals(value))
+                    {
+                        this._node = value;
+                        this.OnPropertyChanged("Node");
+                    }
+                }
+            }
+        }
 
         public Tree()
             :base()

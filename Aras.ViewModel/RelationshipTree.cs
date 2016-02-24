@@ -75,7 +75,11 @@ namespace Aras.ViewModel
             {
                 if (this.Binding is Model.Item)
                 {
-                    this.Node = new RelationshipTreeNode(this);
+                    if (this.Node == null)
+                    {
+                        this.Node = new RelationshipTreeNode(this);
+                    }
+
                     this.Node.Binding = this.Binding;
                 }
                 else
@@ -104,6 +108,7 @@ namespace Aras.ViewModel
         {
             this._relationshipTypes = new List<Model.RelationshipType>();
             this._itemFormatter = new ItemFormatters.Default();
+            this.Node = null;
         }
     }
 }

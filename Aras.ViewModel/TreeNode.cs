@@ -64,7 +64,7 @@ namespace Aras.ViewModel
         }
 
         private ObservableControlList<TreeNode> _children;
-        [ViewModel.Attributes.Property("Name", Aras.ViewModel.Attributes.PropertyTypes.ControlList, true)]
+        [ViewModel.Attributes.Property("Children", Aras.ViewModel.Attributes.PropertyTypes.ControlList, true)]
         public ObservableControlList<TreeNode> Children
         {
             get
@@ -72,6 +72,7 @@ namespace Aras.ViewModel
                 if (this._children == null)
                 {
                     this._children = new ObservableControlList<TreeNode>();
+                    this._children.ListChanged += _children_ListChanged;
 
                     if (!this.Tree.LazyLoad)
                     {
@@ -83,8 +84,28 @@ namespace Aras.ViewModel
             }
         }
 
-        [ViewModel.Attributes.Property("Loaded", Aras.ViewModel.Attributes.PropertyTypes.Boolean, true)]
-        public Boolean Loaded { get; private set; }
+        private void _children_ListChanged(object sender, EventArgs e)
+        {
+            this.OnPropertyChanged("Children");
+        }
+
+        private Boolean _childrenLoaded;
+        [ViewModel.Attributes.Property("ChildrenLoaded", Aras.ViewModel.Attributes.PropertyTypes.Boolean, true)]
+        public Boolean ChildrenLoaded 
+        { 
+            get
+            {
+                return this._childrenLoaded;
+            }
+            protected set
+            {
+                if (this._childrenLoaded != value)
+                {
+                    this._childrenLoaded = value;
+                    this.OnPropertyChanged("ChildrenLoaded");
+                }
+            }
+        }
 
         [ViewModel.Attributes.Command("Load")]
         public LoadCommand Load { get; private set; }
@@ -106,7 +127,7 @@ namespace Aras.ViewModel
             :base()
         {
             this.Tree = Tree;
-            this.Loaded = false;
+            this.ChildrenLoaded = false;
             this.Load = new LoadCommand(this);
         }
 
@@ -116,10 +137,10 @@ namespace Aras.ViewModel
 
             protected override bool Run(IEnumerable<Control> Parameters)
             {
-                if (!this.TreeNode.Loaded)
+                if (!this.TreeNode.ChildrenLoaded)
                 {
                     this.TreeNode.LoadChildren();
-                    this.TreeNode.Loaded = true;
+                    this.TreeNode.ChildrenLoaded = true;
                     this.CanExecute = false;
                 }
 

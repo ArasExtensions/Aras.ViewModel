@@ -50,13 +50,17 @@ namespace Aras.ViewModel.Design.Debug
             Model.Database database = server.Database("VariantsDemo11SP1");
             Model.Session session = database.Login("admin", Model.Server.PasswordHash("innovator"));
 
-            Design.Order ordercontrol = new Order();
-            ordercontrol.SetBinding(session, "1B64E595A3E44AFB8FCC59C30FFD3C01");
+            Design.PartEditor parteditorcontrol = new Design.PartEditor();
+            parteditorcontrol.Binding = session;
 
-            ViewModel.Properties.List list2 = (ViewModel.Properties.List)ordercontrol.Configuration.Rows[0].Cells[1].Controls.First();
-            list2.Value = "1";
+            // Select Top Level Part
+            List<Control> parameters = new List<Control>();
+            parameters.Add(parteditorcontrol.Parts.Grid.Rows[8]);
+            parteditorcontrol.Parts.Grid.Select.Execute(parameters);
 
-            ordercontrol.Save.Execute();
+            // Load Children in Root Node
+            parteditorcontrol.Relationships.Node.Load.Execute();
+
 
 
 

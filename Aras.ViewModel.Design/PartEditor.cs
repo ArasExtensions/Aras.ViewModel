@@ -55,10 +55,28 @@ namespace Aras.ViewModel.Design
 
                 // Set Binding for Parts
                 this.Parts.Binding = partstore;
+
+                // Watch for changes in Parts selection
+                this.Parts.Selected.ListChanged += Selected_ListChanged;
+
+                // Add RelationshipType to RelationshipTree
+                this.Relationships.AddRelationshipType(((Model.Session)this.Binding).ItemType("Part").RelationshipType("Part BOM"));
             }
             else
             {
                 this.Parts.Binding = null;
+            }
+        }
+
+        private void Selected_ListChanged(object sender, EventArgs e)
+        {
+            if (this.Parts.Selected.Count() == 0)
+            {
+                this.Relationships.Binding = null;
+            }
+            else
+            {
+                this.Relationships.Binding = this.Parts.Selected.First();
             }
         }
 

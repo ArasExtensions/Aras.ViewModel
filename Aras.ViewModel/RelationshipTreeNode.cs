@@ -49,6 +49,8 @@ namespace Aras.ViewModel
                 // Build List of Children
                 IEnumerable<Model.Item> childitems = ((Model.Item)this.Binding).RelatedItems(this.RelationshipTree.RelationshipTypes);
 
+                this.Children.NotifyListChanged = false;
+
                 if (childitems.Count() == 0)
                 {
                     this.Children.Clear();
@@ -78,6 +80,8 @@ namespace Aras.ViewModel
                         this.Children[i].Binding = childitems.ElementAt(i);
                     }
                 }
+
+                this.Children.NotifyListChanged = true;
             }
         }
 
@@ -100,6 +104,8 @@ namespace Aras.ViewModel
             {
                 this.Name = "";
             }
+
+            this.ChildrenLoaded = false;
         }
 
         protected override void RefreshControl()
