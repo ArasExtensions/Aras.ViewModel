@@ -44,12 +44,14 @@ namespace Aras.ViewModel.Design.Debug
 
         static void Main(string[] args)
         {
+            // Connect to Server
             Model.Server server = new Model.Server("http://localhost/11SP1");
             server.LoadAssembly("Aras.Model.Design");
             server.LoadAssembly("Aras.ViewModel.Design");
             Model.Database database = server.Database("VariantsDemo11SP1");
             Model.Session session = database.Login("admin", Model.Server.PasswordHash("innovator"));
 
+            // Create PartEditor
             Design.PartEditor parteditorcontrol = new Design.PartEditor();
             parteditorcontrol.Binding = session;
 
@@ -60,10 +62,6 @@ namespace Aras.ViewModel.Design.Debug
 
             // Load Children in Root Node
             parteditorcontrol.Relationships.Node.Load.Execute();
-
-
-
-
         }
     }
 }
