@@ -94,6 +94,8 @@ namespace Aras.ViewModel
                 if (this.Binding is Model.Item)
                 {
                     this.Name = this.RelationshipTree.ItemFormatter.DisplayName((Model.Item)this.Binding);
+                    this.OpenIcon = ((Model.Item)this.Binding).ItemType.Icon;
+                    this.ClosedIcon = ((Model.Item)this.Binding).ItemType.Icon;
                 }
                 else
                 {
@@ -115,6 +117,8 @@ namespace Aras.ViewModel
             if (this.Binding != null && this.Binding is Model.Item)
             {
                 this.Name = this.RelationshipTree.ItemFormatter.DisplayName((Model.Item)this.Binding);
+                this.OpenIcon = ((Model.Item)this.Binding).ItemType.Icon;
+                this.ClosedIcon = ((Model.Item)this.Binding).ItemType.Icon;
             }
             else
             {

@@ -63,6 +63,64 @@ namespace Aras.ViewModel
             }
         }
 
+        private Model.Icon _closedIcon;
+        [ViewModel.Attributes.Property("ClosedIcon", Aras.ViewModel.Attributes.PropertyTypes.Icon, true)]
+        public Model.Icon ClosedIcon
+        {
+            get
+            {
+                return this._closedIcon;
+            }
+            set
+            {
+                if (this._closedIcon == null)
+                {
+                    if (value != null)
+                    {
+                        this._closedIcon = value;
+                        this.OnPropertyChanged("ClosedIcon");
+                    }
+                }
+                else
+                {
+                    if (!this._closedIcon.Equals(value))
+                    {
+                        this._closedIcon = value;
+                        this.OnPropertyChanged("ClosedIcon");
+                    }
+                }
+            }
+        }
+
+        private Model.Icon _openIcon;
+        [ViewModel.Attributes.Property("OpenIcon", Aras.ViewModel.Attributes.PropertyTypes.Icon, true)]
+        public Model.Icon OpenIcon
+        {
+            get
+            {
+                return this._openIcon;
+            }
+            set
+            {
+                if (this._openIcon == null)
+                {
+                    if (value != null)
+                    {
+                        this._openIcon = value;
+                        this.OnPropertyChanged("OpenIcon");
+                    }
+                }
+                else
+                {
+                    if (!this._openIcon.Equals(value))
+                    {
+                        this._openIcon = value;
+                        this.OnPropertyChanged("OpenIcon");
+                    }
+                }
+            }
+        }
+
         private ObservableControlList<TreeNode> _children;
         [ViewModel.Attributes.Property("Children", Aras.ViewModel.Attributes.PropertyTypes.ControlList, true)]
         public ObservableControlList<TreeNode> Children
