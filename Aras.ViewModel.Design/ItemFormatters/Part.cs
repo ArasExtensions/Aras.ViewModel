@@ -28,24 +28,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Aras.ViewModel.Attributes
+namespace Aras.ViewModel.Design.ItemFormatters
 {
-    public enum PropertyTypes { Boolean = 0, Int32 = 1, String = 2, Control = 3, ControlList = 4, NullableInt32 = 5, Float = 6, StringList = 7 };
-
-    [AttributeUsage(AttributeTargets.Property)]
-    public class Property : Attribute
+    public class Part : IItemFormatter
     {
-        public String Name { get; private set; }
-
-        public PropertyTypes Type { get; private set; }
-
-        public Boolean ReadOnly { get; private set; }
-
-        public Property(String Name, PropertyTypes Type, Boolean ReadOnly)
+        public String DisplayName(Model.Item Item)
         {
-            this.Name = Name;
-            this.Type = Type;
-            this.ReadOnly = ReadOnly;
+            return (String)Item.Property("item_number").Value + "." + (String)Item.Property("major_rev").Value + " " + (String)Item.Property("name").Value;
         }
     }
 }

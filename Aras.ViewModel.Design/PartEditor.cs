@@ -84,7 +84,7 @@ namespace Aras.ViewModel.Design
             :base()
         {
             this.Parts = new Searches.Item();
-            this.Relationships = new RelationshipTree();
+            this.Relationships = new RelationshipTree(new ItemFormatters.Part());
         }
     }
 }

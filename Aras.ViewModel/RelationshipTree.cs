@@ -99,12 +99,18 @@ namespace Aras.ViewModel
             }
         }
 
-        public RelationshipTree()
+        public RelationshipTree(IItemFormatter ItemFormatter)
             :base()
         {
             this._relationshipTypes = new List<Model.RelationshipType>();
-            this._itemFormatter = new ItemFormatters.Default();
+            this._itemFormatter = ItemFormatter;
             this.Node = null;
+        }
+
+        public RelationshipTree()
+            :this(new ItemFormatters.Default())
+        {
+
         }
     }
 }

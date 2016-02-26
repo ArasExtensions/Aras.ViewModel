@@ -63,9 +63,9 @@ namespace Aras.ViewModel
             }
         }
 
-        private Model.Icon _closedIcon;
-        [ViewModel.Attributes.Property("ClosedIcon", Aras.ViewModel.Attributes.PropertyTypes.Icon, true)]
-        public Model.Icon ClosedIcon
+        private String _closedIcon;
+        [ViewModel.Attributes.Property("ClosedIcon", Aras.ViewModel.Attributes.PropertyTypes.String, true)]
+        public String ClosedIcon
         {
             get
             {
@@ -92,9 +92,9 @@ namespace Aras.ViewModel
             }
         }
 
-        private Model.Icon _openIcon;
-        [ViewModel.Attributes.Property("OpenIcon", Aras.ViewModel.Attributes.PropertyTypes.Icon, true)]
-        public Model.Icon OpenIcon
+        private String _openIcon;
+        [ViewModel.Attributes.Property("OpenIcon", Aras.ViewModel.Attributes.PropertyTypes.String, true)]
+        public String OpenIcon
         {
             get
             {
@@ -155,7 +155,7 @@ namespace Aras.ViewModel
             {
                 return this._childrenLoaded;
             }
-            protected set
+            private set
             {
                 if (this._childrenLoaded != value)
                 {
@@ -171,6 +171,13 @@ namespace Aras.ViewModel
         protected virtual void LoadChildren()
         {
 
+        }
+
+        protected override void AfterBindingChanged()
+        {
+            base.AfterBindingChanged();
+
+            this.ChildrenLoaded = false;
         }
 
         protected override void RefreshControl()
