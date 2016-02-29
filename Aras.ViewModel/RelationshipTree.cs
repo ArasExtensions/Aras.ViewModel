@@ -67,6 +67,126 @@ namespace Aras.ViewModel
             }
         }
 
+        [ViewModel.Attributes.Command("Select")]
+        public SelectCommand Select { get; private set; }
+
+        [ViewModel.Attributes.Command("Cut")]
+        public CutCommand Cut { get; private set; }
+
+        [ViewModel.Attributes.Command("Copy")]
+        public CopyCommand Copy { get; private set; }
+
+        [ViewModel.Attributes.Command("Paste")]
+        public PasteCommand Paste { get; private set; }
+
+        [ViewModel.Attributes.Command("Delete")]
+        public DeleteCommand Delete { get; private set; }
+
+        [ViewModel.Attributes.Command("Save")]
+        public SaveCommand Save { get; private set; }
+
+        private RelationshipTreeNode _selected;
+        public RelationshipTreeNode Selected
+        {
+            get
+            {
+                return this._selected;
+            }
+            private set
+            {
+                if (value != null)
+                {
+                    if (value.Tree.ID.Equals(this.ID) && !value.Equals(this._selected))
+                    {
+                        this._selected = value;
+                        this.OnPropertyChanged("Selected");
+                    }
+                }
+                else
+                {
+                    if (this._selected != null)
+                    {
+                        this._selected = null;
+                        this.OnPropertyChanged("Selected");
+                    }
+                }
+            }
+        }
+
+        private Model.Item CopyPasteBuffer { get; set; }
+
+        private Model.Transaction _transaction;
+        private Model.Transaction Transaction
+        {
+            get
+            {
+                if (this._transaction == null)
+                {
+                    if (this.Binding != null)
+                    {
+                        this._transaction = ((Model.Item)this.Binding).Session.BeginTransaction();
+                    }
+                }
+
+                return this._transaction;
+            }
+        }
+
+        private void RefreshCommands()
+        {
+            if (this.Binding != null)
+            {
+                if (this.Selected != null)
+                {
+                    this.Copy.UpdateCanExecute(true);
+
+                    if (this.Selected.ID.Equals(this.Node.ID))
+                    {
+                        this.Cut.UpdateCanExecute(false);
+                        this.Delete.UpdateCanExecute(false);
+                    }
+                    else
+                    {
+                        this.Cut.UpdateCanExecute(true);
+                        this.Delete.UpdateCanExecute(true);
+                    }
+
+                    if (this.CopyPasteBuffer != null)
+                    {
+                        this.Paste.UpdateCanExecute(true);
+                    }
+                    else
+                    {
+                        this.Paste.UpdateCanExecute(false);
+                    }
+                }
+                else
+                {
+                    this.Copy.UpdateCanExecute(false);
+                    this.Cut.UpdateCanExecute(false);
+                    this.Delete.UpdateCanExecute(false);
+                    this.Paste.UpdateCanExecute(false);
+                }
+
+                if (this._transaction != null)
+                {
+                    this.Save.UpdateCanExecute(true);
+                }
+                else
+                {
+                    this.Save.UpdateCanExecute(false);
+                }
+            }
+            else
+            {
+                this.Copy.UpdateCanExecute(false);
+                this.Cut.UpdateCanExecute(false);
+                this.Delete.UpdateCanExecute(false);
+                this.Paste.UpdateCanExecute(false);
+                this.Save.UpdateCanExecute(false);
+            }
+        }
+
         protected override void AfterBindingChanged()
         {
             base.AfterBindingChanged();
@@ -75,7 +195,7 @@ namespace Aras.ViewModel
             {
                 if (this.Binding is Model.Item)
                 {
-                    this.Node = new RelationshipTreeNode(this);
+                    this.Node = new RelationshipTreeNode(this, null);
                     this.Node.Binding = this.Binding;
                 }
                 else
@@ -105,12 +225,223 @@ namespace Aras.ViewModel
             this._relationshipTypes = new List<Model.RelationshipType>();
             this._itemFormatter = ItemFormatter;
             this.Node = null;
+            this._transaction = null;
+            this.CopyPasteBuffer = null;
+            this.Cut = new CutCommand(this);
+            this.Copy = new CopyCommand(this);
+            this.Delete = new DeleteCommand(this);
+            this.Paste = new PasteCommand(this);
+            this.Save = new SaveCommand(this);
+            this.Select = new SelectCommand(this);
         }
 
         public RelationshipTree()
             :this(new ItemFormatters.Default())
         {
 
+        }
+
+        public class SelectCommand : Aras.ViewModel.Command
+        {
+            public RelationshipTree RelationshipTree { get; private set; }
+
+            protected override bool Run(IEnumerable<Control> Parameters)
+            {
+                if (Parameters != null)
+                {
+                    foreach (Control parameter in Parameters)
+                    {
+                        if (parameter is RelationshipTreeNode)
+                        {
+                            this.RelationshipTree.Selected = (RelationshipTreeNode)parameter;
+                        }
+                    }
+
+                    this.RelationshipTree.RefreshCommands();
+                }
+
+                return true;
+            }
+
+            internal SelectCommand(RelationshipTree RelationshipTree)
+            {
+                this.RelationshipTree = RelationshipTree;
+                this.CanExecute = true;
+            }
+        }
+
+        public class CutCommand : Aras.ViewModel.Command
+        {
+            public RelationshipTree RelationshipTree { get; private set; }
+
+            internal void UpdateCanExecute(Boolean CanExecute)
+            {
+                this.CanExecute = CanExecute;
+            }
+
+            protected override bool Run(IEnumerable<Control> Parameters)
+            {
+                if ((this.RelationshipTree.Selected != null) && (this.RelationshipTree.Selected.Parent != null))
+                {
+                    // Store Related Item in CopyPaste Buffer
+                    this.RelationshipTree.CopyPasteBuffer = this.RelationshipTree.Selected.Item;
+
+                    // Update Parent Item
+                    ((RelationshipTreeNode)this.RelationshipTree.Selected.Parent).Item.Update(this.RelationshipTree.Transaction);
+
+                    // Delete Relationship
+                    this.RelationshipTree.Selected.Relationship.Delete(this.RelationshipTree.Transaction);
+
+                    // Refesh Parent Node
+                    this.RelationshipTree.Selected.Parent.Refresh.Execute();
+
+                    // Removed Selected
+                    this.RelationshipTree.Selected = null;
+
+                    // Refresh Commands
+                    this.RelationshipTree.RefreshCommands();
+                }
+
+                return true;
+            }
+
+            internal CutCommand(RelationshipTree RelationshipTree)
+            {
+                this.RelationshipTree = RelationshipTree;
+                this.CanExecute = false;
+            }
+        }
+
+        public class CopyCommand : Aras.ViewModel.Command
+        {
+            public RelationshipTree RelationshipTree { get; private set; }
+
+            internal void UpdateCanExecute(Boolean CanExecute)
+            {
+                this.CanExecute = CanExecute;
+            }
+
+            protected override bool Run(IEnumerable<Control> Parameters)
+            {
+                // Store Related Item in CopyPaste Buffer
+                this.RelationshipTree.CopyPasteBuffer = this.RelationshipTree.Selected.Item;
+
+                // Refresh Commands
+                this.RelationshipTree.RefreshCommands();
+
+                return true;
+            }
+
+            internal CopyCommand(RelationshipTree RelationshipTree)
+            {
+                this.RelationshipTree = RelationshipTree;
+                this.CanExecute = false;
+            }
+        }
+
+        public class PasteCommand : Aras.ViewModel.Command
+        {
+            public RelationshipTree RelationshipTree { get; private set; }
+
+            internal void UpdateCanExecute(Boolean CanExecute)
+            {
+                this.CanExecute = CanExecute;
+            }
+
+            protected override bool Run(IEnumerable<Control> Parameters)
+            {
+                if ((this.RelationshipTree.Selected != null) && (this.RelationshipTree.CopyPasteBuffer != null))
+                {
+                    // Update Parent Item
+                    this.RelationshipTree.Selected.Item.Update(this.RelationshipTree.Transaction);
+
+                    // Create Relationship - ******** Need to sort out when more than one Relationship Type ********
+                    this.RelationshipTree.Selected.Item.Store(this.RelationshipTree.RelationshipTypes.First()).Create(this.RelationshipTree.CopyPasteBuffer, this.RelationshipTree.Transaction);
+
+                    // Refresh Parent Node
+                    this.RelationshipTree.Selected.Refresh.Execute();
+
+                    // Refresh Commands
+                    this.RelationshipTree.RefreshCommands();
+                }
+
+                return true;
+            }
+
+            internal PasteCommand(RelationshipTree RelationshipTree)
+            {
+                this.RelationshipTree = RelationshipTree;
+                this.CanExecute = false;
+            }
+        }
+
+        public class DeleteCommand : Aras.ViewModel.Command
+        {
+            public RelationshipTree RelationshipTree { get; private set; }
+
+            internal void UpdateCanExecute(Boolean CanExecute)
+            {
+                this.CanExecute = CanExecute;
+            }
+
+            protected override bool Run(IEnumerable<Control> Parameters)
+            {
+                if ((this.RelationshipTree.Selected != null) && (this.RelationshipTree.Selected.Parent != null))
+                {
+                    // Update Parent Item
+                    ((RelationshipTreeNode)this.RelationshipTree.Selected.Parent).Item.Update(this.RelationshipTree.Transaction);
+
+                    // Delete Relationship
+                    this.RelationshipTree.Selected.Relationship.Delete(this.RelationshipTree.Transaction);
+
+                    // Refesh Parent Node
+                    this.RelationshipTree.Selected.Parent.Refresh.Execute();
+
+                    // Removed Selected
+                    this.RelationshipTree.Selected = null;
+
+                    // Refresh Commands
+                    this.RelationshipTree.RefreshCommands();
+                }
+
+                return true;
+            }
+
+            internal DeleteCommand(RelationshipTree RelationshipTree)
+            {
+                this.RelationshipTree = RelationshipTree;
+                this.CanExecute = false;
+            }
+        }
+
+        public class SaveCommand : Aras.ViewModel.Command
+        {
+            public RelationshipTree RelationshipTree { get; private set; }
+
+            internal void UpdateCanExecute(Boolean CanExecute)
+            {
+                this.CanExecute = CanExecute;
+            }
+
+            protected override bool Run(IEnumerable<Control> Parameters)
+            {
+                if (this.RelationshipTree._transaction != null)
+                {
+                    this.RelationshipTree._transaction.Commit();
+                    this.RelationshipTree._transaction = null;
+
+                    // Refresh Commands
+                    this.RelationshipTree.RefreshCommands();
+                }
+
+                return true;
+            }
+
+            internal SaveCommand(RelationshipTree RelationshipTree)
+            {
+                this.RelationshipTree = RelationshipTree;
+                this.CanExecute = false;
+            }
         }
     }
 }

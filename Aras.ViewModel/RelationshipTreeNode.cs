@@ -109,7 +109,7 @@ namespace Aras.ViewModel
                         // Add Children
                         for (int i = 0; i < (childitemcount - childrencount); i++)
                         {
-                            this.Children.Add(new RelationshipTreeNode(this.RelationshipTree));
+                            this.Children.Add(new RelationshipTreeNode(this.RelationshipTree, this));
                         }
                     }
                     else if (relationships.Count() < this.Children.Count())
@@ -168,8 +168,8 @@ namespace Aras.ViewModel
             }
         }
 
-        public RelationshipTreeNode(RelationshipTree RelationshipTree)
-            :base(RelationshipTree)
+        public RelationshipTreeNode(RelationshipTree RelationshipTree, RelationshipTreeNode RelationshipTreeNode)
+            : base(RelationshipTree, RelationshipTreeNode)
         {
 
         }

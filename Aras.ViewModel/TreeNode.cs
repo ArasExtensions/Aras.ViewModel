@@ -34,6 +34,8 @@ namespace Aras.ViewModel
     {
         public Tree Tree { get; private set; }
 
+        public TreeNode Parent { get; private set; }
+
         private String _name;
         [ViewModel.Attributes.Property("Name", Aras.ViewModel.Attributes.PropertyTypes.String, true)]
         public String Name 
@@ -188,7 +190,7 @@ namespace Aras.ViewModel
             this.LoadChildren();
         }
 
-        public TreeNode(Tree Tree)
+        public TreeNode(Tree Tree, TreeNode Parent)
             :base()
         {
             this.Tree = Tree;
