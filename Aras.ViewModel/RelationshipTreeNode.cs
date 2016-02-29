@@ -40,24 +40,68 @@ namespace Aras.ViewModel
             }
         }
 
+        public Model.Relationship Relationship
+        {
+            get
+            {
+                if (this.Binding != null)
+                {
+                    if (this.Binding is Model.Relationship)
+                    {
+                        return (Model.Relationship)this.Binding;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
+        public Model.Item Item
+        {
+            get
+            {
+                if (this.Binding != null)
+                {
+                    if (this.Binding is Model.Relationship)
+                    {
+                        return ((Model.Relationship)this.Binding).Related;
+                    }
+                    else
+                    {
+                        return (Model.Item)this.Binding;
+                    }
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
         protected override void LoadChildren()
         {
             base.LoadChildren();
 
-            if ((this.Binding != null) && (this.Binding is Model.Item))
+            if (this.Item != null)
             {
-                // Build List of Children
-                IEnumerable<Model.Item> childitems = ((Model.Item)this.Binding).RelatedItems(this.RelationshipTree.RelationshipTypes);
+                // Build List of Relationships
+                IEnumerable<Model.Relationship> relationships = this.Item.Relationships(this.RelationshipTree.RelationshipTypes);
 
                 this.Children.NotifyListChanged = false;
 
-                if (childitems.Count() == 0)
+                if (relationships.Count() == 0)
                 {
                     this.Children.Clear();
                 }
                 else
                 {
-                    int childitemcount = childitems.Count();
+                    int childitemcount = relationships.Count();
                     int childrencount = this.Children.Count();
 
                     if (childitemcount > childrencount)
@@ -68,7 +112,7 @@ namespace Aras.ViewModel
                             this.Children.Add(new RelationshipTreeNode(this.RelationshipTree));
                         }
                     }
-                    else if (childitems.Count() < this.Children.Count())
+                    else if (relationships.Count() < this.Children.Count())
                     {
                         // Remove Children
                         this.Children.RemoveRange(childitemcount, (childrencount - childitemcount));
@@ -77,7 +121,7 @@ namespace Aras.ViewModel
                     // Set Bindings
                     for(int i=0; i<childitemcount; i++)
                     {
-                        this.Children[i].Binding = childitems.ElementAt(i);
+                        this.Children[i].Binding = relationships.ElementAt(i);
                     }
                 }
 
@@ -91,11 +135,11 @@ namespace Aras.ViewModel
 
             if (this.Binding != null)
             {
-                if (this.Binding is Model.Item)
+                if ((this.Binding is Model.Item) || (this.Binding is Model.Relationship))
                 {
-                    this.Name = this.RelationshipTree.ItemFormatter.DisplayName((Model.Item)this.Binding);
-                    this.OpenIcon = ((Model.Item)this.Binding).ItemType.Name.Replace(" ", "");
-                    this.ClosedIcon = ((Model.Item)this.Binding).ItemType.Name.Replace(" ", "");
+                    this.Name = this.RelationshipTree.ItemFormatter.DisplayName(this.Item);
+                    this.OpenIcon = this.Item.ItemType.Name.Replace(" ", "");
+                    this.ClosedIcon = this.Item.ItemType.Name.Replace(" ", "");
                 }
                 else
                 {
@@ -112,11 +156,11 @@ namespace Aras.ViewModel
         {
             base.RefreshControl();
 
-            if (this.Binding != null && this.Binding is Model.Item)
+            if (this.Item != null)
             {
-                this.Name = this.RelationshipTree.ItemFormatter.DisplayName((Model.Item)this.Binding);
-                this.OpenIcon = ((Model.Item)this.Binding).ItemType.Name.Replace(" ", "");
-                this.ClosedIcon = ((Model.Item)this.Binding).ItemType.Name.Replace(" ", "");
+                this.Name = this.RelationshipTree.ItemFormatter.DisplayName(this.Item);
+                this.OpenIcon = this.Item.ItemType.Name.Replace(" ", "");
+                this.ClosedIcon = this.Item.ItemType.Name.Replace(" ", "");
             }
             else
             {
