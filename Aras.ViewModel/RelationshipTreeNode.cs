@@ -168,8 +168,8 @@ namespace Aras.ViewModel
             }
         }
 
-        public RelationshipTreeNode(RelationshipTree RelationshipTree, RelationshipTreeNode RelationshipTreeNode)
-            : base(RelationshipTree, RelationshipTreeNode)
+        public RelationshipTreeNode(RelationshipTree RelationshipTree, RelationshipTreeNode Parent)
+            : base(RelationshipTree, Parent)
         {
 
         }

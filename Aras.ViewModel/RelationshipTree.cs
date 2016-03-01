@@ -295,8 +295,8 @@ namespace Aras.ViewModel
                     // Refesh Parent Node
                     this.RelationshipTree.Selected.Parent.Refresh.Execute();
 
-                    // Removed Selected
-                    this.RelationshipTree.Selected = null;
+                    // Select Parent
+                    this.RelationshipTree.Selected = (RelationshipTreeNode)this.RelationshipTree.Selected.Parent;
 
                     // Refresh Commands
                     this.RelationshipTree.RefreshCommands();
@@ -323,11 +323,14 @@ namespace Aras.ViewModel
 
             protected override bool Run(IEnumerable<Control> Parameters)
             {
-                // Store Related Item in CopyPaste Buffer
-                this.RelationshipTree.CopyPasteBuffer = this.RelationshipTree.Selected.Item;
+                if (this.RelationshipTree.Selected != null)
+                {
+                    // Store Related Item in CopyPaste Buffer
+                    this.RelationshipTree.CopyPasteBuffer = this.RelationshipTree.Selected.Item;
 
-                // Refresh Commands
-                this.RelationshipTree.RefreshCommands();
+                    // Refresh Commands
+                    this.RelationshipTree.RefreshCommands();
+                }
 
                 return true;
             }
@@ -394,11 +397,11 @@ namespace Aras.ViewModel
                     // Delete Relationship
                     this.RelationshipTree.Selected.Relationship.Delete(this.RelationshipTree.Transaction);
 
-                    // Refesh Parent Node
-                    this.RelationshipTree.Selected.Parent.Refresh.Execute();
+                    // Set Selected to Parent
+                    this.RelationshipTree.Selected = (RelationshipTreeNode)this.RelationshipTree.Selected.Parent;
 
-                    // Removed Selected
-                    this.RelationshipTree.Selected = null;
+                    // Refesh Parent Node
+                    this.RelationshipTree.Selected.Refresh.Execute();
 
                     // Refresh Commands
                     this.RelationshipTree.RefreshCommands();

@@ -194,6 +194,7 @@ namespace Aras.ViewModel
             :base()
         {
             this.Tree = Tree;
+            this.Parent = Parent;
             this.ChildrenLoaded = false;
             this.Load = new LoadCommand(this);
         }
