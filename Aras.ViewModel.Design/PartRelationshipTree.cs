@@ -34,6 +34,9 @@ namespace Aras.ViewModel.Design
     {
         protected override Model.Item GetContext(Model.Session Sesison, string ID)
         {
+            // Set Part Properties to Select
+            Sesison.Store("Part").ItemType.AddToSelect("item_number,major_rev,name,keyed_name");
+
             // Ensure RelationshipType Set
             this.AddRelationshipType(Sesison.ItemType("Part").RelationshipType("Part BOM"));
 
@@ -42,7 +45,7 @@ namespace Aras.ViewModel.Design
         }
 
         public PartRelationshipTree()
-            :base()
+            : base(new ItemFormatters.Part())
         {
 
         }
