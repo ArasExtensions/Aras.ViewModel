@@ -40,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ItemFormatters\Part.cs" />
+    <Compile Include="PartRelationshipTree.cs" />
     <Compile Include="PartEditor.cs" />
     <Compile Include="Order.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
