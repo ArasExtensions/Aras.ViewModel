@@ -85,6 +85,12 @@ namespace Aras.ViewModel
         [ViewModel.Attributes.Command("Save")]
         public SaveCommand Save { get; private set; }
 
+        [ViewModel.Attributes.Command("Indent")]
+        public IndentCommand Indent { get; private set; }
+
+        [ViewModel.Attributes.Command("Outdent")]
+        public OutdentCommand Outdent { get; private set; }
+
         private RelationshipTreeNode _selected;
         public RelationshipTreeNode Selected
         {
@@ -159,6 +165,33 @@ namespace Aras.ViewModel
                     {
                         this.Paste.UpdateCanExecute(false);
                     }
+
+                    if (this.Selected.Parent != null)
+                    {
+                        if (!this.Selected.Parent.Children.First().Equals(this.Selected))
+                        {
+                            this.Outdent.UpdateCanExecute(true);
+                        }
+                        else
+                        {
+                            this.Outdent.UpdateCanExecute(false);
+                        }
+
+                        if (this.Selected.Parent.Parent != null)
+                        {
+                            this.Indent.UpdateCanExecute(true);
+                        }
+                        else
+                        {
+                            this.Indent.UpdateCanExecute(false);
+                        }
+                    }
+                    else
+                    {
+                        this.Indent.UpdateCanExecute(false);
+                        this.Outdent.UpdateCanExecute(false);
+                    }
+
                 }
                 else
                 {
@@ -166,6 +199,8 @@ namespace Aras.ViewModel
                     this.Cut.UpdateCanExecute(false);
                     this.Delete.UpdateCanExecute(false);
                     this.Paste.UpdateCanExecute(false);
+                    this.Indent.UpdateCanExecute(false);
+                    this.Outdent.UpdateCanExecute(false);
                 }
 
                 if (this._transaction != null)
@@ -184,6 +219,8 @@ namespace Aras.ViewModel
                 this.Delete.UpdateCanExecute(false);
                 this.Paste.UpdateCanExecute(false);
                 this.Save.UpdateCanExecute(false);
+                this.Indent.UpdateCanExecute(false);
+                this.Outdent.UpdateCanExecute(false);
             }
         }
 
@@ -233,6 +270,8 @@ namespace Aras.ViewModel
             this.Paste = new PasteCommand(this);
             this.Save = new SaveCommand(this);
             this.Select = new SelectCommand(this);
+            this.Indent = new IndentCommand(this);
+            this.Outdent = new OutdentCommand(this);
         }
 
         public RelationshipTree()
@@ -441,6 +480,135 @@ namespace Aras.ViewModel
             }
 
             internal SaveCommand(RelationshipTree RelationshipTree)
+            {
+                this.RelationshipTree = RelationshipTree;
+                this.CanExecute = false;
+            }
+        }
+
+        public class IndentCommand : Aras.ViewModel.Command
+        {
+            public RelationshipTree RelationshipTree { get; private set; }
+
+            internal void UpdateCanExecute(Boolean CanExecute)
+            {
+                this.CanExecute = CanExecute;
+            }
+
+            protected override bool Run(IEnumerable<Control> Parameters)
+            {
+                if ((this.RelationshipTree.Selected != null) && (this.RelationshipTree.Selected.Parent != null) && (this.RelationshipTree.Selected.Parent.Parent != null))
+                {
+                    // Get Current Child Node
+                    RelationshipTreeNode childnode = (RelationshipTreeNode)this.RelationshipTree.Selected;
+
+                    // Get Child Item
+                    Model.Item childitem = childnode.Item;
+
+                    // Get Current Parent Node
+                    RelationshipTreeNode currentparentnode = (RelationshipTreeNode)this.RelationshipTree.Selected.Parent;
+
+                    // Get New Parent Node
+                    RelationshipTreeNode newparentnode = (RelationshipTreeNode)this.RelationshipTree.Selected.Parent.Parent;
+
+                    // Update Current Parent Item
+                    currentparentnode.Item.Update(this.RelationshipTree.Transaction);
+
+                    // Delete Current Relationship
+                    childnode.Relationship.Delete(this.RelationshipTree.Transaction);
+
+                    // Refesh Current Parent Node
+                    currentparentnode.Refresh.Execute();
+
+                    // UpdateNew Parent Item
+                    newparentnode.Item.Update(this.RelationshipTree.Transaction);
+
+                    // Add New Relationship
+                    newparentnode.Item.Store(this.RelationshipTree.RelationshipTypes.First()).Create(childitem, this.RelationshipTree.Transaction);
+
+                    // Refresh new Parent
+                    newparentnode.Refresh.Execute();
+
+                    // Select New Parent
+                    this.RelationshipTree.Selected = newparentnode;
+
+                    // Refresh Commands
+                    this.RelationshipTree.RefreshCommands();
+                }
+
+                return true;
+            }
+
+            internal IndentCommand(RelationshipTree RelationshipTree)
+            {
+                this.RelationshipTree = RelationshipTree;
+                this.CanExecute = false;
+            }
+        }
+
+        public class OutdentCommand : Aras.ViewModel.Command
+        {
+            public RelationshipTree RelationshipTree { get; private set; }
+
+            internal void UpdateCanExecute(Boolean CanExecute)
+            {
+                this.CanExecute = CanExecute;
+            }
+
+            protected override bool Run(IEnumerable<Control> Parameters)
+            {
+                if ((this.RelationshipTree.Selected != null) && !this.RelationshipTree.Selected.Parent.Children.First().Equals(this.RelationshipTree.Selected))
+                {
+                    // Get Child Node
+                    RelationshipTreeNode childnode = this.RelationshipTree.Selected;
+
+                    // Get Current Parent Node
+                    RelationshipTreeNode currentparantnode = (RelationshipTreeNode)childnode.Parent;
+
+                    // Work out new Parent Node
+                    RelationshipTreeNode newparentnode = null;
+
+                    foreach(RelationshipTreeNode child in currentparantnode.Children)
+                    {
+                        if (child.Equals(childnode))
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            newparentnode = child;
+                        }
+                    }
+
+                    // Update Current Parent Item
+                    currentparantnode.Item.Update(this.RelationshipTree.Transaction);
+
+                    // Delete Current Relationship
+                    childnode.Relationship.Delete(this.RelationshipTree.Transaction);
+
+                    // Refesh Current Parent Node
+                    currentparantnode.Refresh.Execute();
+
+                    // Update New Parent Item
+                    newparentnode.Item.Update(this.RelationshipTree.Transaction);
+
+                    // Create new Relationship
+                    newparentnode.Item.Store(this.RelationshipTree.RelationshipTypes.First()).Create(childnode.Item, this.RelationshipTree.Transaction);
+
+                    // Refresh New Parent Node
+                    newparentnode.Refresh.Execute();
+
+                    // Select New Parent Node
+                    this.RelationshipTree.Selected = newparentnode;
+
+                    // Refresh Commands
+                    this.RelationshipTree.RefreshCommands();
+                }
+
+                return true;
+            }
+
+            internal OutdentCommand(RelationshipTree RelationshipTree)
             {
                 this.RelationshipTree = RelationshipTree;
                 this.CanExecute = false;
