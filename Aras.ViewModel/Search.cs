@@ -114,6 +114,7 @@ namespace Aras.ViewModel
                         this.Query.Page = this._page;
                         this.RefreshControl();
                         this.OnPropertyChanged("PageSize");
+                        this.OnPropertyChanged("Page");
                     }
                 }
             }
