@@ -63,8 +63,15 @@ namespace Aras.ViewModel.Manager
         public Session Login(String Username, String Password)
         {
             Model.Session modelsession = this.Model.Login(Username, Password);
-            Session session = new Session(this, modelsession);
-            this.Server.AddSessionToCache(session);
+
+            Session session = this.Server.GetSessionFromCache(modelsession.ID);
+
+            if (session == null)
+            {
+                session = new Session(this, modelsession);
+                this.Server.AddSessionToCache(session);
+            }
+                        
             return session;
         }
 

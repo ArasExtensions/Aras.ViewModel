@@ -88,36 +88,29 @@ namespace Aras.ViewModel.Manager
             }
         }
 
-        private Dictionary<String, Dictionary<String, Control>> PluginCache;
-
         public ViewModel.Control Plugin(String Name, String Context)
         {
-            if (!this.PluginCache.ContainsKey(Name))
+            Control plugin = null;
+
+            try
             {
-                this.PluginCache[Name] = new Dictionary<String, Control>();
+                // Create Control
+                plugin = (Control)Activator.CreateInstance(this.Database.Server.ControlType(Name), new object[] { });
+
+                // Set Context
+                plugin.SetBinding(this.Model, Context);
+
+                // Add Plugin to Cache
+                this.AddControlToCache(plugin, false);
+            }
+            catch (Exception e)
+            {
+                this.Log.Add(Logging.Log.Levels.Error, "Failed to create Plugin: " + Name + "/" + Context + Environment.NewLine + e.Message);
+                this.Log.Add(Logging.Log.Levels.Debug, "Failed to create Plugin: " + Name + "/" + Context + Environment.NewLine + e.Message + Environment.NewLine + e.StackTrace);
             }
 
-            if (!this.PluginCache[Name].ContainsKey(Context))
-            {
-                try
-                {
-                    // Create Control
-                    Control plugin = (Control)Activator.CreateInstance(this.Database.Server.ControlType(Name), new object[] { });
-                    
-                    // Set Context
-                    plugin.SetBinding(this.Model, Context);
-                    
-                    this.PluginCache[Name][Context] = plugin;
-                    this.AddControlToCache(plugin, false);
-                }
-                catch (Exception e)
-                {
-                    this.Log.Add(Logging.Log.Levels.Error, "Failed to create Plugin: " + Name + "/" + Context + Environment.NewLine + e.Message);
-                    this.Log.Add(Logging.Log.Levels.Debug, "Failed to create Plugin: " + Name + "/" + Context + Environment.NewLine + e.Message + Environment.NewLine + e.StackTrace);
-                }
-            }
 
-            return this.PluginCache[Name][Context];
+            return plugin;
         }
 
         private Dictionary<String, Control> ApplicationCache;
@@ -308,7 +301,6 @@ namespace Aras.ViewModel.Manager
 
         internal Session(Database Database, Model.Session Model)
         {
-            this.PluginCache = new Dictionary<String, Dictionary<String, Control>>();
             this.ApplicationCache = new Dictionary<String, Control>();
             this.Database = Database;
             this.Model = Model;

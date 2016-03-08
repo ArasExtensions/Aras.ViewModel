@@ -159,7 +159,7 @@ namespace Aras.ViewModel.Manager
         }
 
         private Object _sessionCacheLock = new Object();
-        private volatile Dictionary<String, Session> SessionCache;
+        private Dictionary<String, Session> SessionCache;
 
         internal void AddSessionToCache(Session Session)
         {
@@ -169,7 +169,7 @@ namespace Aras.ViewModel.Manager
             }
         }
 
-        private Session GetSessionFromCache(String ID)
+        internal Session GetSessionFromCache(String ID)
         {
             lock (this._sessionCacheLock)
             {
@@ -191,6 +191,9 @@ namespace Aras.ViewModel.Manager
 
         public Server(String URL, Logging.Log Log)
         {
+            // Set Default Session Expire
+            this.ExpireSession = DefaultExpireSession;
+
             // Initialiase Session Cache
             this.SessionCache = new Dictionary<String, Session>();
 
