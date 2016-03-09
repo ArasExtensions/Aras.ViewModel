@@ -138,6 +138,64 @@ namespace Aras.ViewModel
             }
         }
 
+        private void ProcessQueryString()
+        {
+            if (String.IsNullOrEmpty(this.QueryString))
+            {
+                this.Query.Condition = null;
+            }
+            else
+            {
+                if (this.PropertyTypes.Count() == 1)
+                {
+                    this.Query.Condition = Aras.Conditions.Like(this.PropertyTypes[0].Name, this.QueryString);
+                }
+                else
+                {
+                    this.Query.Condition = Aras.Conditions.Or(Aras.Conditions.Like(this.PropertyTypes[0].Name, this.QueryString), Aras.Conditions.Like(this.PropertyTypes[1].Name, this.QueryString));
+
+                    if (this.PropertyTypes.Count() > 2)
+                    {
+                        for(int i=2; i<this.PropertyTypes.Count(); i++)
+                        {
+                            ((Model.Conditions.Or)this.Query.Condition).Add(Aras.Conditions.Like(this.PropertyTypes[i].Name, this.QueryString));
+                        }
+                    }
+                }
+            }
+        }
+
+        private String _queryString;
+        [ViewModel.Attributes.Property("QueryString", Aras.ViewModel.Attributes.PropertyTypes.String, false)]
+        public String QueryString
+        {
+            get
+            {
+                return this._queryString;
+            }
+            set
+            {
+                if (value == null)
+                {
+                    if (this._queryString != null)
+                    {
+                        this._queryString = value;
+                        this.ProcessQueryString();
+                        this.OnPropertyChanged("QueryString");
+                    }
+                }
+                else
+                {
+                    if (!value.Equals(this._queryString))
+                    {
+                        this._queryString = value;
+                        this.ProcessQueryString();
+                        this.OnPropertyChanged("QueryString");
+                    }
+                }
+            }
+        }
+
         [ViewModel.Attributes.Property("Grid", Aras.ViewModel.Attributes.PropertyTypes.Control, true)]
         public Grid Grid { get; private set; }
 
@@ -280,6 +338,7 @@ namespace Aras.ViewModel
             this.NextPage = new NextPageCommand(this);
             this.PreviousPage = new PreviousPageCommand(this);
             this._propertyNames = new List<String>();
+            this._queryString = null;
         }
 
         void SelectedRows_ListChanged(object sender, EventArgs e)
