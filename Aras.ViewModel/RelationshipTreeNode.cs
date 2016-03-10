@@ -95,34 +95,19 @@ namespace Aras.ViewModel
 
                 this.Children.NotifyListChanged = false;
 
-                if (relationships.Count() == 0)
-                {
-                    this.Children.Clear();
-                }
-                else
-                {
-                    int childitemcount = relationships.Count();
-                    int childrencount = this.Children.Count();
+                this.Children.Clear();
 
-                    if (childitemcount > childrencount)
-                    {            
-                        // Add Children
-                        for (int i = 0; i < (childitemcount - childrencount); i++)
-                        {
-                            this.Children.Add(new RelationshipTreeNode(this.RelationshipTree, this));
-                        }
-                    }
-                    else if (relationships.Count() < this.Children.Count())
+                foreach (Model.Relationship relationship in this.Item.Relationships(this.RelationshipTree.RelationshipTypes))
+                {
+                    RelationshipTreeNode node = this.RelationshipTree.GetNodeFromCache(relationship);
+
+                    if (node == null)
                     {
-                        // Remove Children
-                        this.Children.RemoveRange(childitemcount, (childrencount - childitemcount));
+                        node = new RelationshipTreeNode(this.RelationshipTree, this);
+                        node.Binding = relationship;
                     }
 
-                    // Set Bindings
-                    for(int i=0; i<childitemcount; i++)
-                    {
-                        this.Children[i].Binding = relationships.ElementAt(i);
-                    }
+                    this.Children.Add(node);
                 }
 
                 this.Children.NotifyListChanged = true;
@@ -161,13 +146,6 @@ namespace Aras.ViewModel
                 this.Name = this.RelationshipTree.ItemFormatter.DisplayName(this.Item);
                 this.OpenIcon = this.Item.ItemType.Name.Replace(" ", "");
                 this.ClosedIcon = this.Item.ItemType.Name.Replace(" ", "");
-
-                this.LoadChildren();
-
-                foreach(RelationshipTreeNode child in this.Children)
-                {
-                    child.Refresh.Execute();
-                }
             }
             else
             {

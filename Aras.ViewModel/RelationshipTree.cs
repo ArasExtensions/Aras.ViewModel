@@ -122,6 +122,25 @@ namespace Aras.ViewModel
             }
         }
 
+        private Dictionary<Model.Item, RelationshipTreeNode> NodeCache;
+
+        internal RelationshipTreeNode GetNodeFromCache(Model.Item Item)
+        {
+            if (this.NodeCache.ContainsKey(Item))
+            {
+                return this.NodeCache[Item];
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        internal void AddNodeToCache(RelationshipTreeNode Node)
+        {
+            this.NodeCache[Node.Item] = Node;
+        }
+
         private Model.Item CopyPasteBuffer { get; set; }
 
         private Model.Transaction _transaction;
@@ -239,6 +258,7 @@ namespace Aras.ViewModel
                 {
                     this.Node = new RelationshipTreeNode(this, null);
                     this.Node.Binding = this.Binding;
+                    this.AddNodeToCache((RelationshipTreeNode)this.Node);
                 }
                 else
                 {
@@ -265,6 +285,7 @@ namespace Aras.ViewModel
             :base()
         {
             this._relationshipTypes = new List<Model.RelationshipType>();
+            this.NodeCache = new Dictionary<Model.Item, RelationshipTreeNode>();
             this._itemFormatter = ItemFormatter;
             this.Node = null;
             this._transaction = null;
