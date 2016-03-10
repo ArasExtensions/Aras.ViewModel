@@ -102,15 +102,15 @@ namespace Aras.ViewModel.Manager
 
                 // Add Plugin to Cache
                 this.AddControlToCache(plugin, false);
+
+                return plugin;
             }
             catch (Exception e)
             {
                 this.Log.Add(Logging.Log.Levels.Error, "Failed to create Plugin: " + Name + "/" + Context + Environment.NewLine + e.Message);
                 this.Log.Add(Logging.Log.Levels.Debug, "Failed to create Plugin: " + Name + "/" + Context + Environment.NewLine + e.Message + Environment.NewLine + e.StackTrace);
+                throw e;
             }
-
-
-            return plugin;
         }
 
         public ViewModel.Control Application(String Name)
@@ -127,13 +127,15 @@ namespace Aras.ViewModel.Manager
 
                 // Add Application to Cache
                 this.AddControlToCache(application, false);
+
+                return application;
             }
             catch (Exception e)
             {
                 this.Log.Add(Logging.Log.Levels.Error, "Failed to create Application: " + Name + " " + Environment.NewLine + e.Message);
+                this.Log.Add(Logging.Log.Levels.Debug, "Failed to create Plugin: " + Name  + Environment.NewLine + e.Message + Environment.NewLine + e.StackTrace);
+                throw e;
             }
-
-            return application;
         }
 
         private Dictionary<Guid, ViewModel.Control> ControlCache;

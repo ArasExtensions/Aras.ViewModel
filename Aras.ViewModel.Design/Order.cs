@@ -35,11 +35,46 @@ namespace Aras.ViewModel.Design
         [ViewModel.Attributes.Command("Save")]
         public SaveCommand Save { get; private set; }
 
+        private ViewModel.Grid _bOM;
         [ViewModel.Attributes.Property("BOM", Aras.ViewModel.Attributes.PropertyTypes.Control, true)]
-        public ViewModel.Grid BOM { get; private set; }
+        public ViewModel.Grid BOM
+        {
+            get
+            {
+                if (this._bOM == null)
+                {
+                    this._bOM = new Grid();
+                    this.OnPropertyChanged("BOM");
+                    this._bOM.AllowSelect = false;
+                    this._bOM.AddColumn("number", "Number");
+                    this._bOM.AddColumn("revision", "Revision");
+                    this._bOM.AddColumn("name", "Name");
+                    this._bOM.AddColumn("quantity", "Qty");
+                }
 
+                return this._bOM;
+            }
+        }
+
+        private ViewModel.Grid _configuration;
         [ViewModel.Attributes.Property("Configuration", Aras.ViewModel.Attributes.PropertyTypes.Control, true)]
-        public ViewModel.Grid Configuration { get; private set; }
+        public ViewModel.Grid Configuration
+        {
+            get
+            {
+                if (this._configuration == null)
+                {
+                    this._configuration = new Grid();
+                    this.OnPropertyChanged("Configuration");
+                    this._configuration.AllowSelect = false;
+                    this._configuration.AddColumn("rule", "Item");
+                    this._configuration.AddColumn("value", "Required");
+                    this._configuration.AddColumn("quantity", "Qty");
+                }
+
+                return this._configuration;
+            }
+        }
 
         protected override Model.Item GetContext(Model.Session Sesison, String ID)
         {
@@ -288,31 +323,34 @@ namespace Aras.ViewModel.Design
 
         private void Update()
         {
-            this.OrderModel.Refresh();
-
-            // Create Transaction if Order Locked
-            if (this.OrderModel.Locked(true))
+            if (this.OrderModel != null)
             {
-                if (this.OrderModel.Transaction == null)
+                this.OrderModel.Refresh();
+
+                // Create Transaction if Order Locked
+                if (this.OrderModel.Locked(true))
                 {
-                    this.Transaction = this.OrderModel.Session.BeginTransaction();
-                    this.OrderModel.Update(this.Transaction);
+                    if (this.OrderModel.Transaction == null)
+                    {
+                        this.Transaction = this.OrderModel.Session.BeginTransaction();
+                        this.OrderModel.Update(this.Transaction);
+                    }
+                    else
+                    {
+                        this.Transaction = this.OrderModel.Transaction;
+                    }
+
+                    this.Save.UpdateCanExecute(true);
                 }
                 else
                 {
-                    this.Transaction = this.OrderModel.Transaction;
+                    this.Save.UpdateCanExecute(false);
                 }
 
-                this.Save.UpdateCanExecute(true);
+                // Update Grids
+                this.UpdateConfigurationGrid();
+                this.UpdateBOMGrid();
             }
-            else
-            {
-                this.Save.UpdateCanExecute(false);
-            }
-
-            // Update Grids
-            this.UpdateConfigurationGrid();
-            this.UpdateBOMGrid();
         }
 
         protected override void CloseControl()
@@ -348,21 +386,7 @@ namespace Aras.ViewModel.Design
             this.PartBOMNameCache = new ControlCache<Model.Design.PartBOM, Properties.String>();
             this.PartBOMQuantityCache = new ControlCache<Model.Design.PartBOM, Properties.Float>();
 
-           
             this.Save = new SaveCommand(this);
-
-            this.BOM = new Grid();
-            this.BOM.AllowSelect = false;
-            this.BOM.AddColumn("number", "Number");
-            this.BOM.AddColumn("revision", "Revision");
-            this.BOM.AddColumn("name", "Name");
-            this.BOM.AddColumn("quantity", "Qty");
-
-            this.Configuration = new Grid();
-            this.Configuration.AllowSelect = false;
-            this.Configuration.AddColumn("rule", "Item");
-            this.Configuration.AddColumn("value", "Required");
-            this.Configuration.AddColumn("quantity", "Qty");
         }
 
         protected override void RefreshControl()
