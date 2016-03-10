@@ -50,6 +50,18 @@ namespace Aras.ViewModel
             return col;
         }
 
+        public Boolean AllowSelect
+        {
+            get
+            {
+                return this.Select.CanExecute;
+            }
+            set
+            {
+                this.Select.UpdateCanExecute(value);
+            }
+        }
+
         private List<Row> RowCache;
 
         private Row AddRow()

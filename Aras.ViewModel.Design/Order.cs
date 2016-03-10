@@ -352,12 +352,14 @@ namespace Aras.ViewModel.Design
             this.Save = new SaveCommand(this);
 
             this.BOM = new Grid();
+            this.BOM.AllowSelect = false;
             this.BOM.AddColumn("number", "Number");
             this.BOM.AddColumn("revision", "Revision");
             this.BOM.AddColumn("name", "Name");
             this.BOM.AddColumn("quantity", "Qty");
 
             this.Configuration = new Grid();
+            this.Configuration.AllowSelect = false;
             this.Configuration.AddColumn("rule", "Item");
             this.Configuration.AddColumn("value", "Required");
             this.Configuration.AddColumn("quantity", "Qty");
