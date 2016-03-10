@@ -113,29 +113,27 @@ namespace Aras.ViewModel.Manager
             return plugin;
         }
 
-        private Dictionary<String, Control> ApplicationCache;
-
         public ViewModel.Control Application(String Name)
         {
-            if (!this.ApplicationCache.ContainsKey(Name))
+            Control application = null;
+
+            try
             {
-                try
-                {
-                    // Create Control
-                    Control application = (Control)Activator.CreateInstance(this.Database.Server.ControlType(Name), new object[] { });
-                    this.ApplicationCache[Name] = application;
-                    
-                    // Set Binding to Session
-                    application.Binding = this.Model;
-                    this.AddControlToCache(application, false);
-                }
-                catch (Exception e)
-                {
-                    this.Log.Add(Logging.Log.Levels.Error, "Failed to create Application: " + Name + " " + Environment.NewLine + e.Message);
-                }
+                // Create Control
+                application = (Control)Activator.CreateInstance(this.Database.Server.ControlType(Name), new object[] { });
+
+                // Set Binding to Session
+                application.Binding = this.Model;
+
+                // Add Application to Cache
+                this.AddControlToCache(application, false);
+            }
+            catch (Exception e)
+            {
+                this.Log.Add(Logging.Log.Levels.Error, "Failed to create Application: " + Name + " " + Environment.NewLine + e.Message);
             }
 
-            return this.ApplicationCache[Name];
+            return application;
         }
 
         private Dictionary<Guid, ViewModel.Control> ControlCache;
@@ -301,7 +299,6 @@ namespace Aras.ViewModel.Manager
 
         internal Session(Database Database, Model.Session Model)
         {
-            this.ApplicationCache = new Dictionary<String, Control>();
             this.Database = Database;
             this.Model = Model;
             this.ControlCache = new Dictionary<Guid, ViewModel.Control>();

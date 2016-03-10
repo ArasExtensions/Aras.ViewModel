@@ -175,6 +175,11 @@ namespace Aras.ViewModel
 
         }
 
+        public void RefreshChildren()
+        {
+            this.LoadChildren();
+        }
+
         protected override void AfterBindingChanged()
         {
             base.AfterBindingChanged();

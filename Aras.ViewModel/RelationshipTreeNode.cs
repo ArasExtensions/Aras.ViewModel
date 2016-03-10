@@ -161,6 +161,13 @@ namespace Aras.ViewModel
                 this.Name = this.RelationshipTree.ItemFormatter.DisplayName(this.Item);
                 this.OpenIcon = this.Item.ItemType.Name.Replace(" ", "");
                 this.ClosedIcon = this.Item.ItemType.Name.Replace(" ", "");
+
+                this.LoadChildren();
+
+                foreach(RelationshipTreeNode child in this.Children)
+                {
+                    child.Refresh.Execute();
+                }
             }
             else
             {

@@ -85,6 +85,9 @@ namespace Aras.ViewModel
         [ViewModel.Attributes.Command("Save")]
         public SaveCommand Save { get; private set; }
 
+        [ViewModel.Attributes.Command("Undo")]
+        public UndoCommand Undo { get; private set; }
+
         [ViewModel.Attributes.Command("Indent")]
         public IndentCommand Indent { get; private set; }
 
@@ -206,10 +209,12 @@ namespace Aras.ViewModel
                 if (this._transaction != null)
                 {
                     this.Save.UpdateCanExecute(true);
+                    this.Undo.UpdateCanExecute(true);
                 }
                 else
                 {
                     this.Save.UpdateCanExecute(false);
+                    this.Undo.UpdateCanExecute(false);
                 }
             }
             else
@@ -269,6 +274,7 @@ namespace Aras.ViewModel
             this.Delete = new DeleteCommand(this);
             this.Paste = new PasteCommand(this);
             this.Save = new SaveCommand(this);
+            this.Undo = new UndoCommand(this);
             this.Select = new SelectCommand(this);
             this.Indent = new IndentCommand(this);
             this.Outdent = new OutdentCommand(this);
@@ -430,17 +436,23 @@ namespace Aras.ViewModel
             {
                 if ((this.RelationshipTree.Selected != null) && (this.RelationshipTree.Selected.Parent != null))
                 {
+                    // Get Parent Node
+                    RelationshipTreeNode parentnode = (RelationshipTreeNode)this.RelationshipTree.Selected.Parent;
+
+                    // Get Node to Delete
+                    RelationshipTreeNode todeletenode = (RelationshipTreeNode)this.RelationshipTree.Selected;
+
                     // Update Parent Item
-                    ((RelationshipTreeNode)this.RelationshipTree.Selected.Parent).Item.Update(this.RelationshipTree.Transaction);
+                    parentnode.Item.Update(this.RelationshipTree.Transaction);
 
                     // Delete Relationship
-                    this.RelationshipTree.Selected.Relationship.Delete(this.RelationshipTree.Transaction);
+                    todeletenode.Relationship.Delete(this.RelationshipTree.Transaction);
 
                     // Set Selected to Parent
-                    this.RelationshipTree.Selected = (RelationshipTreeNode)this.RelationshipTree.Selected.Parent;
+                    this.RelationshipTree.Selected = parentnode;
 
                     // Refesh Parent Node
-                    this.RelationshipTree.Selected.Refresh.Execute();
+                    parentnode.RefreshChildren();
 
                     // Refresh Commands
                     this.RelationshipTree.RefreshCommands();
@@ -480,6 +492,39 @@ namespace Aras.ViewModel
             }
 
             internal SaveCommand(RelationshipTree RelationshipTree)
+            {
+                this.RelationshipTree = RelationshipTree;
+                this.CanExecute = false;
+            }
+        }
+
+        public class UndoCommand : Aras.ViewModel.Command
+        {
+            public RelationshipTree RelationshipTree { get; private set; }
+
+            internal void UpdateCanExecute(Boolean CanExecute)
+            {
+                this.CanExecute = CanExecute;
+            }
+
+            protected override bool Run(IEnumerable<Control> Parameters)
+            {
+                if (this.RelationshipTree._transaction != null)
+                {
+                    this.RelationshipTree._transaction.RollBack();
+                    this.RelationshipTree._transaction = null;
+
+                    // Refresh Tree
+                    this.RelationshipTree.Refresh.Execute();
+
+                    // Refresh Commands
+                    this.RelationshipTree.RefreshCommands();
+                }
+
+                return true;
+            }
+
+            internal UndoCommand(RelationshipTree RelationshipTree)
             {
                 this.RelationshipTree = RelationshipTree;
                 this.CanExecute = false;
