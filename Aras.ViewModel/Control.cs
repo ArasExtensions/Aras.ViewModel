@@ -49,6 +49,9 @@ namespace Aras.ViewModel
         [ViewModel.Attributes.Command("Refresh")]
         public RefreshCommand Refresh { get; private set; }
 
+        [ViewModel.Attributes.Command("Close")]
+        public CloseCommand Close { get; private set; }
+
         private Boolean _enabled;
         [Attributes.Property("Enabled", Attributes.PropertyTypes.Boolean, true)]
         public Boolean Enabled
@@ -274,6 +277,11 @@ namespace Aras.ViewModel
 
         }
 
+        protected virtual void CloseControl()
+        {
+
+        }
+
         public bool Equals(Control other)
         {
             if (other == null)
@@ -329,6 +337,25 @@ namespace Aras.ViewModel
             }
 
             internal RefreshCommand(Control Control)
+            {
+                this.Control = Control;
+                this.CanExecute = true;
+            }
+        }
+
+        public class CloseCommand : Aras.ViewModel.Command
+        {
+            public Control Control { get; private set; }
+
+            protected override bool Run(IEnumerable<Control> Parameters)
+            {
+                this.CanExecute = false;
+                this.Control.CloseControl();
+                this.CanExecute = true;
+                return true;
+            }
+
+            internal CloseCommand(Control Control)
             {
                 this.Control = Control;
                 this.CanExecute = true;

@@ -222,17 +222,26 @@ namespace Aras.ViewModel.Design
 
         private Model.Transaction Transaction;
 
+        private Boolean OrderLocked;
+
         protected override void AfterBindingChanged()
         {
             base.AfterBindingChanged();
 
             if (this.Binding != null)
             {
+                // Check if Order is already Locked
+                this.OrderLocked = this.OrderModel.Locked(true);
+
                 this.Update();
 
                 // Add Event Handlers
                 this.OrderModel.PropertyChanged += OrderModel_PropertyChanged;
                 this.OrderModel.Store("v_Order Context").StoreChanged += OrderContext_StoreChanged;
+            }
+            else
+            {
+                this.OrderLocked = false;
             }
         }
 
@@ -304,6 +313,27 @@ namespace Aras.ViewModel.Design
             // Update Grids
             this.UpdateConfigurationGrid();
             this.UpdateBOMGrid();
+        }
+
+        protected override void CloseControl()
+        {
+            base.CloseControl();
+
+            // Rollback any changes
+            if (this.Transaction != null)
+            {
+                this.Transaction.RollBack();
+            }
+
+            // If Order was originally locked then Lock
+            if (this.OrderLocked)
+            {
+                if (this.OrderModel != null)
+                {
+                    Model.Transaction transaction = this.OrderModel.Session.BeginTransaction();
+                    this.OrderModel.Update(transaction);
+                }
+            }
         }
 
         public Order()
