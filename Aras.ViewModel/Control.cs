@@ -322,6 +322,7 @@ namespace Aras.ViewModel
         {
             this.ID = Guid.NewGuid();
             this.Refresh = new RefreshCommand(this);
+            this.Close = new CloseCommand(this);
         }
 
         public class RefreshCommand : Aras.ViewModel.Command
