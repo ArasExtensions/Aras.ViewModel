@@ -181,7 +181,11 @@ namespace Aras.ViewModel
                     {
                         this._queryString = value;
                         this.ProcessQueryString();
+                        this._page = 1;
+                        this.Query.Page = this._page;
+                        this.RefreshControl();
                         this.OnPropertyChanged("QueryString");
+                        this.OnPropertyChanged("Page");
                     }
                 }
                 else
@@ -190,7 +194,11 @@ namespace Aras.ViewModel
                     {
                         this._queryString = value;
                         this.ProcessQueryString();
+                        this._page = 1;
+                        this.Query.Page = this._page;
+                        this.RefreshControl();
                         this.OnPropertyChanged("QueryString");
+                        this.OnPropertyChanged("Page");
                     }
                 }
             }
