@@ -70,6 +70,9 @@ namespace Aras.ViewModel
         [ViewModel.Attributes.Command("Select")]
         public SelectCommand Select { get; private set; }
 
+        [ViewModel.Attributes.Command("Add")]
+        public AddCommand Add { get; private set; }
+
         [ViewModel.Attributes.Command("Cut")]
         public CutCommand Cut { get; private set; }
 
@@ -93,6 +96,9 @@ namespace Aras.ViewModel
 
         [ViewModel.Attributes.Command("Outdent")]
         public OutdentCommand Outdent { get; private set; }
+
+        [ViewModel.Attributes.Command("SearchClosed")]
+        public SearchClosedCommand SearchClosed { get; private set; }
 
         private RelationshipTreeNode _selected;
         public RelationshipTreeNode Selected
@@ -118,6 +124,24 @@ namespace Aras.ViewModel
                         this._selected = null;
                         this.OnPropertyChanged("Selected");
                     }
+                }
+            }
+        }
+
+        private Boolean _showSearch;
+        [ViewModel.Attributes.Property("ShowSearch", Aras.ViewModel.Attributes.PropertyTypes.Boolean, true)]
+        public Boolean ShowSearch
+        {
+            get
+            {
+                return this._showSearch;
+            }
+            private set
+            {
+                if (this._showSearch != value)
+                {
+                    this._showSearch = value;
+                    this.OnPropertyChanged("ShowSearch");
                 }
             }
         }
@@ -169,6 +193,7 @@ namespace Aras.ViewModel
             {
                 if (this.Selected != null)
                 {
+                    this.Add.UpdateCanExecute(true);
                     this.Copy.UpdateCanExecute(true);
 
                     if (this.Selected.ID.Equals(this.Node.ID))
@@ -226,6 +251,7 @@ namespace Aras.ViewModel
                     this.Paste.UpdateCanExecute(false);
                     this.Indent.UpdateCanExecute(false);
                     this.Outdent.UpdateCanExecute(false);
+                    this.Add.UpdateCanExecute(false);
                 }
 
                 if (this._transaction != null)
@@ -266,6 +292,10 @@ namespace Aras.ViewModel
 
                     // Set Binding for Search Control
                     this.Search.Binding = ((Model.Item)this.Binding).Session.Store(((Model.Item)this.Binding).ItemType);
+
+                    // Watch for Selection on Search Control
+                    this.Search.Selected.ListChanged -= Selected_ListChanged;
+                    this.Search.Selected.ListChanged += Selected_ListChanged;
                 }
                 else
                 {
@@ -297,6 +327,7 @@ namespace Aras.ViewModel
             this.Node = null;
             this._transaction = null;
             this.CopyPasteBuffer = null;
+            this.Add = new AddCommand(this);
             this.Cut = new CutCommand(this);
             this.Copy = new CopyCommand(this);
             this.Delete = new DeleteCommand(this);
@@ -306,6 +337,7 @@ namespace Aras.ViewModel
             this.Select = new SelectCommand(this);
             this.Indent = new IndentCommand(this);
             this.Outdent = new OutdentCommand(this);
+            this.SearchClosed = new SearchClosedCommand(this);
             this.Search = new Searches.Item();
         }
 
@@ -341,6 +373,36 @@ namespace Aras.ViewModel
             {
                 this.RelationshipTree = RelationshipTree;
                 this.CanExecute = true;
+            }
+        }
+
+        public class AddCommand : Aras.ViewModel.Command
+        {
+            public RelationshipTree RelationshipTree { get; private set; }
+
+            internal void UpdateCanExecute(Boolean CanExecute)
+            {
+                this.CanExecute = CanExecute;
+            }
+
+            protected override bool Run(IEnumerable<Control> Parameters)
+            {
+                if (this.RelationshipTree.Selected != null)
+                {
+                    this.RelationshipTree.ShowSearch = true;
+                }
+                else
+                {
+                    this.RelationshipTree.ShowSearch = false;
+                }
+
+                return true;
+            }
+
+            internal AddCommand(RelationshipTree RelationshipTree)
+            {
+                this.RelationshipTree = RelationshipTree;
+                this.CanExecute = false;
             }
         }
 
@@ -384,6 +446,32 @@ namespace Aras.ViewModel
                 this.RelationshipTree = RelationshipTree;
                 this.CanExecute = false;
             }
+        }
+
+        void Selected_ListChanged(object sender, EventArgs e)
+        {
+            if ((this.Selected != null) && (this.Search.Selected != null))
+            {
+                // Seach Selection - Add Item
+
+                // Get Parent Item
+                Model.Item parent = this.Selected.Item;
+
+                // Update Parent Item
+                parent.Update(this.Transaction);
+
+                // Create Relationship - ******** Need to sort out when more than one Relationship Type ********
+                parent.Store(this.RelationshipTypes.First()).Create(this.Search.Selected.First(), this.Transaction);
+
+                // Refresh Parent Node
+                this.Selected.Refresh.Execute();
+
+                // Refresh Commands
+                this.RefreshCommands();
+            }
+
+            // Close Search Dialogue
+            this.ShowSearch = false;
         }
 
         public class CopyCommand : Aras.ViewModel.Command
@@ -686,6 +774,29 @@ namespace Aras.ViewModel
             {
                 this.RelationshipTree = RelationshipTree;
                 this.CanExecute = false;
+            }
+        }
+
+        public class SearchClosedCommand : Aras.ViewModel.Command
+        {
+            public RelationshipTree RelationshipTree { get; private set; }
+
+            internal void UpdateCanExecute(Boolean CanExecute)
+            {
+                this.CanExecute = CanExecute;
+            }
+
+            protected override bool Run(IEnumerable<Control> Parameters)
+            {
+                this.RelationshipTree.ShowSearch = false;
+
+                return true;
+            }
+
+            internal SearchClosedCommand(RelationshipTree RelationshipTree)
+            {
+                this.RelationshipTree = RelationshipTree;
+                this.CanExecute = true;
             }
         }
     }
