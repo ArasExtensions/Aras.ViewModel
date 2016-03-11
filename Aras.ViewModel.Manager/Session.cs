@@ -138,43 +138,50 @@ namespace Aras.ViewModel.Manager
             }
         }
 
+        private object ControlCacheLock = new object();
         private Dictionary<Guid, ViewModel.Control> ControlCache;
 
         private void AddControlToCache(ViewModel.Control Control, Boolean Queue)
         {
-            if (Control != null)
+            lock (this.ControlCacheLock)
             {
-                if (!this.ControlCache.ContainsKey(Control.ID))
+                if (Control != null)
                 {
-                    // Add Control to Cache
-                    this.ControlCache[Control.ID] = Control;
-
-                    // Link to PropertyChanged Event
-                    Control.PropertyChanged += Control_PropertyChanged;
-
-                    // Add Commands to Cache
-                    foreach (String name in Control.Commands)
+                    if (!this.ControlCache.ContainsKey(Control.ID))
                     {
-                        this.AddCommandToCache(name, Control.GetCommand(name));
+                        // Add Control to Cache
+                        this.ControlCache[Control.ID] = Control;
+
+                        // Link to PropertyChanged Event
+                        Control.PropertyChanged += Control_PropertyChanged;
+
+                        // Add Commands to Cache
+                        foreach (String name in Control.Commands)
+                        {
+                            this.AddCommandToCache(name, Control.GetCommand(name));
+                        }
                     }
-                }
 
-                // Add Child Controls to Cache
-                foreach (Control thiscontrol in Control.Controls)
-                {
-                    this.AddControlToCache(thiscontrol, true);
-                }
+                    // Add Child Controls to Cache
+                    foreach (Control thiscontrol in Control.Controls)
+                    {
+                        this.AddControlToCache(thiscontrol, true);
+                    }
 
-                if (Queue)
-                {
-                    this.AddControlToQueue(Control);
+                    if (Queue)
+                    {
+                        this.AddControlToQueue(Control);
+                    }
                 }
             }
         }
 
         public ViewModel.Control Control(Guid ID)
         {
-            return this.ControlCache[ID];
+            lock (this.ControlCacheLock)
+            {
+                return this.ControlCache[ID];
+            }
         }
 
         void Control_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -215,10 +222,10 @@ namespace Aras.ViewModel.Manager
 
         public IEnumerable<ViewModel.Control> GetControlsFromQueue()
         {
-            List<ViewModel.Control> ret = new List<ViewModel.Control>();
-
             lock (this.ControlQueueLock)
             {
+                List<ViewModel.Control> ret = new List<ViewModel.Control>();
+
                 while (this.ControlQueue.Count > 0)
                 {
                     ViewModel.Control control = this.ControlQueue.Dequeue();
@@ -228,9 +235,9 @@ namespace Aras.ViewModel.Manager
                         ret.Add(control);
                     }
                 }
-            }
 
-            return ret;
+                return ret;
+            }
         }
 
         private Dictionary<Guid, ViewModel.Command> CommandCache;
@@ -271,11 +278,11 @@ namespace Aras.ViewModel.Manager
 
         public IEnumerable<ViewModel.Command> GetCommandsFromQueue()
         {
-            List<ViewModel.Command> ret = new List<ViewModel.Command>();
-
-            lock(this.CommandQueueLock)
+            lock (this.CommandQueueLock)
             {
-                while(this.CommandQueue.Count > 0)
+                List<ViewModel.Command> ret = new List<ViewModel.Command>();
+
+                while (this.CommandQueue.Count > 0)
                 {
                     ViewModel.Command command = this.CommandQueue.Dequeue();
 
@@ -284,9 +291,9 @@ namespace Aras.ViewModel.Manager
                         ret.Add(command);
                     }
                 }
-            }
 
-            return ret;
+                return ret;
+            }
         }
 
         public ViewModel.Command Command(Guid ID)
