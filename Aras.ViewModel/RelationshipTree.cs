@@ -122,6 +122,9 @@ namespace Aras.ViewModel
             }
         }
 
+        [ViewModel.Attributes.Property("Search", Aras.ViewModel.Attributes.PropertyTypes.Control, true)]
+        public Searches.Item Search { get; private set; }
+   
         private Dictionary<Model.Item, RelationshipTreeNode> NodeCache;
 
         internal RelationshipTreeNode GetNodeFromCache(Model.Item Item)
@@ -256,9 +259,13 @@ namespace Aras.ViewModel
             {
                 if (this.Binding is Model.Item)
                 {
+                    // Create Root Node
                     this.Node = new RelationshipTreeNode(this, null);
                     this.Node.Binding = this.Binding;
                     this.AddNodeToCache((RelationshipTreeNode)this.Node);
+
+                    // Set Binding for Search Control
+                    this.Search.Binding = ((Model.Item)this.Binding).Session.Store(((Model.Item)this.Binding).ItemType);
                 }
                 else
                 {
@@ -299,6 +306,7 @@ namespace Aras.ViewModel
             this.Select = new SelectCommand(this);
             this.Indent = new IndentCommand(this);
             this.Outdent = new OutdentCommand(this);
+            this.Search = new Searches.Item();
         }
 
         public RelationshipTree()

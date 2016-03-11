@@ -59,6 +59,12 @@ namespace Aras.ViewModel
                     this._propertyNames.Add(name);
                 }
             }
+
+            // Load Columns
+            this.LoadColumns();
+
+            // Refresh Control
+            this.RefreshControl();
         }
 
         public Model.ObservableList<T> Selected { get; private set; }
@@ -215,7 +221,7 @@ namespace Aras.ViewModel
             this.LoadColumns();
 
             // Load Rows
-            this.LoadRows();
+            this.RefreshControl();
         }
 
         protected override void RefreshControl()
