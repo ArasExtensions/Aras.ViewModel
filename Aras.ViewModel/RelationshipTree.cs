@@ -189,92 +189,15 @@ namespace Aras.ViewModel
 
         private void RefreshCommands()
         {
-            if (this.Binding != null)
-            {
-                if (this.Selected != null)
-                {
-                    this.Add.UpdateCanExecute(true);
-                    this.Copy.UpdateCanExecute(true);
-
-                    if (this.Selected.ID.Equals(this.Node.ID))
-                    {
-                        this.Cut.UpdateCanExecute(false);
-                        this.Delete.UpdateCanExecute(false);
-                    }
-                    else
-                    {
-                        this.Cut.UpdateCanExecute(true);
-                        this.Delete.UpdateCanExecute(true);
-                    }
-
-                    if (this.CopyPasteBuffer != null)
-                    {
-                        this.Paste.UpdateCanExecute(true);
-                    }
-                    else
-                    {
-                        this.Paste.UpdateCanExecute(false);
-                    }
-
-                    if (this.Selected.Parent != null)
-                    {
-                        if (!this.Selected.Parent.Children.First().Equals(this.Selected))
-                        {
-                            this.Outdent.UpdateCanExecute(true);
-                        }
-                        else
-                        {
-                            this.Outdent.UpdateCanExecute(false);
-                        }
-
-                        if (this.Selected.Parent.Parent != null)
-                        {
-                            this.Indent.UpdateCanExecute(true);
-                        }
-                        else
-                        {
-                            this.Indent.UpdateCanExecute(false);
-                        }
-                    }
-                    else
-                    {
-                        this.Indent.UpdateCanExecute(false);
-                        this.Outdent.UpdateCanExecute(false);
-                    }
-
-                }
-                else
-                {
-                    this.Copy.UpdateCanExecute(false);
-                    this.Cut.UpdateCanExecute(false);
-                    this.Delete.UpdateCanExecute(false);
-                    this.Paste.UpdateCanExecute(false);
-                    this.Indent.UpdateCanExecute(false);
-                    this.Outdent.UpdateCanExecute(false);
-                    this.Add.UpdateCanExecute(false);
-                }
-
-                if (this._transaction != null)
-                {
-                    this.Save.UpdateCanExecute(true);
-                    this.Undo.UpdateCanExecute(true);
-                }
-                else
-                {
-                    this.Save.UpdateCanExecute(false);
-                    this.Undo.UpdateCanExecute(false);
-                }
-            }
-            else
-            {
-                this.Copy.UpdateCanExecute(false);
-                this.Cut.UpdateCanExecute(false);
-                this.Delete.UpdateCanExecute(false);
-                this.Paste.UpdateCanExecute(false);
-                this.Save.UpdateCanExecute(false);
-                this.Indent.UpdateCanExecute(false);
-                this.Outdent.UpdateCanExecute(false);
-            }
+            this.Copy.UpdateCanExecute();
+            this.Cut.UpdateCanExecute();
+            this.Delete.UpdateCanExecute();
+            this.Paste.UpdateCanExecute();
+            this.Save.UpdateCanExecute();
+            this.Indent.UpdateCanExecute();
+            this.Outdent.UpdateCanExecute();
+            this.Undo.UpdateCanExecute();
+            this.Add.UpdateCanExecute();
         }
 
         protected override void AfterBindingChanged()
@@ -285,6 +208,9 @@ namespace Aras.ViewModel
             {
                 if (this.Binding is Model.Item)
                 {
+                    // Ensure Permission is Selected for Items
+                    ((Model.Item)this.Binding).ItemType.AddToSelect("permission_id");
+
                     // Create Root Node
                     this.Node = new RelationshipTreeNode(this, null);
                     this.Node.Binding = this.Binding;
@@ -380,9 +306,23 @@ namespace Aras.ViewModel
         {
             public RelationshipTree RelationshipTree { get; private set; }
 
-            internal void UpdateCanExecute(Boolean CanExecute)
+            internal void UpdateCanExecute()
             {
-                this.CanExecute = CanExecute;
+                if(this.RelationshipTree.Selected != null)
+                {
+                    if (this.RelationshipTree.Selected.Item.CanUpdate)
+                    {
+                        this.CanExecute = true;
+                    }
+                    else
+                    {
+                        this.CanExecute = false;
+                    }
+                }
+                else
+                {
+                    this.CanExecute = false;
+                }
             }
 
             protected override bool Run(IEnumerable<Control> Parameters)
@@ -410,9 +350,23 @@ namespace Aras.ViewModel
         {
             public RelationshipTree RelationshipTree { get; private set; }
 
-            internal void UpdateCanExecute(Boolean CanExecute)
+            internal void UpdateCanExecute()
             {
-                this.CanExecute = CanExecute;
+                if ((this.RelationshipTree.Selected != null) && (this.RelationshipTree.Selected.Parent != null))
+                {
+                    if (((RelationshipTreeNode)this.RelationshipTree.Selected.Parent).Item.CanUpdate)
+                    {
+                        this.CanExecute = true;
+                    }
+                    else
+                    {
+                        this.CanExecute = false;
+                    }
+                }
+                else
+                {
+                    this.CanExecute = false;
+                }
             }
 
             protected override bool Run(IEnumerable<Control> Parameters)
@@ -478,9 +432,16 @@ namespace Aras.ViewModel
         {
             public RelationshipTree RelationshipTree { get; private set; }
 
-            internal void UpdateCanExecute(Boolean CanExecute)
+            internal void UpdateCanExecute()
             {
-                this.CanExecute = CanExecute;
+                if (this.RelationshipTree.Selected != null)
+                {
+                    this.CanExecute = true;
+                }
+                else
+                {
+                    this.CanExecute = false;
+                }
             }
 
             protected override bool Run(IEnumerable<Control> Parameters)
@@ -508,9 +469,23 @@ namespace Aras.ViewModel
         {
             public RelationshipTree RelationshipTree { get; private set; }
 
-            internal void UpdateCanExecute(Boolean CanExecute)
+            internal void UpdateCanExecute()
             {
-                this.CanExecute = CanExecute;
+                if ((this.RelationshipTree.Selected != null) && (this.RelationshipTree.Selected.Parent != null) && (this.RelationshipTree.CopyPasteBuffer != null))
+                {
+                    if (((RelationshipTreeNode)this.RelationshipTree.Selected.Parent).Item.CanUpdate)
+                    {
+                        this.CanExecute = true;
+                    }
+                    else
+                    {
+                        this.CanExecute = false;
+                    }
+                }
+                else
+                {
+                    this.CanExecute = false;
+                }
             }
 
             protected override bool Run(IEnumerable<Control> Parameters)
@@ -544,9 +519,23 @@ namespace Aras.ViewModel
         {
             public RelationshipTree RelationshipTree { get; private set; }
 
-            internal void UpdateCanExecute(Boolean CanExecute)
+            internal void UpdateCanExecute()
             {
-                this.CanExecute = CanExecute;
+                if ((this.RelationshipTree.Selected != null) && (this.RelationshipTree.Selected.Parent != null))
+                {
+                    if (((RelationshipTreeNode)this.RelationshipTree.Selected.Parent).Item.CanUpdate)
+                    {
+                        this.CanExecute = true;
+                    }
+                    else
+                    {
+                        this.CanExecute = false;
+                    }
+                }
+                else
+                {
+                    this.CanExecute = false;
+                }
             }
 
             protected override bool Run(IEnumerable<Control> Parameters)
@@ -589,9 +578,16 @@ namespace Aras.ViewModel
         {
             public RelationshipTree RelationshipTree { get; private set; }
 
-            internal void UpdateCanExecute(Boolean CanExecute)
+            internal void UpdateCanExecute()
             {
-                this.CanExecute = CanExecute;
+                if (this.RelationshipTree.Transaction != null)
+                {
+                    this.CanExecute = true;
+                }
+                else
+                {
+                    this.CanExecute = false;
+                }
             }
 
             protected override bool Run(IEnumerable<Control> Parameters)
@@ -619,9 +615,16 @@ namespace Aras.ViewModel
         {
             public RelationshipTree RelationshipTree { get; private set; }
 
-            internal void UpdateCanExecute(Boolean CanExecute)
+            internal void UpdateCanExecute()
             {
-                this.CanExecute = CanExecute;
+                if (this.RelationshipTree.Transaction != null)
+                {
+                    this.CanExecute = true;
+                }
+                else
+                {
+                    this.CanExecute = false;
+                }
             }
 
             protected override bool Run(IEnumerable<Control> Parameters)
@@ -652,9 +655,23 @@ namespace Aras.ViewModel
         {
             public RelationshipTree RelationshipTree { get; private set; }
 
-            internal void UpdateCanExecute(Boolean CanExecute)
+            internal void UpdateCanExecute()
             {
-                this.CanExecute = CanExecute;
+                if ((this.RelationshipTree.Selected != null) && (this.RelationshipTree.Selected.Parent != null) && (this.RelationshipTree.Selected.Parent.Parent != null))
+                {
+                    if (((RelationshipTreeNode)this.RelationshipTree.Selected.Parent).Item.CanUpdate && ((RelationshipTreeNode)this.RelationshipTree.Selected.Parent.Parent).Item.CanUpdate)
+                    {
+                        this.CanExecute = true;
+                    }
+                    else
+                    {
+                        this.CanExecute = false;
+                    }
+                }
+                else
+                {
+                    this.CanExecute = false;
+                }
             }
 
             protected override bool Run(IEnumerable<Control> Parameters)
@@ -712,27 +729,50 @@ namespace Aras.ViewModel
         {
             public RelationshipTree RelationshipTree { get; private set; }
 
-            internal void UpdateCanExecute(Boolean CanExecute)
+            internal void UpdateCanExecute()
             {
-                this.CanExecute = CanExecute;
+                if ((this.RelationshipTree.Selected != null) && (this.RelationshipTree.Selected.Parent != null) && !this.RelationshipTree.Selected.Parent.Children.First().Equals(this.RelationshipTree.Selected))
+                {
+                    if (this.CurrentParentNode.Item.CanUpdate && this.NewParentNode.Item.CanUpdate)
+                    {
+                        this.CanExecute = true;
+                    }
+                    else
+                    {
+                        this.CanExecute = false;
+                    }
+                }
+                else
+                {
+                    this.CanExecute = false;
+                }
             }
 
-            protected override bool Run(IEnumerable<Control> Parameters)
+            private RelationshipTreeNode ChildNode
             {
-                if ((this.RelationshipTree.Selected != null) && !this.RelationshipTree.Selected.Parent.Children.First().Equals(this.RelationshipTree.Selected))
+                get
                 {
-                    // Get Child Node
-                    RelationshipTreeNode childnode = this.RelationshipTree.Selected;
+                    return this.RelationshipTree.Selected;
+                }
+            }
 
-                    // Get Current Parent Node
-                    RelationshipTreeNode currentparantnode = (RelationshipTreeNode)childnode.Parent;
+            private RelationshipTreeNode CurrentParentNode
+            {
+                get
+                {
+                    return (RelationshipTreeNode)this.ChildNode.Parent;
+                }
+            }
 
-                    // Work out new Parent Node
+            private RelationshipTreeNode NewParentNode
+            {
+                get
+                {
                     RelationshipTreeNode newparentnode = null;
 
-                    foreach(RelationshipTreeNode child in currentparantnode.Children)
+                    foreach (RelationshipTreeNode child in this.CurrentParentNode.Children)
                     {
-                        if (child.Equals(childnode))
+                        if (child.Equals(this.ChildNode))
                         {
                             break;
                         }
@@ -741,6 +781,23 @@ namespace Aras.ViewModel
                             newparentnode = child;
                         }
                     }
+
+                    return newparentnode;
+                }
+            }
+
+            protected override bool Run(IEnumerable<Control> Parameters)
+            {
+                if ((this.RelationshipTree.Selected != null) && (this.RelationshipTree.Selected.Parent != null) && !this.RelationshipTree.Selected.Parent.Children.First().Equals(this.RelationshipTree.Selected))
+                {
+                    // Get Child Node
+                    RelationshipTreeNode childnode = this.ChildNode;
+
+                    // Get Current Parent Node
+                    RelationshipTreeNode currentparantnode = this.CurrentParentNode;
+
+                    // Work out new Parent Node
+                    RelationshipTreeNode newparentnode = this.NewParentNode;
 
                     // Update Current Parent Item
                     currentparantnode.Item.Update(this.RelationshipTree.Transaction);
