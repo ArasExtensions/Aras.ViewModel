@@ -203,7 +203,7 @@ namespace Aras.ViewModel.Design
             // Update Configuration Grid
             int cnt = 0;
 
-            foreach (Model.Design.OrderContext ordercontext in this.OrderModel.Store("v_Order Context"))
+            foreach (Model.Design.OrderContext ordercontext in this.OrderModel.OrderContexts)
             {
                 Row row = this.Configuration.Rows[cnt];
 
