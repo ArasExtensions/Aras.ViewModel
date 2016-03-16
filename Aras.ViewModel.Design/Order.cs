@@ -328,6 +328,7 @@ namespace Aras.ViewModel.Design
                 this.OrderModel.Refresh();
 
                 // Create Transaction if Order Locked
+
                 if (this.OrderModel.Locked(true))
                 {
                     if (this.OrderModel.Transaction == null)
@@ -409,7 +410,7 @@ namespace Aras.ViewModel.Design
                 if (this.Order.Transaction != null)
                 {
                     // Committ current transaction
-                    this.Order.OrderModel.Transaction.Commit();
+                    this.Order.Transaction.Commit();
 
                     // Create new Transaction
                     this.Order.Transaction = this.Order.OrderModel.Session.BeginTransaction();
