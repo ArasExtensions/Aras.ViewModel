@@ -86,7 +86,7 @@ namespace Aras.ViewModel
             }
             else
             {
-                this.Binding = null;
+                throw new Model.Exceptions.ArgumentException("Invalid Context ID");
             }
         }
 
