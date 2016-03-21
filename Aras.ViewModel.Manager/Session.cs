@@ -90,52 +90,30 @@ namespace Aras.ViewModel.Manager
 
         public ViewModel.Control Plugin(String Name, String Context)
         {
-            Control plugin = null;
+            // Create Control
+            Control plugin = (Control)Activator.CreateInstance(this.Database.Server.ControlType(Name), new object[] { });
 
-            try
-            {
-                // Create Control
-                plugin = (Control)Activator.CreateInstance(this.Database.Server.ControlType(Name), new object[] { });
+            // Set Context
+            plugin.SetBinding(this.Model, Context);
 
-                // Set Context
-                plugin.SetBinding(this.Model, Context);
+            // Add Plugin to Cache
+            this.AddControlToCache(plugin, false);
 
-                // Add Plugin to Cache
-                this.AddControlToCache(plugin, false);
-
-                return plugin;
-            }
-            catch (Exception e)
-            {
-                this.Log.Add(Logging.Log.Levels.Error, "Failed to create Plugin: " + Name + "/" + Context + Environment.NewLine + e.Message);
-                this.Log.Add(Logging.Log.Levels.Debug, "Failed to create Plugin: " + Name + "/" + Context + Environment.NewLine + e.Message + Environment.NewLine + e.StackTrace);
-                throw e;
-            }
+            return plugin;
         }
 
         public ViewModel.Control Application(String Name)
         {
-            Control application = null;
+            // Create Control
+            Control application = (Control)Activator.CreateInstance(this.Database.Server.ControlType(Name), new object[] { });
 
-            try
-            {
-                // Create Control
-                application = (Control)Activator.CreateInstance(this.Database.Server.ControlType(Name), new object[] { });
+            // Set Binding to Session
+            application.Binding = this.Model;
 
-                // Set Binding to Session
-                application.Binding = this.Model;
+            // Add Application to Cache
+            this.AddControlToCache(application, false);
 
-                // Add Application to Cache
-                this.AddControlToCache(application, false);
-
-                return application;
-            }
-            catch (Exception e)
-            {
-                this.Log.Add(Logging.Log.Levels.Error, "Failed to create Application: " + Name + " " + Environment.NewLine + e.Message);
-                this.Log.Add(Logging.Log.Levels.Debug, "Failed to create Plugin: " + Name  + Environment.NewLine + e.Message + Environment.NewLine + e.StackTrace);
-                throw e;
-            }
+            return application;
         }
 
         private object ControlCacheLock = new object();
