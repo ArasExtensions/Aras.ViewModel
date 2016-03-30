@@ -409,7 +409,7 @@ namespace Aras.ViewModel.Design
             {
                 if (this.Order.Transaction != null)
                 {
-                    // Committ current transaction
+                    // Commit current transaction
                     this.Order.Transaction.Commit();
 
                     // Create new Transaction
