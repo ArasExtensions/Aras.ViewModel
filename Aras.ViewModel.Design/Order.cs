@@ -35,6 +35,9 @@ namespace Aras.ViewModel.Design
         [ViewModel.Attributes.Command("Save")]
         public SaveCommand Save { get; private set; }
 
+        [ViewModel.Attributes.Command("UpdateBOM")]
+        public UpdateBOMCommand UpdateBOM { get; private set; }
+
         private ViewModel.Grid _bOM;
         [ViewModel.Attributes.Property("BOM", Aras.ViewModel.Attributes.PropertyTypes.Control, true)]
         public ViewModel.Grid BOM
@@ -342,10 +345,12 @@ namespace Aras.ViewModel.Design
                     }
 
                     this.Save.UpdateCanExecute(true);
+                    this.UpdateBOM.UpdateCanExecute(true);
                 }
                 else
                 {
                     this.Save.UpdateCanExecute(false);
+                    this.UpdateBOM.UpdateCanExecute(false);
                 }
 
                 // Update Grids
@@ -388,6 +393,7 @@ namespace Aras.ViewModel.Design
             this.PartBOMQuantityCache = new ControlCache<Model.Design.PartBOM, Properties.Float>();
 
             this.Save = new SaveCommand(this);
+            this.UpdateBOM = new UpdateBOMCommand(this);
         }
 
         protected override void RefreshControl()
@@ -409,18 +415,52 @@ namespace Aras.ViewModel.Design
             {
                 if (this.Order.Transaction != null)
                 {
+                    // Process BOM
+                    this.Order.OrderModel.UpdateBOM();
+
                     // Commit current transaction
                     this.Order.Transaction.Commit();
 
                     // Create new Transaction
                     this.Order.Transaction = this.Order.OrderModel.Session.BeginTransaction();
                     this.Order.OrderModel.Update(this.Order.Transaction);
+
+                    this.CanExecute = true;
                 }
 
                 return true;
             }
 
             internal SaveCommand(Order Order)
+            {
+                this.Order = Order;
+                this.CanExecute = false;
+            }
+        }
+
+        public class UpdateBOMCommand : Aras.ViewModel.Command
+        {
+            public Order Order { get; private set; }
+
+            internal void UpdateCanExecute(Boolean CanExecute)
+            {
+                this.CanExecute = CanExecute;
+            }
+
+            protected override bool Run(IEnumerable<Control> Parameters)
+            {
+                if (this.Order.Transaction != null)
+                {
+                    // Process BOM
+                    this.Order.OrderModel.UpdateBOM();
+
+                    this.CanExecute = true;
+                }
+
+                return true;
+            }
+
+            internal UpdateBOMCommand(Order Order)
             {
                 this.Order = Order;
                 this.CanExecute = false;
