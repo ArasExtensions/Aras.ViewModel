@@ -201,7 +201,7 @@ namespace Aras.ViewModel.Design
         private void UpdateConfigurationGrid()
         {
             // Update number of Rows
-            this.Configuration.NoRows = this.OrderModel.Store("v_Order Context").Count();
+            this.Configuration.NoRows = this.OrderModel.OrderContexts.Count();
 
             // Update Configuration Grid
             int cnt = 0;
@@ -428,6 +428,10 @@ namespace Aras.ViewModel.Design
                     this.Order.Transaction = this.Order.OrderModel.Session.BeginTransaction();
                     this.Order.OrderModel.Update(this.Order.Transaction);
 
+                    // Update Grids
+                    this.Order.UpdateConfigurationGrid();
+                    this.Order.UpdateBOMGrid();
+
                     this.CanExecute = true;
                 }
 
@@ -456,6 +460,10 @@ namespace Aras.ViewModel.Design
                 {
                     // Process BOM
                     this.Order.OrderModel.UpdateBOM();
+
+                    // Update Grids
+                    this.Order.UpdateConfigurationGrid();
+                    this.Order.UpdateBOMGrid();
 
                     this.CanExecute = true;
                 }
