@@ -344,6 +344,9 @@ namespace Aras.ViewModel.Design
                         this.Transaction = this.OrderModel.Transaction;
                     }
 
+                    // Update BOM
+                    this.OrderModel.UpdateBOM();
+
                     this.Save.UpdateCanExecute(true);
                     this.UpdateBOM.UpdateCanExecute(true);
                 }
