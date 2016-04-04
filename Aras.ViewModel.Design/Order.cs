@@ -326,39 +326,52 @@ namespace Aras.ViewModel.Design
 
         private void Update()
         {
+            this.ResetError();
+
             if (this.OrderModel != null)
             {
-                this.OrderModel.Refresh();
-
-                // Create Transaction if Order Locked
-
-                if (this.OrderModel.Locked(true))
+                try
                 {
-                    if (this.OrderModel.Transaction == null)
+                    this.OrderModel.Refresh();
+
+                    // Create Transaction if Order Locked
+
+                    if (this.OrderModel.Locked(true))
                     {
-                        this.Transaction = this.OrderModel.Session.BeginTransaction();
-                        this.OrderModel.Update(this.Transaction);
+                        if (this.OrderModel.Transaction == null)
+                        {
+                            this.Transaction = this.OrderModel.Session.BeginTransaction();
+                            this.OrderModel.Update(this.Transaction, true);
+                        }
+                        else
+                        {
+                            this.Transaction = this.OrderModel.Transaction;
+                        }
+
+                        // Update BOM
+                        this.OrderModel.UpdateBOM();
+
+                        this.Save.UpdateCanExecute(true);
+                        this.UpdateBOM.UpdateCanExecute(true);
                     }
                     else
                     {
-                        this.Transaction = this.OrderModel.Transaction;
+                        this.Save.UpdateCanExecute(false);
+                        this.UpdateBOM.UpdateCanExecute(false);
                     }
 
-                    // Update BOM
-                    this.OrderModel.UpdateBOM();
-
-                    this.Save.UpdateCanExecute(true);
-                    this.UpdateBOM.UpdateCanExecute(true);
+                    // Update Grids
+                    this.UpdateConfigurationGrid();
+                    this.UpdateBOMGrid();
                 }
-                else
+                catch (Model.Exceptions.UnLockException e)
                 {
-                    this.Save.UpdateCanExecute(false);
-                    this.UpdateBOM.UpdateCanExecute(false);
-                }
+                    // Failed to unlock Item
+                    this.BOM.NoRows = 0;
+                    this.Configuration.NoRows = 0;
 
-                // Update Grids
-                this.UpdateConfigurationGrid();
-                this.UpdateBOMGrid();
+                    this.OnError("Order Locked By: " + e.Item.LockedBy.KeyedName);
+                }
             }
         }
 
@@ -402,6 +415,8 @@ namespace Aras.ViewModel.Design
         protected override void RefreshControl()
         {
             base.RefreshControl();
+
+            // Update
             this.Update();
         }
 

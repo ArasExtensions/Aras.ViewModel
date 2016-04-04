@@ -70,6 +70,54 @@ namespace Aras.ViewModel
             }
         }
 
+        private Boolean _inError;
+        [Attributes.Property("InError", Attributes.PropertyTypes.Boolean, true)]
+        public Boolean InError
+        {
+            get
+            {
+                return this._inError;
+            }
+            private set
+            {
+                if (this._inError != value)
+                {
+                    this._inError = value;
+                    this.OnPropertyChanged("InError");
+                }
+            }
+        }
+
+        private String _errorMessage;
+        [Attributes.Property("ErrorMessage", Attributes.PropertyTypes.String, true)]
+        public String ErrorMessage
+        {
+            get
+            {
+                return this._errorMessage;
+            }
+            private set
+            {
+                if (this._errorMessage != value)
+                {
+                    this._errorMessage = value;
+                    this.OnPropertyChanged("ErrorMessage");
+                }
+            }
+        }
+
+        protected void ResetError()
+        {
+            this.InError = false;
+            this.ErrorMessage = null;
+        }
+
+        protected void OnError(String ErrorMessage)
+        {
+            this.InError = true;
+            this.ErrorMessage = ErrorMessage;
+        }
+
         public void SetBinding(Model.Session Session, String Context)
         {
             Model.Item item = this.GetContext(Session, Context);
@@ -323,6 +371,8 @@ namespace Aras.ViewModel
             this.ID = Guid.NewGuid();
             this.Refresh = new RefreshCommand(this);
             this.Close = new CloseCommand(this);
+            this.ErrorMessage = null;
+            this.InError = false;
         }
 
         public class RefreshCommand : Aras.ViewModel.Command

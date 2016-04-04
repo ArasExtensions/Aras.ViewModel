@@ -45,23 +45,20 @@ namespace Aras.ViewModel.Design.Debug
         static void Main(string[] args)
         {
             // Connect to Server
-            Model.Server server = new Model.Server("http://localhost/11SP1");
+            Model.Server server = new Model.Server("http://localhost/InnovatorServer10SP4");
             server.LoadAssembly("Aras.Model.Design");
             server.LoadAssembly("Aras.ViewModel.Design");
-            Model.Database database = server.Database("VariantsDemo11SP1");
-            Model.Session session = database.Login("admin", Model.Server.PasswordHash("innovator"));
+            Model.Database database = server.Database("CMB");
+            Model.Session session = database.Login("cavem", Model.Server.PasswordHash("innovator"));
 
-            // Create PartEditor
-            Design.PartEditor parteditorcontrol = new Design.PartEditor();
-            parteditorcontrol.Binding = session;
+            Model.Queries.Item query = (Model.Queries.Item)session.Store("v_Order").Query(Aras.Conditions.Eq("item_number", "RJM-Test50"));
+            Model.Design.Order order = (Model.Design.Order)query.First();
+         
 
-            // Select Top Level Part
-            List<Control> parameters = new List<Control>();
-            parameters.Add(parteditorcontrol.Parts.Grid.Rows[8]);
-            parteditorcontrol.Parts.Grid.Select.Execute(parameters);
-
-            // Load Children in Root Node
-            parteditorcontrol.Relationships.Node.Load.Execute();
+            // Create Order
+            Design.Order ordercontrol = new Design.Order();
+            ordercontrol.Binding = order;
+          
         }
     }
 }
