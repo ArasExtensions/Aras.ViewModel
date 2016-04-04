@@ -326,10 +326,10 @@ namespace Aras.ViewModel.Design
 
         private void Update()
         {
-            this.ResetError();
-
             if (this.OrderModel != null)
             {
+                this.ResetError();
+
                 try
                 {
                     this.OrderModel.Refresh();

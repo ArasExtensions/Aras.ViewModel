@@ -124,13 +124,21 @@ namespace Aras.ViewModel
 
             if (item != null)
             {
-                if (item.Locked(true))
+                try
                 {
-                    Model.Transaction transaction = Session.BeginTransaction();
-                    item.Update(transaction);
-                }
+                    if (item.Locked(true))
+                    {
+                        Model.Transaction transaction = Session.BeginTransaction();
+                        item.Update(transaction);
+                    }
 
-                this.Binding = item;
+                    this.Binding = item;
+                }
+                catch (Model.Exceptions.UnLockException e)
+                {
+                    // Failed to unlock Item
+                    this.OnError("Order Locked By: " + e.Item.LockedBy.KeyedName);
+                }
             }
             else
             {
