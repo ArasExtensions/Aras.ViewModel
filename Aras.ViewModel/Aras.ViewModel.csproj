@@ -43,10 +43,12 @@
     <Compile Include="Attributes\Property.cs" />
     <Compile Include="ControlCache.cs" />
     <Compile Include="Cell.cs" />
+    <Compile Include="IRelationshipFormatter.cs" />
     <Compile Include="IItemFormatter.cs" />
     <Compile Include="ItemFormatters\Default.cs" />
     <Compile Include="ObservableControlList.cs" />
     <Compile Include="Props\ListValue.cs" />
+    <Compile Include="RelationshipFormatters\Default.cs" />
     <Compile Include="RelationshipTree.cs" />
     <Compile Include="RelationshipTreeNode.cs" />
     <Compile Include="Row.cs" />

@@ -33,8 +33,8 @@ namespace Aras.ViewModel
     public class RelationshipTree : Tree
     {
         private IItemFormatter _itemFormatter;
-        public IItemFormatter ItemFormatter 
-        { 
+        public IItemFormatter ItemFormatter
+        {
             get
             {
                 return this._itemFormatter;
@@ -44,6 +44,23 @@ namespace Aras.ViewModel
                 if (this._itemFormatter != value)
                 {
                     this._itemFormatter = value;
+                    this.Refresh.Execute();
+                }
+            }
+        }
+
+        private IRelationshipFormatter _relationshipFormatter;
+        public IRelationshipFormatter RelationshipFormatter 
+        { 
+            get
+            {
+                return this._relationshipFormatter;
+            }
+            set
+            {
+                if (this._relationshipFormatter != value)
+                {
+                    this._relationshipFormatter = value;
                     this.Refresh.Execute();
                 }
             }
@@ -244,11 +261,12 @@ namespace Aras.ViewModel
             }
         }
 
-        public RelationshipTree(IItemFormatter ItemFormatter)
+        public RelationshipTree(IRelationshipFormatter RelationshipFormatter, IItemFormatter ItemFormatter)
             :base()
         {
             this._relationshipTypes = new List<Model.RelationshipType>();
             this.NodeCache = new Dictionary<Model.Item, RelationshipTreeNode>();
+            this._relationshipFormatter = RelationshipFormatter;
             this._itemFormatter = ItemFormatter;
             this.Node = null;
             this._transaction = null;
@@ -268,7 +286,7 @@ namespace Aras.ViewModel
         }
 
         public RelationshipTree()
-            :this(new ItemFormatters.Default())
+            : this(new RelationshipFormatters.Default(), new ItemFormatters.Default())
         {
 
         }

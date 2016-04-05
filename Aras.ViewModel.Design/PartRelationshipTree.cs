@@ -56,7 +56,7 @@ namespace Aras.ViewModel.Design
         }
 
         public PartRelationshipTree()
-            : base(new ItemFormatters.Part())
+            : base(new RelationshipFormatters.Part(), new ItemFormatters.Part())
         {
 
         }

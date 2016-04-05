@@ -64,15 +64,16 @@ namespace Aras.ViewModel.Manager
         {
             Model.Session modelsession = this.Model.Login(Username, Password);
 
-            Session session = this.Server.GetSessionFromCache(modelsession.ID);
-
-            if (session == null)
+            if (this.Server.SessionInCache(modelsession.ID))
             {
-                session = new Session(this, modelsession);
-                this.Server.AddSessionToCache(session);
+                return this.Server.GetSessionFromCache(modelsession.ID);
             }
-                        
-            return session;
+            else
+            {
+                Session session = new Session(this, modelsession);
+                this.Server.AddSessionToCache(session);
+                return session;
+            }
         }
 
         public override string ToString()

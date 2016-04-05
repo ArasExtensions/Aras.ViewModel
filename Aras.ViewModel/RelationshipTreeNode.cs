@@ -120,12 +120,19 @@ namespace Aras.ViewModel
 
             if (this.Binding != null)
             {
-                if ((this.Binding is Model.Item) || (this.Binding is Model.Relationship))
+                if (this.Binding is Model.Relationship)
+                {
+                    this.Name = this.RelationshipTree.RelationshipFormatter.DisplayName(this.Relationship);
+                    this.OpenIcon = this.Item.ItemType.Name.Replace(" ", "");
+                    this.ClosedIcon = this.Item.ItemType.Name.Replace(" ", "");
+                }
+                else if (this.Binding is Model.Item)
                 {
                     this.Name = this.RelationshipTree.ItemFormatter.DisplayName(this.Item);
                     this.OpenIcon = this.Item.ItemType.Name.Replace(" ", "");
                     this.ClosedIcon = this.Item.ItemType.Name.Replace(" ", "");
                 }
+
                 else
                 {
                     throw new Model.Exceptions.ArgumentException("Binding must be of type Model.Item");
@@ -141,7 +148,13 @@ namespace Aras.ViewModel
         {
             base.RefreshControl();
 
-            if (this.Item != null)
+            if (this.Relationship != null)
+            {
+                this.Name = this.RelationshipTree.RelationshipFormatter.DisplayName(this.Relationship);
+                this.OpenIcon = this.Item.ItemType.Name.Replace(" ", "");
+                this.ClosedIcon = this.Item.ItemType.Name.Replace(" ", "");
+            }
+            else if (this.Item != null)
             {
                 this.Name = this.RelationshipTree.ItemFormatter.DisplayName(this.Item);
                 this.OpenIcon = this.Item.ItemType.Name.Replace(" ", "");

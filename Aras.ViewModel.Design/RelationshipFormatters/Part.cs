@@ -28,22 +28,39 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Aras.ViewModel.Design.ItemFormatters
+namespace Aras.ViewModel.Design.RelationshipFormatters
 {
-    public class Part : IItemFormatter
+    public class Part : IRelationshipFormatter
     {
-        public String DisplayName(Model.Item Item)
+        public String DisplayName(Model.Relationship Relationship)
         {
-            if (Item != null)
+            if (Relationship != null)
             {
-                if (Item is Model.Design.Part)
+                if (Relationship.Related != null)
                 {
-                    Model.Design.Part part = (Model.Design.Part)Item;
-                    return part.ItemNumber + "." + part.MajorRev + " " + " " + (String)Item.Property("name").Value;
+                    if ((Relationship is Model.Design.PartBOM) && (Relationship.Related is Model.Design.Part))
+                    {
+                        Model.Design.PartBOM partbom = (Model.Design.PartBOM)Relationship;
+                        Model.Design.Part part = (Model.Design.Part)Relationship.Related;
+
+                        if (partbom.Quantity > 1)
+                        {
+                            return part.ItemNumber + "." + part.MajorRev + " " + " " + (String)part.Property("name").Value + " (" + partbom.Quantity.ToString() + ")";
+                        }
+                        else
+                        {
+                            return part.ItemNumber + "." + part.MajorRev + " " + " " + (String)part.Property("name").Value;
+                        }
+                    }
+                    else
+                    {
+                        return Relationship.KeyedName;
+                    }
+
                 }
                 else
                 {
-                    return Item.KeyedName;
+                    return Relationship.KeyedName;
                 }
             }
             else

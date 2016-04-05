@@ -169,6 +169,11 @@ namespace Aras.ViewModel.Manager
             }
         }
 
+        internal Boolean SessionInCache(String ID)
+        {
+            return this.SessionCache.ContainsKey(ID);
+        }
+
         internal Session GetSessionFromCache(String ID)
         {
             lock (this._sessionCacheLock)
@@ -179,7 +184,7 @@ namespace Aras.ViewModel.Manager
                 }
                 else
                 {
-                    return null;
+                    throw new Exceptions.SessionException();
                 }
             }
         }

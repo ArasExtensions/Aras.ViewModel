@@ -28,28 +28,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Aras.ViewModel.Design.ItemFormatters
+namespace Aras.ViewModel
 {
-    public class Part : IItemFormatter
+    public interface IRelationshipFormatter
     {
-        public String DisplayName(Model.Item Item)
-        {
-            if (Item != null)
-            {
-                if (Item is Model.Design.Part)
-                {
-                    Model.Design.Part part = (Model.Design.Part)Item;
-                    return part.ItemNumber + "." + part.MajorRev + " " + " " + (String)Item.Property("name").Value;
-                }
-                else
-                {
-                    return Item.KeyedName;
-                }
-            }
-            else
-            {
-                return null;
-            }
-        }
+        String DisplayName(Model.Relationship Relationship);
     }
 }
