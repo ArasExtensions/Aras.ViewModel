@@ -651,7 +651,7 @@ namespace Aras.ViewModel
             }
         }
 
-        public class IndentCommand : Aras.ViewModel.Command
+        public class OutdentCommand : Aras.ViewModel.Command
         {
             public RelationshipTree RelationshipTree { get; private set; }
 
@@ -718,14 +718,14 @@ namespace Aras.ViewModel
                 return true;
             }
 
-            internal IndentCommand(RelationshipTree RelationshipTree)
+            internal OutdentCommand(RelationshipTree RelationshipTree)
             {
                 this.RelationshipTree = RelationshipTree;
                 this.CanExecute = false;
             }
         }
 
-        public class OutdentCommand : Aras.ViewModel.Command
+        public class IndentCommand : Aras.ViewModel.Command
         {
             public RelationshipTree RelationshipTree { get; private set; }
 
@@ -827,7 +827,7 @@ namespace Aras.ViewModel
                 return true;
             }
 
-            internal OutdentCommand(RelationshipTree RelationshipTree)
+            internal IndentCommand(RelationshipTree RelationshipTree)
             {
                 this.RelationshipTree = RelationshipTree;
                 this.CanExecute = false;
