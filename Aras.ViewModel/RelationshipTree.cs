@@ -598,7 +598,7 @@ namespace Aras.ViewModel
 
             internal void UpdateCanExecute()
             {
-                if (this.RelationshipTree.Transaction != null)
+                if (this.RelationshipTree._transaction != null)
                 {
                     this.CanExecute = true;
                 }
@@ -635,7 +635,7 @@ namespace Aras.ViewModel
 
             internal void UpdateCanExecute()
             {
-                if (this.RelationshipTree.Transaction != null)
+                if (this.RelationshipTree._transaction != null)
                 {
                     this.CanExecute = true;
                 }
@@ -855,11 +855,6 @@ namespace Aras.ViewModel
         public class SearchClosedCommand : Aras.ViewModel.Command
         {
             public RelationshipTree RelationshipTree { get; private set; }
-
-            internal void UpdateCanExecute(Boolean CanExecute)
-            {
-                this.CanExecute = CanExecute;
-            }
 
             protected override bool Run(IEnumerable<Control> Parameters)
             {
