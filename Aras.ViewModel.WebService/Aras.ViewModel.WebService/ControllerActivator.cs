@@ -30,7 +30,7 @@ using System.Net.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Dispatcher;
 
-namespace Aras.WebService
+namespace Aras.ViewModel.WebService
 {
     public class ControllerActivator : IHttpControllerActivator
     {

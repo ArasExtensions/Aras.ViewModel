@@ -30,7 +30,7 @@ using System.Net;
 using System.Web.Http;
 using System.Net.Http;
 
-namespace Aras.WebService.Exceptions
+namespace Aras.ViewModel.WebService.Exceptions
 {
     public class SessionException : HttpResponseException
     {

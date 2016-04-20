@@ -31,7 +31,7 @@ using System.Web.Routing;
 using System.Web.Http.Dispatcher;
 using System.IO;
 
-namespace Aras.WebService
+namespace Aras.ViewModel.WebService
 {
     public class WebApiApplication : System.Web.HttpApplication
     {

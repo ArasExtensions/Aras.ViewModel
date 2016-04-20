@@ -27,7 +27,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 
-namespace Aras.WebService
+namespace Aras.ViewModel.WebService
 {
     public static class WebApiConfig
     {

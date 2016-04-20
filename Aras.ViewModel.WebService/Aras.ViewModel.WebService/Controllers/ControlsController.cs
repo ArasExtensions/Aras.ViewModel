@@ -29,7 +29,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 
-namespace Aras.WebService.Controllers
+namespace Aras.ViewModel.WebService.Controllers
 {
     public class ControlsController : BaseController
     {

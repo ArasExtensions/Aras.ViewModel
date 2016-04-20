@@ -27,7 +27,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace Aras.WebService.Models.Responses
+namespace Aras.ViewModel.WebService.Models.Responses
 {
     public class Control : Response
     {
