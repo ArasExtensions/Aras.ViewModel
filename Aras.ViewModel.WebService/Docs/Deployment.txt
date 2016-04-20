@@ -1,0 +1,4 @@
+1. Copy ArasExtensions\Aras.HTML5\src\js to Innovator\Client\javascript
+2. Copy AESSiS\Variants\HTML5\src\js to Innovator\Client\javascript
+3. Append ArasExtensions\Aras.HTML5\src\js\Themes\base.css to end of Innovator\Client\styles\default.css. Do not append html and body.
+4. Copy ArasExtensions\Aras.HTML5\src\js\Themes\images to Innovator\Client\styles.
