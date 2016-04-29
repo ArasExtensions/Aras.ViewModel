@@ -32,9 +32,9 @@ namespace Aras.ViewModel.Manager
 {
     public class DefaultLicence : Licence.IManager
     {
-        public Boolean Check(String ApplicationID)
+        public Licence.LicenceStates Check(String ApplicationID)
         {
-            return true;
+            return Licence.LicenceStates.OK;
         }
 
         public DefaultLicence()

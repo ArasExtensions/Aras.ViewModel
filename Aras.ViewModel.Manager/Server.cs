@@ -47,8 +47,20 @@ namespace Aras.ViewModel.Manager
 
         internal void CheckLicence()
         {
-            if (!this.Licence.Check(ApplicationID))
+            switch (this.Licence.Check(ApplicationID))
             {
+                case Aras.Licence.LicenceStates.CorruptLicenceFile:
+                    throw new Exceptions.LicenceException("Licence file is corrupted");
+                case Aras.Licence.LicenceStates.Expired:
+                    throw new Exceptions.LicenceException("Licence for " + ApplicationID + " has expired");
+                case Aras.Licence.LicenceStates.InvalidApplicationID:
+                    throw new Exceptions.LicenceException("No licence for ApplicationID: " + ApplicationID);
+                case Aras.Licence.LicenceStates.InvalidHostID:
+                    throw new Exceptions.LicenceException("Licence not available for this Server");
+                case Aras.Licence.LicenceStates.MissingLicenceFile:
+                    throw new Exceptions.LicenceException("Licence file not found");
+                default:
+                    break;
                 throw new Exceptions.LicenceException(ApplicationID);
             }
         }

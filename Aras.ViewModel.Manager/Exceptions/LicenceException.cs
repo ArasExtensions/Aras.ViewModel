@@ -32,8 +32,8 @@ namespace Aras.ViewModel.Manager.Exceptions
 {
     public class LicenceException : Exception
     {
-        internal LicenceException(String ApplicationID)
-            :base("No Licence available for: " + ApplicationID)
+        internal LicenceException(String Message)
+            :base(Message)
         {
 
         }
