@@ -90,6 +90,9 @@ namespace Aras.ViewModel.Manager
 
         public ViewModel.Control Plugin(String Name, String Context)
         {
+            // Check Licence
+            this.Database.Server.CheckLicence();
+
             // Create Control
             Control plugin = (Control)Activator.CreateInstance(this.Database.Server.ControlType(Name), new object[] { });
 
@@ -104,6 +107,9 @@ namespace Aras.ViewModel.Manager
 
         public ViewModel.Control Application(String Name)
         {
+            // Check Licence
+            this.Database.Server.CheckLicence();
+
             // Create Control
             Control application = (Control)Activator.CreateInstance(this.Database.Server.ControlType(Name), new object[] { });
 

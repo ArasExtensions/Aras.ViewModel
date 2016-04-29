@@ -34,13 +34,24 @@ namespace Aras.ViewModel.Manager
 {
     public class Server
     {
+        private const String ApplicationID = "AAD";
         private const double MinExpireSession = 1;
         private const double MaxExpireSession = 60;
         private const double DefaultExpireSession = 10;
 
         public Logging.Log Log { get; private set; }
 
+        public Licence.IManager Licence { get; private set; }
+
         public Model.Server Model { get; private set; }
+
+        internal void CheckLicence()
+        {
+            if (!this.Licence.Check(ApplicationID))
+            {
+                throw new Exceptions.LicenceException(ApplicationID);
+            }
+        }
 
         private List<Database> _databases;
         public IEnumerable<Database> Databases
@@ -194,22 +205,31 @@ namespace Aras.ViewModel.Manager
             return this.GetSessionFromCache(Token);
         }
 
-        public Server(String URL, Logging.Log Log)
+        public Server(String URL, Licence.IManager Licence, Logging.Log Log)
         {
+            // Store Log
+            this.Log = Log;
+
+            // Store Licence
+            this.Licence = Licence;
+
             // Set Default Session Expire
             this.ExpireSession = DefaultExpireSession;
 
             // Initialiase Session Cache
             this.SessionCache = new Dictionary<String, Session>();
 
-            // Store Log
-            this.Log = Log;
-
             // Create Model Server
             this.Model = new Model.Server(URL);
             
             // Default Assembly Directory
             this.AssemblyDirectory = new DirectoryInfo(Environment.CurrentDirectory);
+        }
+
+        public Server(String URL, Logging.Log Log)
+            :this(URL, new DefaultLicence(), Log)
+        {
+
         }
     }
 }

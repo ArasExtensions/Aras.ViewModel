@@ -40,12 +40,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Database.cs" />
+    <Compile Include="DefaultLicence.cs" />
+    <Compile Include="Exceptions\LicenceException.cs" />
     <Compile Include="Exceptions\SessionException.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Session.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Aras.Common\Aras.Licence\Aras.Licence.csproj">
+      <Project>{7964b2f8-3989-415a-b9c6-f4d417945a7a}</Project>
+      <Name>Aras.Licence</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Aras.Common\Aras.Logging\Aras.Logging.csproj">
       <Project>{95ccb1e3-f2fa-423a-bae6-a5a3ec0cec94}</Project>
       <Name>Aras.Logging</Name>
