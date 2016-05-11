@@ -41,10 +41,10 @@ namespace Aras.ViewModel.Design
             Sesison.Store("Part").ItemType.AddToSelect("item_number,major_rev,name,keyed_name");
 
             // Ensure RelationshipType Set
-            this.AddRelationshipType(Sesison.ItemType("Part").RelationshipType("Part BOM"));
+            this.RelationshipType = (Sesison.ItemType("Part").RelationshipType("Part BOM"));
 
             // Return Part
-            return Sesison.Store("Part").Get(ID);
+            return Sesison.Cache("Part").Get(ID);
         }
 
         protected override void AfterBindingChanged()

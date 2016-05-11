@@ -193,6 +193,12 @@ namespace Aras.ViewModel
 
             // Load Children
             this.LoadChildren();
+
+            // Refresh Children
+            foreach (TreeNode child in this.Children)
+            {
+                child.RefreshControl();
+            }
         }
 
         public TreeNode(Tree Tree, TreeNode Parent)

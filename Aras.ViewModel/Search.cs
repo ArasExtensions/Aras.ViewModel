@@ -278,8 +278,8 @@ namespace Aras.ViewModel
             }
         }
 
-        private Model.Query<T> _query;
-        private Model.Query<T> Query
+        private Model.Store<T> _query;
+        private Model.Store<T> Query
         {
             get
             {
@@ -288,7 +288,7 @@ namespace Aras.ViewModel
                     if (this.Binding != null && this.Binding is Model.Store<T>)
                     {
                         // Create Query
-                        this._query = ((Model.Store<T>)this.Binding).Query();
+                        this._query = (Model.Store<T>)this.Binding;
                         
                         // Switch on Paging
                         this._query.Paging = true;

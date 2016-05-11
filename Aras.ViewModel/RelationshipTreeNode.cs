@@ -84,26 +84,39 @@ namespace Aras.ViewModel
             }
         }
 
+        internal Model.Stores.Relationship Store { get; private set; }
+
         protected override void LoadChildren()
         {
             base.LoadChildren();
 
             if (this.Item != null)
             {
-                // Build List of Relationships
-                IEnumerable<Model.Relationship> relationships = this.Item.Relationships(this.RelationshipTree.RelationshipTypes);
-
                 this.Children.NotifyListChanged = false;
 
                 this.Children.Clear();
 
-                foreach (Model.Relationship relationship in this.Item.Relationships(this.RelationshipTree.RelationshipTypes))
+                // Check Store has correct Source Item
+                if (!this.Item.ID.Equals(this.Store.Source.ID))
                 {
-                    RelationshipTreeNode node = this.RelationshipTree.GetNodeFromCache(relationship);
+                    this.Store = this.Item.Store(this.RelationshipTree.RelationshipType);
+                }
+
+                // Refresh Store
+                this.Store.Refresh();
+
+                foreach (Model.Relationship relationship in this.Store)
+                {
+                    RelationshipTreeNode node = this.RelationshipTree.GetNodeFromCache(relationship.ID);
 
                     if (node == null)
                     {
                         node = new RelationshipTreeNode(this.RelationshipTree, this);
+                        node.Binding = relationship;
+                        this.RelationshipTree.AddNodeToCache(node);
+                    }
+                    else
+                    {
                         node.Binding = relationship;
                     }
 
@@ -111,6 +124,17 @@ namespace Aras.ViewModel
                 }
 
                 this.Children.NotifyListChanged = true;
+            }
+        }
+
+        protected override void BeforeBindingChanged()
+        {
+            base.BeforeBindingChanged();
+
+            if (this.Item != null)
+            {
+                // Stop watching current Item
+                this.Item.Superceded -= Item_Superceded;
             }
         }
 
@@ -132,22 +156,39 @@ namespace Aras.ViewModel
                     this.OpenIcon = this.Item.ItemType.Name.Replace(" ", "");
                     this.ClosedIcon = this.Item.ItemType.Name.Replace(" ", "");
                 }
-
                 else
                 {
                     throw new Model.Exceptions.ArgumentException("Binding must be of type Model.Item");
                 }
+
+                // Create Store
+                this.Store = this.Item.Store(this.RelationshipTree.RelationshipType);
+
+                // Watch for versioning on Item
+                this.Item.Superceded += Item_Superceded;
             }
             else
             {
                 this.Name = "";
+                this.Store = null;
             }
+        }
+
+        void Item_Superceded(object sender, Model.SupercededEventArgs e)
+        {
+            if (this.Binding != null && this.Binding is Model.Item)
+            {
+                this.Binding = e.NewGeneration;
+            }
+
+            this.LoadChildren();
         }
 
         protected override void RefreshControl()
         {
             base.RefreshControl();
 
+            // Update Name
             if (this.Relationship != null)
             {
                 this.Name = this.RelationshipTree.RelationshipFormatter.DisplayName(this.Relationship);
@@ -164,6 +205,7 @@ namespace Aras.ViewModel
             {
                 this.Name = "";
             }
+
         }
 
         public RelationshipTreeNode(RelationshipTree RelationshipTree, RelationshipTreeNode Parent)

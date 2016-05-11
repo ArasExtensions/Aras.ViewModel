@@ -83,7 +83,7 @@ namespace Aras.ViewModel.Design
         {
             try
             {
-                return Sesison.Store("v_Order").Get(ID);
+                return Sesison.Cache("v_Order").Get(ID);
             }
             catch (Exception)
             {
@@ -145,7 +145,7 @@ namespace Aras.ViewModel.Design
 
                 foreach (Model.Design.PartBOM partbom in this.OrderModel.ConfiguredPart.Store("Part BOM"))
                 {
-                    if (partbom.Action != Model.Item.Actions.Deleted)
+                    if (partbom.Action != Model.Item.Actions.Delete)
                     {
                         cnt++;
                     }
@@ -158,7 +158,7 @@ namespace Aras.ViewModel.Design
 
                 foreach (Model.Design.PartBOM partbom in this.OrderModel.ConfiguredPart.Store("Part BOM"))
                 {
-                    if (partbom.Action != Model.Item.Actions.Deleted)
+                    if (partbom.Action != Model.Item.Actions.Delete)
                     {
                         Row row = this.BOM.Rows[cnt];
 
@@ -275,7 +275,7 @@ namespace Aras.ViewModel.Design
 
                 // Add Event Handlers
                 this.OrderModel.PropertyChanged += OrderModel_PropertyChanged;
-                this.OrderModel.Store("v_Order Context").StoreChanged += OrderContext_StoreChanged;
+                // HERE   **********   this.OrderModel.Store("v_Order Context").StoreChanged += OrderContext_StoreChanged;
             }
             else
             {
@@ -315,7 +315,7 @@ namespace Aras.ViewModel.Design
                 }
 
                 // Remove Event Handlers
-                this.OrderModel.Store("v_Order Context").StoreChanged -= OrderContext_StoreChanged;
+                // HERE ***************** this.OrderModel.Store("v_Order Context").StoreChanged -= OrderContext_StoreChanged;
                 this.OrderModel.PropertyChanged -= OrderModel_PropertyChanged;
 
                 // Clear Grids

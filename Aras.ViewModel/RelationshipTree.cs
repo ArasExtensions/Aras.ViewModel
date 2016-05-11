@@ -66,21 +66,21 @@ namespace Aras.ViewModel
             }
         }
 
-        private List<Model.RelationshipType> _relationshipTypes;
-        public IEnumerable<Model.RelationshipType> RelationshipTypes
+        private Model.RelationshipType _relationshipType;
+        public Model.RelationshipType RelationshipType
         {
             get
             {
-                return this._relationshipTypes;
+                return this._relationshipType;
             }
-        }
-
-        public void AddRelationshipType(Model.RelationshipType RelationshipType)
-        {
-            if (!this._relationshipTypes.Contains(RelationshipType))
+            set
             {
-                this._relationshipTypes.Add(RelationshipType);
-                this.Refresh.Execute();
+                this._relationshipType = value;
+
+                if (this._relationshipType != null)
+                {
+                    this.Refresh.Execute();
+                }
             }
         }
 
@@ -166,13 +166,13 @@ namespace Aras.ViewModel
         [ViewModel.Attributes.Property("Search", Aras.ViewModel.Attributes.PropertyTypes.Control, true)]
         public Searches.Item Search { get; private set; }
    
-        private Dictionary<Model.Item, RelationshipTreeNode> NodeCache;
+        private Dictionary<String, RelationshipTreeNode> NodeCache;
 
-        internal RelationshipTreeNode GetNodeFromCache(Model.Item Item)
+        internal RelationshipTreeNode GetNodeFromCache(String ID)
         {
-            if (this.NodeCache.ContainsKey(Item))
+            if (this.NodeCache.ContainsKey(ID))
             {
-                return this.NodeCache[Item];
+                return this.NodeCache[ID];
             }
             else
             {
@@ -182,7 +182,14 @@ namespace Aras.ViewModel
 
         internal void AddNodeToCache(RelationshipTreeNode Node)
         {
-            this.NodeCache[Node.Item] = Node;
+            if (Node.Relationship == null)
+            {
+                this.NodeCache[Node.Item.ID] = Node;
+            }
+            else
+            {
+                this.NodeCache[Node.Relationship.ID] = Node;
+            }
         }
 
         private Model.Item CopyPasteBuffer { get; set; }
@@ -229,16 +236,21 @@ namespace Aras.ViewModel
                     ((Model.Item)this.Binding).ItemType.AddToSelect("permission_id");
 
                     // Create Root Node
-                    this.Node = new RelationshipTreeNode(this, null);
-                    this.Node.Binding = this.Binding;
-                    this.AddNodeToCache((RelationshipTreeNode)this.Node);
+                    this.Node = this.GetNodeFromCache(((Model.Item)this.Binding).ID);
+
+                    if (this.Node == null)
+                    {
+                        this.Node = new RelationshipTreeNode(this, null);
+                        this.Node.Binding = this.Binding;
+                        this.AddNodeToCache((RelationshipTreeNode)this.Node);
+                    }
+                    else
+                    {
+                        this.Node.Binding = this.Binding;
+                    }
 
                     // Set Binding for Search Control
                     this.Search.Binding = ((Model.Item)this.Binding).Session.Store(((Model.Item)this.Binding).ItemType);
-
-                    // Watch for Selection on Search Control
-                    this.Search.Selected.ListChanged -= Selected_ListChanged;
-                    this.Search.Selected.ListChanged += Selected_ListChanged;
                 }
                 else
                 {
@@ -264,8 +276,7 @@ namespace Aras.ViewModel
         public RelationshipTree(IRelationshipFormatter RelationshipFormatter, IItemFormatter ItemFormatter)
             :base()
         {
-            this._relationshipTypes = new List<Model.RelationshipType>();
-            this.NodeCache = new Dictionary<Model.Item, RelationshipTreeNode>();
+            this.NodeCache = new Dictionary<String, RelationshipTreeNode>();
             this._relationshipFormatter = RelationshipFormatter;
             this._itemFormatter = ItemFormatter;
             this.Node = null;
@@ -283,6 +294,9 @@ namespace Aras.ViewModel
             this.Outdent = new OutdentCommand(this);
             this.SearchClosed = new SearchClosedCommand(this);
             this.Search = new Searches.Item();
+
+            // Watch for Selection on Search Control
+            this.Search.Selected.ListChanged += Selected_ListChanged;
         }
 
         public RelationshipTree()
@@ -406,6 +420,9 @@ namespace Aras.ViewModel
                     // Select Parent
                     this.RelationshipTree.Selected = (RelationshipTreeNode)this.RelationshipTree.Selected.Parent;
 
+                    // Refesh Parent
+                    this.RelationshipTree.Selected.RefreshChildren();
+
                     // Refresh Commands
                     this.RelationshipTree.RefreshCommands();
                 }
@@ -424,16 +441,13 @@ namespace Aras.ViewModel
         {
             if ((this.Selected != null) && (this.Search.Selected != null))
             {
-                // Seach Selection - Add Item
-
-                // Get Parent Item
-                Model.Item parent = this.Selected.Item;
+                // Seach Selection - Add Selected Search Item as a child of Selected Tree Node
 
                 // Update Parent Item
-                parent.Update(this.Transaction);
+                this.Selected.Item.Update(this.Transaction);
 
-                // Create Relationship - ******** Need to sort out when more than one Relationship Type ********
-                parent.Store(this.RelationshipTypes.First()).Create(this.Search.Selected.First(), this.Transaction);
+                // Create Relationship to Selected Search Item
+                ((RelationshipTreeNode)this.Selected).Store.Create(this.Search.Selected.First(), this.Transaction);
 
                 // Refresh Parent Node
                 this.Selected.Refresh.Execute();
@@ -513,8 +527,8 @@ namespace Aras.ViewModel
                     // Update Parent Item
                     this.RelationshipTree.Selected.Item.Update(this.RelationshipTree.Transaction);
 
-                    // Create Relationship - ******** Need to sort out when more than one Relationship Type ********
-                    this.RelationshipTree.Selected.Item.Store(this.RelationshipTree.RelationshipTypes.First()).Create(this.RelationshipTree.CopyPasteBuffer, this.RelationshipTree.Transaction);
+                    // Create Relationship
+                    this.RelationshipTree.Selected.Store.Create(this.RelationshipTree.CopyPasteBuffer, this.RelationshipTree.Transaction);
 
                     // Refresh Parent Node
                     this.RelationshipTree.Selected.Refresh.Execute();
@@ -721,7 +735,7 @@ namespace Aras.ViewModel
                     newparentnode.Item.Update(this.RelationshipTree.Transaction);
 
                     // Add New Relationship
-                    newparentnode.Item.Store(this.RelationshipTree.RelationshipTypes.First()).Create(childitem, this.RelationshipTree.Transaction);
+                    newparentnode.Store.Create(childitem, this.RelationshipTree.Transaction);
 
                     // Refresh new Parent
                     newparentnode.Refresh.Execute();
@@ -830,7 +844,7 @@ namespace Aras.ViewModel
                     newparentnode.Item.Update(this.RelationshipTree.Transaction);
 
                     // Create new Relationship
-                    newparentnode.Item.Store(this.RelationshipTree.RelationshipTypes.First()).Create(childnode.Item, this.RelationshipTree.Transaction);
+                    newparentnode.Store.Create(childnode.Item, this.RelationshipTree.Transaction);
 
                     // Refresh New Parent Node
                     newparentnode.Refresh.Execute();

@@ -63,7 +63,7 @@ namespace Aras.ViewModel.Design
                 this.Relationships.Search.AddToPropertyNames("item_number,major_rev,name");
 
                 // Add RelationshipType to RelationshipTree
-                this.Relationships.AddRelationshipType(((Model.Session)this.Binding).ItemType("Part").RelationshipType("Part BOM"));
+                this.Relationships.RelationshipType = (((Model.Session)this.Binding).ItemType("Part").RelationshipType("Part BOM"));
             }
             else
             {

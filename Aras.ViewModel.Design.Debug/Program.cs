@@ -32,33 +32,21 @@ namespace Aras.ViewModel.Design.Debug
 {
     class Program
     {
-        static void OutputOrder(Order Order)
-        {
-            foreach(Row row in Order.BOM.Rows)
-            {
-                System.Console.WriteLine(((Properties.String)row.Cells[2].Value).Value);
-            }
-
-            System.Console.WriteLine();
-        }
-
         static void Main(string[] args)
         {
             // Connect to Server
-            Model.Server server = new Model.Server("http://localhost/InnovatorServer10SP4");
+            Model.Server server = new Model.Server("http://localhost/11SP1");
             server.LoadAssembly("Aras.Model.Design");
             server.LoadAssembly("Aras.ViewModel.Design");
-            Model.Database database = server.Database("CMB");
-            Model.Session session = database.Login("cavem", Model.Server.PasswordHash("innovator"));
+            Model.Database database = server.Database("Development11SP1");
+            Model.Session session = database.Login("admin", Model.Server.PasswordHash("innovator"));
 
-            Model.Queries.Item query = (Model.Queries.Item)session.Store("v_Order").Query(Aras.Conditions.Eq("item_number", "RJM-Test50"));
-            Model.Design.Order order = (Model.Design.Order)query.First();
+            Model.Stores.Item store = (Model.Stores.Item)session.Store("Part", Aras.Conditions.Eq("item_number", "G10011"));
+            Model.Design.Part block = (Model.Design.Part)store.First();
          
-
-            // Create Order
-            Design.Order ordercontrol = new Design.Order();
-            ordercontrol.Binding = order;
-          
+            // Create Part Editor
+            Design.PartEditor control = new Design.PartEditor();
+            control.Binding = block;
         }
     }
 }
