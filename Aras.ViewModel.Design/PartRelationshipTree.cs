@@ -32,19 +32,19 @@ namespace Aras.ViewModel.Design
 {
     public class PartRelationshipTree : RelationshipTree
     {
-        protected override Model.Item GetContext(Model.Session Sesison, string ID)
+        protected override Model.Item GetContext(Model.Session Session, string ID)
         {
             // Set Columns to show in Search
             this.Search.AddToPropertyNames("item_number,major_rev,name");
 
             // Set Part Properties to Select
-            Sesison.Store("Part").ItemType.AddToSelect("item_number,major_rev,name,keyed_name");
+            Session.ItemType("Part").AddToSelect("item_number,major_rev,name,keyed_name");
 
             // Ensure RelationshipType Set
-            this.RelationshipType = (Sesison.ItemType("Part").RelationshipType("Part BOM"));
+            this.RelationshipType = (Session.ItemType("Part").RelationshipType("Part BOM"));
 
             // Return Part
-            return Sesison.Cache("Part").Get(ID);
+            return Session.Cache("Part").Get(ID);
         }
 
         protected override void AfterBindingChanged()

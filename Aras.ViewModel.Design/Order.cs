@@ -141,22 +141,13 @@ namespace Aras.ViewModel.Design
             if (this.OrderModel != null && this.OrderModel.ConfiguredPart != null)
             {
                 // Set No of Rows
-                int cnt = 0;
-
-                foreach (Model.Design.PartBOM partbom in this.OrderModel.ConfiguredPart.Store("Part BOM"))
-                {
-                    if (partbom.Action != Model.Item.Actions.Delete)
-                    {
-                        cnt++;
-                    }
-                }
-
-                this.BOM.NoRows = cnt;
+                this.OrderModel.ConfiguredPart.PartBOMS.Refresh();
+                this.BOM.NoRows = this.OrderModel.ConfiguredPart.PartBOMS.Count();
 
                 // Update BOM Grid
-                cnt = 0;
+                int cnt = 0;
 
-                foreach (Model.Design.PartBOM partbom in this.OrderModel.ConfiguredPart.Store("Part BOM"))
+                foreach (Model.Design.PartBOM partbom in this.OrderModel.ConfiguredPart.PartBOMS)
                 {
                     if (partbom.Action != Model.Item.Actions.Delete)
                     {
@@ -275,7 +266,7 @@ namespace Aras.ViewModel.Design
 
                 // Add Event Handlers
                 this.OrderModel.PropertyChanged += OrderModel_PropertyChanged;
-                // HERE   **********   this.OrderModel.Store("v_Order Context").StoreChanged += OrderContext_StoreChanged;
+                this.OrderModel.OrderContexts.StoreChanged += OrderContexts_StoreChanged;
             }
             else
             {
@@ -283,7 +274,7 @@ namespace Aras.ViewModel.Design
             }
         }
 
-        void OrderContext_StoreChanged(object sender, EventArgs e)
+        void OrderContexts_StoreChanged(object sender, Model.StoreChangedEventArgs e)
         {
             this.UpdateConfigurationGrid();
         }
@@ -315,7 +306,7 @@ namespace Aras.ViewModel.Design
                 }
 
                 // Remove Event Handlers
-                // HERE ***************** this.OrderModel.Store("v_Order Context").StoreChanged -= OrderContext_StoreChanged;
+                this.OrderModel.OrderContexts.StoreChanged -= OrderContexts_StoreChanged;
                 this.OrderModel.PropertyChanged -= OrderModel_PropertyChanged;
 
                 // Clear Grids
