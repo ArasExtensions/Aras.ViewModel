@@ -141,13 +141,12 @@ namespace Aras.ViewModel.Design
             if (this.OrderModel != null && this.OrderModel.ConfiguredPart != null)
             {
                 // Set No of Rows
-                this.OrderModel.ConfiguredPart.PartBOMS.Refresh();
-                this.BOM.NoRows = this.OrderModel.ConfiguredPart.PartBOMS.Count();
+                this.BOM.NoRows = this.OrderModel.ConfiguredPart.PartBOMS.CurrentItems.Count();
 
                 // Update BOM Grid
                 int cnt = 0;
 
-                foreach (Model.Design.PartBOM partbom in this.OrderModel.ConfiguredPart.PartBOMS)
+                foreach (Model.Design.PartBOM partbom in this.OrderModel.ConfiguredPart.PartBOMS.CurrentItems)
                 {
                     if (partbom.Action != Model.Item.Actions.Delete)
                     {
