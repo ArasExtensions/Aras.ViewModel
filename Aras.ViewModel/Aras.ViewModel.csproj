@@ -43,6 +43,8 @@
     <Compile Include="Attributes\Property.cs" />
     <Compile Include="ControlCache.cs" />
     <Compile Include="Cell.cs" />
+    <Compile Include="Form.cs" />
+    <Compile Include="File.cs" />
     <Compile Include="IRelationshipFormatter.cs" />
     <Compile Include="IItemFormatter.cs" />
     <Compile Include="ItemFormatters\Default.cs" />

@@ -75,30 +75,14 @@ namespace Aras.ViewModel.Properties
                 {
                     if (value != null)
                     {
-                        if (value.Length <= this.Length)
-                        {
-                            this._value = value;
-                            this.OnPropertyChanged("Value");
-                        }
-                        else
-                        {
-                            throw new ArgumentException("Length must be no greater than " + this.Length.ToString());
-                        }
+                        this.SetValue(value);
                     }
                 }
                 else
                 {
                     if (System.String.Compare(this._value, value) != 0)
                     {
-                        if (value == null || value.Length <= this.Length)
-                        {
-                            this._value = value;
-                            this.OnPropertyChanged("Value");
-                        }
-                        else
-                        {
-                            throw new ArgumentException("Length must be no greater than " + this.Length.ToString());
-                        }
+                        this.SetValue(value);
                     }
                 }
             }

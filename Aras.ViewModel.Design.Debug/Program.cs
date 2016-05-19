@@ -41,12 +41,19 @@ namespace Aras.ViewModel.Design.Debug
             Model.Database database = server.Database("Development11SP1");
             Model.Session session = database.Login("admin", Model.Server.PasswordHash("innovator"));
 
-            Model.Stores.Item store = (Model.Stores.Item)session.Store("Part", Aras.Conditions.Eq("item_number", "G10011"));
-            Model.Design.Part block = (Model.Design.Part)store.First();
-         
-            // Create Part Editor
-            Design.PartEditor control = new Design.PartEditor();
-            control.Binding = block;
+            session.ItemType("Document").AddToSelect("item_number,name,description");
+
+            Model.Stores.Item<Model.Design.Document> store = new Model.Stores.Item<Model.Design.Document>(session, "Document", Aras.Conditions.Eq("item_number", "0000001"));
+            Model.Design.Document sample = store.First();
+            Model.Design.DocumentFile worddoc = sample.Files.First();
+
+            Form form = new Form();
+            form.AddPropertyNames("item_number,name,description");
+            form.Binding = sample;
+
+            form.Edit.Execute();
+            ((ViewModel.Properties.String)form.Fields.Last()).Value = "New Description";
+            form.Save.Execute();
         }
     }
 }
