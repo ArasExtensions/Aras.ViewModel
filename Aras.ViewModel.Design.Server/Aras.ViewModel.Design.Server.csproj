@@ -32,7 +32,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="IOM">
-      <HintPath>..\..\..\..\Aras10SP4\Innovator\Server\bin\IOM.dll</HintPath>
+      <HintPath>..\..\..\..\Aras\Innovator1000SP4\Innovator\Client\cbin\IOM.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -48,9 +48,12 @@
     <Compile Include="Order.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy $(TargetPath) C:\Aras10SP4\Innovator\Server\bin\$(TargetFileName)</PostBuildEvent>
+    <PostBuildEvent>copy $(TargetPath) C:\Aras\Innovator1000SP4\Innovator\Server\bin\$(TargetFileName)</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
