@@ -341,8 +341,16 @@ namespace Aras.ViewModel.Design
                         // Update BOM
                         this.OrderModel.UpdateBOM();
 
-                        this.Save.UpdateCanExecute(true);
-                        this.UpdateBOM.UpdateCanExecute(true);
+                        if (this.OrderModel.Part != null)
+                        {
+                            this.Save.UpdateCanExecute(true);
+                            this.UpdateBOM.UpdateCanExecute(true);
+                        }
+                        else
+                        {
+                            this.Save.UpdateCanExecute(false);
+                            this.UpdateBOM.UpdateCanExecute(false);
+                        }
                     }
                     else
                     {
@@ -423,21 +431,28 @@ namespace Aras.ViewModel.Design
             {
                 if (this.Order.Transaction != null)
                 {
-                    // Process BOM
-                    this.Order.OrderModel.UpdateBOM();
+                    if (this.Order.OrderModel.Part != null)
+                    {
+                        // Process BOM
+                        this.Order.OrderModel.UpdateBOM();
 
-                    // Commit current transaction
-                    this.Order.Transaction.Commit();
+                        // Commit current transaction
+                        this.Order.Transaction.Commit();
 
-                    // Create new Transaction
-                    this.Order.Transaction = this.Order.OrderModel.Session.BeginTransaction();
-                    this.Order.OrderModel.Update(this.Order.Transaction);
+                        // Create new Transaction
+                        this.Order.Transaction = this.Order.OrderModel.Session.BeginTransaction();
+                        this.Order.OrderModel.Update(this.Order.Transaction);
 
-                    // Update Grids
-                    this.Order.UpdateConfigurationGrid();
-                    this.Order.UpdateBOMGrid();
+                        // Update Grids
+                        this.Order.UpdateConfigurationGrid();
+                        this.Order.UpdateBOMGrid();
 
-                    this.CanExecute = true;
+                        this.CanExecute = true;
+                    }
+                    else
+                    {
+                        this.CanExecute = false;
+                    }
                 }
 
                 return true;
