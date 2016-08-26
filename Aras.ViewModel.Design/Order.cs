@@ -138,15 +138,17 @@ namespace Aras.ViewModel.Design
 
         private void UpdateBOMGrid()
         {
-            if (this.OrderModel != null && this.OrderModel.ConfiguredPart != null)
+            if ((this.OrderModel != null) && (this.OrderModel.ConfiguredPart != null))
             {
+                IEnumerable<Model.Design.PartBOM> currentpartboms = this.OrderModel.ConfiguredPart.PartBOMS.CurrentItems();
+
                 // Set No of Rows
-                this.BOM.NoRows = this.OrderModel.ConfiguredPart.PartBOMS.CurrentItems.Count();
+                this.BOM.NoRows = currentpartboms.Count();
 
                 // Update BOM Grid
                 int cnt = 0;
 
-                foreach (Model.Design.PartBOM partbom in this.OrderModel.ConfiguredPart.PartBOMS.CurrentItems)
+                foreach (Model.Design.PartBOM partbom in currentpartboms)
                 {
                     if (partbom.Action != Model.Item.Actions.Delete)
                     {

@@ -105,7 +105,7 @@ namespace Aras.ViewModel
                 // Refresh Store
                 this.Store.Refresh();
 
-                foreach (Model.Relationship relationship in this.Store.CurrentItems)
+                foreach (Model.Relationship relationship in this.Store.CurrentItems())
                 {
                     RelationshipTreeNode node = this.RelationshipTree.GetNodeFromCache(relationship.ID);
 
