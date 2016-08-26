@@ -192,13 +192,24 @@ namespace Aras.ViewModel.Design
 
         private void UpdateConfigurationGrid()
         {
+            // Build List of OrderContext to Display
+            List<Model.Design.OrderContext> ordercontexts = new List<Model.Design.OrderContext>();
+
+            foreach (Model.Design.OrderContext ordercontext in this.OrderModel.OrderContexts)
+            {
+                if (!ordercontext.VariantContext.IsMethod)
+                {
+                    ordercontexts.Add(ordercontext);
+                }
+            }
+
             // Update number of Rows
-            this.Configuration.NoRows = this.OrderModel.OrderContexts.Count();
+            this.Configuration.NoRows = ordercontexts.Count();
 
             // Update Configuration Grid
             int cnt = 0;
 
-            foreach (Model.Design.OrderContext ordercontext in this.OrderModel.OrderContexts)
+            foreach (Model.Design.OrderContext ordercontext in ordercontexts)
             {
                 Row row = this.Configuration.Rows[cnt];
 
@@ -221,13 +232,13 @@ namespace Aras.ViewModel.Design
                 valuecontrol.Binding = ordercontext.Property("value_list");
                 row.Cells[1].Value = valuecontrol;
 
-                if (ordercontext.VariantContext.IsMethod || !this.OrderModel.Locked(false))
+                if (this.OrderModel.Locked(false))
                 {
-                    valuecontrol.Enabled = false;
+                    valuecontrol.Enabled = true;
                 }
                 else
                 {
-                    valuecontrol.Enabled = true;
+                    valuecontrol.Enabled = false;
                 }
 
                 // Add Quantity
@@ -235,13 +246,13 @@ namespace Aras.ViewModel.Design
                 quantitycontrol.Binding = ordercontext.Property("quantity");
                 row.Cells[2].Value = quantitycontrol;
 
-                if (ordercontext.VariantContext.IsMethod || !this.OrderModel.Locked(false))
+                if (this.OrderModel.Locked(false))
                 {
-                    quantitycontrol.Enabled = false;
+                    quantitycontrol.Enabled = true;
                 }
                 else
                 {
-                    quantitycontrol.Enabled = true;
+                    quantitycontrol.Enabled = false;
                 }
 
                 cnt++;
