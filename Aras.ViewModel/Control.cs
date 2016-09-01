@@ -137,7 +137,7 @@ namespace Aras.ViewModel
                 catch (Model.Exceptions.UnLockException e)
                 {
                     // Failed to unlock Item
-                    this.OnError("Order Locked By: " + e.Item.LockedBy.KeyedName);
+                    this.OnError(e.Item.ItemType.Name + " Locked By: " + e.Item.LockedBy.KeyedName + " " + e.Item.KeyedName);
                 }
             }
             else

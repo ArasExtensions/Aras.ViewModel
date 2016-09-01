@@ -39,13 +39,14 @@ namespace Aras.ViewModel.Design.Debug
             server.LoadAssembly("Aras.Model.Design");
             server.LoadAssembly("Aras.ViewModel.Design");
             Model.Database database = server.Database("CMB");
-            Model.Session session = database.Login("admin", Model.Server.PasswordHash("innovator"));
+            Model.Session session = database.Login("barrettv", Model.Server.PasswordHash("innovator"));
 
-            Model.Stores.Item<Model.Design.Order> store = new Model.Stores.Item<Model.Design.Order>(session, "v_Order", Aras.Conditions.Eq("item_number", "RJMTest002"));
+            Model.Stores.Item<Model.Design.Order> store = new Model.Stores.Item<Model.Design.Order>(session, "v_Order", Aras.Conditions.Eq("item_number", "RJMTest001"));
             Model.Design.Order order = store.First();
 
             ViewModel.Design.Order vmorder = new ViewModel.Design.Order();
             vmorder.Binding = order;
+            vmorder.UpdateBOM.Execute();
 
 
 
