@@ -35,25 +35,20 @@ namespace Aras.ViewModel.Design.Debug
         static void Main(string[] args)
         {
             // Connect to Server
-            Model.Server server = new Model.Server("http://localhost/11SP1");
+            Model.Server server = new Model.Server("http://localhost/InnovatorServer100SP4");
             server.LoadAssembly("Aras.Model.Design");
             server.LoadAssembly("Aras.ViewModel.Design");
-            Model.Database database = server.Database("Development11SP1");
+            Model.Database database = server.Database("CMB");
             Model.Session session = database.Login("admin", Model.Server.PasswordHash("innovator"));
 
-            session.ItemType("Document").AddToSelect("item_number,name,description");
+            Model.Stores.Item<Model.Design.Order> store = new Model.Stores.Item<Model.Design.Order>(session, "v_Order", Aras.Conditions.Eq("item_number", "RJMTest002"));
+            Model.Design.Order order = store.First();
 
-            Model.Stores.Item<Model.Design.Document> store = new Model.Stores.Item<Model.Design.Document>(session, "Document", Aras.Conditions.Eq("item_number", "0000001"));
-            Model.Design.Document sample = store.First();
-            Model.Design.DocumentFile worddoc = sample.Files.First();
+            ViewModel.Design.Order vmorder = new ViewModel.Design.Order();
+            vmorder.Binding = order;
 
-            Form form = new Form();
-            form.AddPropertyNames("item_number,name,description");
-            form.Binding = sample;
 
-            form.Edit.Execute();
-            ((ViewModel.Properties.String)form.Fields.Last()).Value = "New Description";
-            form.Save.Execute();
+
         }
     }
 }

@@ -246,6 +246,10 @@ namespace Aras.ViewModel.Design
                 quantitycontrol.Binding = ordercontext.Property("quantity");
                 row.Cells[2].Value = quantitycontrol;
 
+                // Add Min Max Quantity
+                quantitycontrol.MinValue = (System.Double)ordercontext.VariantContext.MinQuantity;
+                quantitycontrol.MaxValue = (System.Double)ordercontext.VariantContext.MaxQuantity;
+
                 if (this.OrderModel.Locked(false))
                 {
                     quantitycontrol.Enabled = true;
