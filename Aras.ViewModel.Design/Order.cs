@@ -203,6 +203,14 @@ namespace Aras.ViewModel.Design
                 }
             }
 
+            // Order
+            ordercontexts.Sort(
+                delegate(Model.Design.OrderContext p1, Model.Design.OrderContext p2)
+                {
+                    return p1.VariantContext.SortOrder.CompareTo(p2.VariantContext.SortOrder);
+                }
+            );
+
             // Update number of Rows
             this.Configuration.NoRows = ordercontexts.Count();
 
