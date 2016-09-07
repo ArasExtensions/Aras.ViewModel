@@ -32,7 +32,8 @@ namespace Aras.ViewModel.Design
 {
     public class PartRelationshipTree : RelationshipTree
     {
-        protected override Model.Item GetContext(Model.Session Session, string ID)
+        /*
+        public override Model.Item GetContext(Model.Session Session, string ID)
         {
             // Set Columns to show in Search
             this.Search.AddToPropertyNames("item_number,major_rev,name");
@@ -46,7 +47,7 @@ namespace Aras.ViewModel.Design
             // Return Part
             return Session.Cache("Part").Get(ID);
         }
-
+        */
         protected override void AfterBindingChanged()
         {
             base.AfterBindingChanged();

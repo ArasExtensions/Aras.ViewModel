@@ -50,29 +50,13 @@ namespace Aras.ViewModel
             }
         }
 
-        public override object Binding
+        protected override void CheckBinding(object Binding)
         {
-            get
+            base.CheckBinding(Binding);
+
+            if (!(Binding is Model.Property))
             {
-                return base.Binding;
-            }
-            set
-            {
-                if (value == null)
-                {
-                    base.Binding = value;
-                }
-                else
-                {
-                    if (value is Model.Property)
-                    {
-                        base.Binding = value;
-                    }
-                    else
-                    {
-                        throw new Model.Exceptions.ArgumentException("Binding must be of type Aras.Model.Property");
-                    }
-                }
+                throw new Model.Exceptions.ArgumentException("Binding must be of type Aras.Model.Property");
             }
         }
 

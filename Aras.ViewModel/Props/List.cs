@@ -63,42 +63,24 @@ namespace Aras.ViewModel.Properties
         {
             this._value = Value;
             this.OnPropertyChanged("Value");
+        }
 
+        protected virtual void OnAfterSetValue()
+        {
             if (this.Binding != null)
             {
-                if (this.Binding is Model.Properties.List)
+                if (Value == null)
                 {
-                    if (Value == null)
-                    {
-                        ((Model.Properties.List)this.Binding).Value = null;
-                    }
-                    else
-                    {
-                        foreach(Model.ListValue listvalue in ((Model.Properties.List)this.Binding).Values.Values)
-                        {
-                            if (listvalue.Value.Equals(Value))
-                            {
-                                ((Model.Properties.List)this.Binding).Value = listvalue;
-                                break;
-                            }
-                        }
-                    }
+                    ((Model.Properties.List)this.Binding).Value = null;
                 }
                 else
                 {
-                    if (Value == null)
+                    foreach (Model.ListValue listvalue in ((Model.Properties.List)this.Binding).Values.Values)
                     {
-                        ((Model.Properties.VariableList)this.Binding).Value = null;
-                    }
-                    else
-                    {
-                        foreach (Model.ListValue listvalue in ((Model.Properties.VariableList)this.Binding).Values.Values)
+                        if (listvalue.Value.Equals(Value))
                         {
-                            if (listvalue.Value.Equals(Value))
-                            {
-                                ((Model.Properties.VariableList)this.Binding).Value = listvalue;
-                                break;
-                            }
+                            ((Model.Properties.List)this.Binding).Value = listvalue;
+                            break;
                         }
                     }
                 }
@@ -108,29 +90,13 @@ namespace Aras.ViewModel.Properties
         [Attributes.Property("Values", Attributes.PropertyTypes.ControlList, true)]
         public Model.ObservableList<ListValue> Values { get; private set; }
 
-        public override object Binding
+        protected override void CheckBinding(object Binding)
         {
-            get
+            base.CheckBinding(Binding);
+
+            if (!(Binding is Model.Properties.List))
             {
-                return base.Binding;
-            }
-            set
-            {
-                if (value == null)
-                {
-                    base.Binding = value;
-                }
-                else
-                {
-                    if (value is Model.Properties.List || value is Model.Properties.VariableList)
-                    {
-                        base.Binding = value;
-                    }
-                    else
-                    {
-                        throw new Model.Exceptions.ArgumentException("Binding must be of type Aras.Model.Properties.List or Aras.Model.Properties.VariableList");
-                    }
-                }
+                throw new Model.Exceptions.ArgumentException("Binding must be of type Aras.Model.Properties.List");
             }
         }
 
@@ -143,16 +109,8 @@ namespace Aras.ViewModel.Properties
                 Model.List list = null;
                 Int32 selected = -1;
 
-                if (this.Binding is Model.Properties.List)
-                {
-                    list = ((Model.Properties.List)this.Binding).Values;
-                    selected = ((Model.Properties.List)this.Binding).Selected;
-                }
-                else
-                {
-                    list = ((Model.Properties.VariableList)this.Binding).Values;
-                    selected = ((Model.Properties.VariableList)this.Binding).Selected;
-                }
+                list = ((Model.Properties.List)this.Binding).Values;
+                selected = ((Model.Properties.List)this.Binding).Selected;
 
                 this.Values.Clear();
 
@@ -160,7 +118,7 @@ namespace Aras.ViewModel.Properties
 
                 this.Values.NotifyListChanged = false;
 
-                foreach(Model.ListValue modellistvalue in list.Values)
+                foreach (Model.ListValue modellistvalue in list.Values)
                 {
                     ListValue listvalue = new ListValue();
                     listvalue.Binding = modellistvalue;
@@ -186,28 +144,14 @@ namespace Aras.ViewModel.Properties
             {
                 if (e.PropertyName.Equals("Selected") || e.PropertyName.Equals("Value"))
                 {
-                    if (this.Binding is Model.Properties.VariableList)
+                    if (((Model.Properties.List)this.Binding).Selected == -1)
                     {
-                        if (((Model.Properties.VariableList)this.Binding).Selected == -1)
-                        {
-                            this.Value = null;
-                        }
-                        else
-                        {
-                            this.Value = ((Aras.Model.ListValue)((Model.Properties.VariableList)this.Binding).Value).Value;
-                        }
+                        this.Value = null;
                     }
                     else
                     {
-                        if (((Model.Properties.List)this.Binding).Selected == -1)
-                        {
-                            this.Value = null;
-                        }
-                        else
-                        {
-                            this.Value = ((Aras.Model.ListValue)((Model.Properties.List)this.Binding).Value).Value;
-                        }
-                    }    
+                        this.Value = ((Aras.Model.ListValue)((Model.Properties.List)this.Binding).Value).Value;
+                    }
                 }
             }
         }

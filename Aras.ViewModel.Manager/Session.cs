@@ -97,7 +97,7 @@ namespace Aras.ViewModel.Manager
             Control plugin = (Control)Activator.CreateInstance(this.Database.Server.ControlType(Name), new object[] { });
 
             // Set Context
-            plugin.SetBinding(this.Model, Context);
+            ((ViewModel.Item)plugin).SetBinding(this.Model, Context);
 
             // Add Plugin to Cache
             this.AddControlToCache(plugin, false);

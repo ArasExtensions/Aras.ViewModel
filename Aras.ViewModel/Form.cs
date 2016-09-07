@@ -30,21 +30,10 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel
 {
-    public class Form : Control
+    public class Form : Item
     {
-        [ViewModel.Attributes.Command("Edit")]
-        public EditCommand Edit { get; private set; }
-
-        [ViewModel.Attributes.Command("Save")]
-        public SaveCommand Save { get; private set; }
-
-        [ViewModel.Attributes.Command("Undo")]
-        public UndoCommand Undo { get; private set; }
-
         [ViewModel.Attributes.Property("Properties", Aras.ViewModel.Attributes.PropertyTypes.ControlList, true)]
         public Model.ObservableList<Property> Fields { get; private set; }
-
-        private Model.Transaction Transaction;
 
         private List<String> _propertyNames;
         public IEnumerable<String> PropertyNames
@@ -66,32 +55,6 @@ namespace Aras.ViewModel
             }
         }
 
-        public override object Binding
-        {
-            get
-            {
-                return base.Binding;
-            }
-            set
-            {
-                if (value == null)
-                {
-                    base.Binding = value;
-                }
-                else
-                {
-                    if (value is Model.Item)
-                    {
-                        base.Binding = value;
-                    }
-                    else
-                    {
-                        throw new Model.Exceptions.ArgumentException("Binding must be of type Aras.Model.Item");
-                    }
-                }
-            }
-        }
-
         protected override void AfterBindingChanged()
         {
             base.AfterBindingChanged();
@@ -101,7 +64,7 @@ namespace Aras.ViewModel
 
             if (this.Binding != null)
             {
-                this.Transaction = ((Model.Item)this.Binding).Transaction;
+                //this.Transaction = ((Model.Item)this.Binding).Transaction;
 
                 foreach (String propertyname in this.PropertyNames)
                 {
@@ -130,148 +93,15 @@ namespace Aras.ViewModel
                     }
                 }
             }
-            else
-            {
-                this.Transaction = null;
-            }
 
             this.Fields.NotifyListChanged = true;
-
-            this.RefreshCommands();
-        }
-
-        private void RefreshCommands()
-        {
-            this.Edit.Refesh();
-            this.Save.Refesh();
-            this.Undo.Refesh();
-        }
-
-        protected override void RefreshControl()
-        {
-            base.RefreshControl();
-
-            if (this.Transaction == null && this.Binding != null)
-            {
-                ((Model.Item)this.Binding).Refresh();
-            }
         }
 
         public Form()
             :base()
         {
-            this.Transaction = null;
             this._propertyNames = new List<String>();
             this.Fields = new Model.ObservableList<Property>();
-            this.Edit = new EditCommand(this);
-            this.Save = new SaveCommand(this);
-            this.Undo = new UndoCommand(this);
-        }
-
-        public class EditCommand : Aras.ViewModel.Command
-        {
-            public Form Form { get; private set; }
-
-            protected override bool Run(IEnumerable<Control> Parameters)
-            {
-                if (this.CanExecute)
-                {
-                    this.Form.Transaction = ((Model.Item)this.Form.Binding).Session.BeginTransaction();
-                    ((Model.Item)this.Form.Binding).Update(this.Form.Transaction);
-                }
-
-                this.Form.RefreshCommands();
-
-                return true;
-            }
-
-            internal void Refesh()
-            {
-                if ((this.Form.Transaction == null) && (this.Form.Binding != null) && ((Model.Item)this.Form.Binding).CanUpdate)
-                {
-                    this.CanExecute = true;
-                }
-                else
-                {
-                    this.CanExecute = false;
-                }
-            }
-
-            internal EditCommand(Form Form)
-            {
-                this.Form = Form;
-                this.Refesh();
-            }
-        }
-
-        public class SaveCommand : Aras.ViewModel.Command
-        {
-            public Form Form { get; private set; }
-
-            protected override bool Run(IEnumerable<Control> Parameters)
-            {
-                if (this.CanExecute)
-                {
-                    this.Form.Transaction.Commit();
-                }
-
-                this.Form.RefreshCommands();
-
-                return true;
-            }
-
-            internal void Refesh()
-            {
-                if (this.Form.Transaction != null)
-                {
-                    this.CanExecute = true;
-                }
-                else
-                {
-                    this.CanExecute = false;
-                }
-            }
-
-            internal SaveCommand(Form Form)
-            {
-                this.Form = Form;
-                this.Refesh();
-            }
-        }
-
-        public class UndoCommand : Aras.ViewModel.Command
-        {
-            public Form Form { get; private set; }
-
-            protected override bool Run(IEnumerable<Control> Parameters)
-            {
-                if (this.CanExecute)
-                {
-                    this.Form.Transaction.RollBack();
-                }
-
-                this.Form.RefreshCommands();
-
-                return true;
-            }
-
-            internal void Refesh()
-            {
-                if (this.Form.Transaction != null)
-                {
-                    this.CanExecute = true;
-                }
-                else
-                {
-                    this.CanExecute = false;
-                }
-            }
-
-            internal UndoCommand(Form Form)
-            {
-                this.Form = Form;
-                this.Refesh();
-            }
         }
 
     }

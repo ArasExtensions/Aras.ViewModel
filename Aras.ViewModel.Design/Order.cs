@@ -30,13 +30,10 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel.Design
 {
-    public class Order : Control
+    public class Order : Item
     {
-        [ViewModel.Attributes.Command("Save")]
-        public SaveCommand Save { get; private set; }
-
-        [ViewModel.Attributes.Command("UpdateBOM")]
-        public UpdateBOMCommand UpdateBOM { get; private set; }
+        [ViewModel.Attributes.Command("Update")]
+        public UpdateCommand Update { get; private set; }
 
         private ViewModel.Grid _bOM;
         [ViewModel.Attributes.Property("BOM", Aras.ViewModel.Attributes.PropertyTypes.Control, true)]
@@ -79,68 +76,191 @@ namespace Aras.ViewModel.Design
             }
         }
 
-        protected override Model.Item GetContext(Model.Session Sesison, String ID)
+        public override void SetBinding(Model.Session Sesison, String ID)
         {
             try
             {
-                return Sesison.Cache("v_Order").Get(ID);
+                this.Binding = Sesison.Cache("v_Order").Get(ID);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return null;
+                throw new Model.Exceptions.ArgumentException("Invalid Context Item: " + ID, e);
             }
         }
 
-        public override object Binding
+        protected override void CheckBinding(object Binding)
         {
-            get
+            base.CheckBinding(Binding);
+
+            if (!(Binding is Model.Design.Order))
             {
-                return base.Binding;
+                throw new Model.Exceptions.ArgumentException("Binding must be of type Model.Design.Order");
             }
-            set
+        }
+
+        protected override void AfterBindingChanged()
+        {
+            base.AfterBindingChanged();
+
+            // Ensure Required Properties are Selected
+            if (this.ModelSession != null)
             {
-                if (value == null)
+                this.ModelSession.ItemType("v_Order Context").AddToSelect("quantity,value,locked_by_id");
+                this.ModelSession.ItemType("Variant Context").AddToSelect("context_type,min_quantity,max_quantity,sort_order");
+                this.ModelSession.ItemType("Part").AddToSelect("item_number,locked_by_id");
+                this.ModelSession.ItemType("Part Variants").AddToSelect("quantity");
+                this.ModelSession.ItemType("Part BOM").AddToSelect("quantity,locked_by_id,sort_order");
+                this.ModelSession.ItemType("User").AddToSelect("keyed_name");
+            }
+
+            // Set Top Level Part
+            this.SetTopLevelPart();
+
+            // Set Configured Part
+            this.SetConfiguredPart();
+
+            // Lock Items
+            this.LockItems();
+
+            // Update Configuration Grid
+            this.UpdateConfigurationGrid();
+
+            // Update BOM Grid
+            this.UpdateBOMGrid();
+
+            // Update Commands
+            this.SetCommandsCanExecute();
+        }
+
+        protected override void AfterSave()
+        {
+            base.AfterSave();
+        }
+
+        protected override void AfterEdit()
+        {
+            base.AfterEdit();
+
+            // Lock Items
+            this.LockItems();
+        }
+
+        private void LockItems()
+        {
+            // Need to lock all Variant Orders
+            if (this.OrderContexts != null)
+            {
+                foreach (Model.Design.OrderContext ordercontext in this.OrderContexts.CurrentItems())
                 {
-                    base.Binding = value;
+                    ordercontext.Update(this.ModelTransaction);
+                }
+            }
+        }
+
+        private Model.Design.Part ConfiguredPart;   
+        private Model.Stores.Relationship<Model.Design.PartBOM> ConfiguredPartBOMS;
+
+        private void SetConfiguredPart()
+        {
+            if (this.ModelItem != null)
+            {
+                Model.Design.Part configured_part = (Model.Design.Part)this.ModelItem.Property("configured_part").Value;
+
+                if (configured_part != null)
+                {
+                    if (!configured_part.Equals(this.ConfiguredPart))
+                    {
+                        this.ConfiguredPart = configured_part;
+
+                        // Store for Configured BOMS
+                        this.ConfiguredPartBOMS = new Model.Stores.Relationship<Model.Design.PartBOM>(this.ConfiguredPart, "Part BOM");
+                    }
                 }
                 else
                 {
-                    if (value is Model.Design.Order)
-                    {
-                        base.Binding = value;
-                    }
-                    else
-                    {
-                        throw new Model.Exceptions.ArgumentException("Binding must be of type Aras.Model.Design.Order");
-                    }
+                    this.ConfiguredPart = null;
+                    this.ConfiguredPartBOMS = null;
                 }
             }
-        }
-
-        // Configuration Control Caches
-        private ControlCache<Model.Design.OrderContext, Properties.String> ConfigQuestionCache;
-        private ControlCache<Model.Design.OrderContext, Properties.List> ConfigValueCache;
-        private ControlCache<Model.Design.OrderContext, Properties.Float> ConfigQuantityCache;
-
-        // PartBOM Control Caches
-        private ControlCache<Model.Design.PartBOM, Properties.String> PartBOMNumberCache;
-        private ControlCache<Model.Design.PartBOM, Properties.String> PartBOMRevisionCache;
-        private ControlCache<Model.Design.PartBOM, Properties.String> PartBOMNameCache;
-        private ControlCache<Model.Design.PartBOM, Properties.Float> PartBOMQuantityCache;
-
-        private Model.Design.Order OrderModel
-        {
-            get
+            else
             {
-                return (Model.Design.Order)this.Binding;
+                this.ConfiguredPart = null;
+                this.ConfiguredPartBOMS = null;
             }
         }
+
+        private Model.Design.Part TopLevelPart;
+        private Model.Stores.Relationship<Model.Design.OrderContext> OrderContexts;
+
+        private void SetTopLevelPart()
+        {
+            if (this.ModelItem != null)
+            {
+                Model.Design.Part top_level_part = (Model.Design.Part)this.ModelItem.Property("part").Value;
+
+                if (top_level_part != null)
+                {
+                    if (!top_level_part.Equals(this.TopLevelPart))
+                    {
+                        this.TopLevelPart = top_level_part;
+
+                        // Store for Order Contexts
+                        this.OrderContexts = new Model.Stores.Relationship<Model.Design.OrderContext>(this.ModelItem, "v_Order Context");
+
+                        // Watch for changes in Top Level Part
+                        this.TopLevelPart.PropertyChanged += TopLevelPart_PropertyChanged;
+                    }
+                }
+                else
+                {
+                    if (this.TopLevelPart != null)
+                    {
+                        this.TopLevelPart.PropertyChanged -= TopLevelPart_PropertyChanged;
+                    }
+
+                    this.TopLevelPart = null;
+                    this.OrderContexts = null;
+                }
+            }
+            else
+            {
+                if (this.TopLevelPart != null)
+                {
+                    this.TopLevelPart.PropertyChanged -= TopLevelPart_PropertyChanged;
+                }
+
+                this.TopLevelPart = null;
+                this.ConfiguredPart = null;
+            }
+        }
+
+        private void TopLevelPart_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            // Watch for changes in Top Level Part
+            switch(e.PropertyName)
+            {
+                case "part":
+                    this.SetTopLevelPart();
+                    this.SetConfiguredPart();
+                    this.UpdateConfigurationGrid();
+                    this.UpdateBOMGrid();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        // PartBOM Control Caches
+        private ControlCache<Model.Design.PartBOM, ViewModel.Properties.String> PartBOMNumberCache;
+        private ControlCache<Model.Design.PartBOM, ViewModel.Properties.String> PartBOMRevisionCache;
+        private ControlCache<Model.Design.PartBOM, ViewModel.Properties.String> PartBOMNameCache;
+        private ControlCache<Model.Design.PartBOM, ViewModel.Properties.Float> PartBOMQuantityCache;
 
         private void UpdateBOMGrid()
         {
-            if ((this.OrderModel != null) && (this.OrderModel.ConfiguredPart != null))
+            if (this.ConfiguredPartBOMS != null)
             {
-                IEnumerable<Model.Design.PartBOM> currentpartboms = this.OrderModel.ConfiguredPart.PartBOMS.CurrentItems();
+                IEnumerable<Model.Item> currentpartboms = this.ConfiguredPartBOMS.CurrentItems();
 
                 // Set No of Rows
                 this.BOM.NoRows = currentpartboms.Count();
@@ -150,36 +270,33 @@ namespace Aras.ViewModel.Design
 
                 foreach (Model.Design.PartBOM partbom in currentpartboms)
                 {
-                    if (partbom.Action != Model.Item.Actions.Delete)
-                    {
-                        Row row = this.BOM.Rows[cnt];
+                    Row row = this.BOM.Rows[cnt];
 
-                        // Add Part Number
-                        Properties.String numbercontrol = this.PartBOMNumberCache.Get(partbom);
-                        numbercontrol.Binding = partbom.Related.Property("item_number");
-                        row.Cells[0].Value = numbercontrol;
-                        numbercontrol.Enabled = false;
+                    // Add Part Number
+                    ViewModel.Properties.String numbercontrol = this.PartBOMNumberCache.Get(partbom);
+                    numbercontrol.Binding = partbom.Related.Property("item_number");
+                    row.Cells[0].Value = numbercontrol;
+                    numbercontrol.Enabled = false;
 
-                        // Add Part Revision
-                        Properties.String revisioncontrol = this.PartBOMRevisionCache.Get(partbom);
-                        revisioncontrol.Binding = partbom.Related.Property("major_rev");
-                        row.Cells[1].Value = revisioncontrol;
-                        revisioncontrol.Enabled = false;
+                    // Add Part Revision
+                    ViewModel.Properties.String revisioncontrol = this.PartBOMRevisionCache.Get(partbom);
+                    revisioncontrol.Binding = partbom.Related.Property("major_rev");
+                    row.Cells[1].Value = revisioncontrol;
+                    revisioncontrol.Enabled = false;
 
-                        // Add Part Name
-                        Properties.String namecontrol = this.PartBOMNameCache.Get(partbom);
-                        namecontrol.Binding = partbom.Related.Property("cmb_name");
-                        row.Cells[2].Value = namecontrol;
-                        namecontrol.Enabled = false;
+                    // Add Part Name
+                    ViewModel.Properties.String namecontrol = this.PartBOMNameCache.Get(partbom);
+                    namecontrol.Binding = partbom.Related.Property("cmb_name");
+                    row.Cells[2].Value = namecontrol;
+                    namecontrol.Enabled = false;
 
-                        // Add Quantity
-                        Properties.Float quantitycontrol = this.PartBOMQuantityCache.Get(partbom);
-                        quantitycontrol.Binding = partbom.Property("quantity");
-                        row.Cells[3].Value = quantitycontrol;
-                        quantitycontrol.Enabled = false;
+                    // Add Quantity
+                    ViewModel.Properties.Float quantitycontrol = this.PartBOMQuantityCache.Get(partbom);
+                    quantitycontrol.Binding = partbom.Property("quantity");
+                    row.Cells[3].Value = quantitycontrol;
+                    quantitycontrol.Enabled = false;
 
-                        cnt++;
-                    }
+                    cnt++;
                 }
             }
             else
@@ -190,12 +307,16 @@ namespace Aras.ViewModel.Design
             this.OnPropertyChanged("BOM");
         }
 
+        private ControlCache<Model.Design.OrderContext, ViewModel.Properties.String> ConfigQuestionCache;
+        private ControlCache<Model.Design.OrderContext, Properties.OrderContextList> ConfigValueCache;
+        private ControlCache<Model.Design.OrderContext, ViewModel.Properties.Float> ConfigQuantityCache;
+
         private void UpdateConfigurationGrid()
         {
             // Build List of OrderContext to Display
             List<Model.Design.OrderContext> ordercontexts = new List<Model.Design.OrderContext>();
 
-            foreach (Model.Design.OrderContext ordercontext in this.OrderModel.OrderContexts)
+            foreach (Model.Design.OrderContext ordercontext in this.OrderContexts.CurrentItems())
             {
                 if (!ordercontext.VariantContext.IsMethod)
                 {
@@ -222,7 +343,7 @@ namespace Aras.ViewModel.Design
                 Row row = this.Configuration.Rows[cnt];
 
                 // Add Question
-                Properties.String questioncontrol = this.ConfigQuestionCache.Get(ordercontext);
+                ViewModel.Properties.String questioncontrol = this.ConfigQuestionCache.Get(ordercontext);
 
                 if (!String.IsNullOrEmpty((String)ordercontext.VariantContext.Property("question").Value))
                 {
@@ -234,13 +355,13 @@ namespace Aras.ViewModel.Design
                 }
 
                 row.Cells[0].Value = questioncontrol;
-                
+
                 // Add Values
-                Properties.List valuecontrol = this.ConfigValueCache.Get(ordercontext);
-                valuecontrol.Binding = ordercontext.Property("value_list");
+                Properties.OrderContextList valuecontrol = this.ConfigValueCache.Get(ordercontext);
+                valuecontrol.Binding = ordercontext;
                 row.Cells[1].Value = valuecontrol;
 
-                if (this.OrderModel.Locked(false))
+                if (this.ModelItem.Locked(false))
                 {
                     valuecontrol.Enabled = true;
                 }
@@ -250,7 +371,7 @@ namespace Aras.ViewModel.Design
                 }
 
                 // Add Quantity
-                Properties.Float quantitycontrol = this.ConfigQuantityCache.Get(ordercontext);
+                ViewModel.Properties.Float quantitycontrol = this.ConfigQuantityCache.Get(ordercontext);
                 quantitycontrol.Binding = ordercontext.Property("quantity");
                 row.Cells[2].Value = quantitycontrol;
 
@@ -258,7 +379,7 @@ namespace Aras.ViewModel.Design
                 quantitycontrol.MinValue = (System.Double)ordercontext.VariantContext.MinQuantity;
                 quantitycontrol.MaxValue = (System.Double)ordercontext.VariantContext.MaxQuantity;
 
-                if (this.OrderModel.Locked(false))
+                if (this.ModelItem.Locked(false))
                 {
                     quantitycontrol.Enabled = true;
                 }
@@ -273,177 +394,82 @@ namespace Aras.ViewModel.Design
             this.OnPropertyChanged("Configuration");
         }
 
-        private Model.Transaction Transaction;
+        // Caches to hold current configured state
+        private Dictionary<Model.Design.VariantContext, Double> VariantContextCache;
+        private List<Model.Design.Part> PartCache;
+        private Dictionary<Model.Design.Part, Model.Store<Model.Design.PartBOM>> BOMStoreCache;
+        private Dictionary<Model.Design.Part, Model.Store<Model.Design.PartVariant>> VariantStoreCache;
 
-        private Boolean OrderLocked;
-
-        protected override void AfterBindingChanged()
+        private void RefeshCache()
         {
-            base.AfterBindingChanged();
+            this.VariantContextCache.Clear();
+            this.PartCache.Clear();
 
-            if (this.Binding != null)
+            if (this.ModelItem != null)
             {
-                // Check if Order is already Locked
-                this.OrderLocked = this.OrderModel.Locked(true);
+                this.RefeshPart(this.TopLevelPart, 1.0);
+            }
 
-                this.Update();
+        }
 
-                // Add Event Handlers
-                this.OrderModel.PropertyChanged += OrderModel_PropertyChanged;
-                this.OrderModel.OrderContexts.StoreChanged += OrderContexts_StoreChanged;
+        private void RefeshPart(Model.Design.Part Part, Double Quantity)
+        {
+            if (Part.IsVariant)
+            {
+
+            }
+
+            // Process Part BOM
+
+        }
+
+        private void UpdateItem()
+        {
+
+        }
+
+
+
+        private void SetCommandsCanExecute()
+        {
+            if (this.ModelItem != null)
+            {
+                if (this.ModelTransaction == null)
+                {
+                    this.Update.UpdateCanExecute(false);
+                }
+                else
+                {
+                    this.Update.UpdateCanExecute(true);
+                }
             }
             else
             {
-                this.OrderLocked = false;
-            }
-        }
-
-        void OrderContexts_StoreChanged(object sender, Model.StoreChangedEventArgs e)
-        {
-            this.UpdateConfigurationGrid();
-        }
-
-        void OrderModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            switch(e.PropertyName)
-            {
-                case "ConfiguredPart":
-                    this.UpdateBOMGrid();
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        protected override void BeforeBindingChanged()
-        {
-            base.BeforeBindingChanged();
-
-            if (this.Binding != null)
-            {
-                // Rollbck Transaction
-
-                if (this.Transaction != null)
-                {
-                    this.Transaction.RollBack();
-                    this.Transaction = null;
-                }
-
-                // Remove Event Handlers
-                this.OrderModel.OrderContexts.StoreChanged -= OrderContexts_StoreChanged;
-                this.OrderModel.PropertyChanged -= OrderModel_PropertyChanged;
-
-                // Clear Grids
-                this.Configuration.Rows.Clear();
-                this.BOM.Rows.Clear();
-            }
-        }
-
-        private void Update()
-        {
-            if (this.OrderModel != null)
-            {
-                this.ResetError();
-
-                try
-                {
-                    this.OrderModel.Refresh();
-
-                    // Create Transaction if Order Locked
-
-                    if (this.OrderModel.Locked(true))
-                    {
-                        if (this.OrderModel.Transaction == null)
-                        {
-                            this.Transaction = this.OrderModel.Session.BeginTransaction();
-                            this.OrderModel.Update(this.Transaction, true);
-                        }
-                        else
-                        {
-                            this.Transaction = this.OrderModel.Transaction;
-                        }
-
-                        // Update BOM
-                        this.OrderModel.UpdateBOM();
-
-                        if (this.OrderModel.Part != null)
-                        {
-                            this.Save.UpdateCanExecute(true);
-                            this.UpdateBOM.UpdateCanExecute(true);
-                        }
-                        else
-                        {
-                            this.Save.UpdateCanExecute(false);
-                            this.UpdateBOM.UpdateCanExecute(false);
-                        }
-                    }
-                    else
-                    {
-                        this.Save.UpdateCanExecute(false);
-                        this.UpdateBOM.UpdateCanExecute(false);
-                    }
-
-                    // Update Grids
-                    this.UpdateConfigurationGrid();
-                    this.UpdateBOMGrid();
-                }
-                catch (Model.Exceptions.UnLockException e)
-                {
-                    // Failed to unlock Item
-                    this.BOM.NoRows = 0;
-                    this.Configuration.NoRows = 0;
-
-                    this.OnError("Order Locked By: " + e.Item.LockedBy.KeyedName);
-                }
-            }
-        }
-
-        protected override void CloseControl()
-        {
-            base.CloseControl();
-
-            // Rollback any changes
-            if (this.Transaction != null)
-            {
-                this.Transaction.RollBack();
-            }
-
-            // If Order was originally locked then Lock
-            if (this.OrderLocked)
-            {
-                if (this.OrderModel != null)
-                {
-                    Model.Transaction transaction = this.OrderModel.Session.BeginTransaction();
-                    this.OrderModel.Update(transaction);
-                }
+                this.Update.UpdateCanExecute(false);
             }
         }
 
         public Order()
-            :base()
+            : base()
         {
-            this.ConfigQuestionCache = new ControlCache<Model.Design.OrderContext, Properties.String>();
-            this.ConfigValueCache = new ControlCache<Model.Design.OrderContext, Properties.List>();
-            this.ConfigQuantityCache = new ControlCache<Model.Design.OrderContext, Properties.Float>();
+            // Create Caches
+            this.VariantContextCache = new Dictionary<Model.Design.VariantContext, Double>();
+            this.PartCache = new List<Model.Design.Part>();
+            this.BOMStoreCache = new Dictionary<Model.Design.Part, Model.Store<Model.Design.PartBOM>>();
+            this.VariantStoreCache = new Dictionary<Model.Design.Part, Model.Store<Model.Design.PartVariant>>();
+            this.PartBOMNumberCache = new ControlCache<Model.Design.PartBOM, ViewModel.Properties.String>();
+            this.PartBOMRevisionCache = new ControlCache<Model.Design.PartBOM, ViewModel.Properties.String>();
+            this.PartBOMNameCache = new ControlCache<Model.Design.PartBOM, ViewModel.Properties.String>();
+            this.PartBOMQuantityCache = new ControlCache<Model.Design.PartBOM, ViewModel.Properties.Float>();
+            this.ConfigQuestionCache = new ControlCache<Model.Design.OrderContext, ViewModel.Properties.String>();
+            this.ConfigValueCache = new ControlCache<Model.Design.OrderContext, Properties.OrderContextList>();
+            this.ConfigQuantityCache = new ControlCache<Model.Design.OrderContext, ViewModel.Properties.Float>();
 
-            this.PartBOMNumberCache = new ControlCache<Model.Design.PartBOM, Properties.String>();
-            this.PartBOMRevisionCache = new ControlCache<Model.Design.PartBOM, Properties.String>();
-            this.PartBOMNameCache = new ControlCache<Model.Design.PartBOM, Properties.String>();
-            this.PartBOMQuantityCache = new ControlCache<Model.Design.PartBOM, Properties.Float>();
-
-            this.Save = new SaveCommand(this);
-            this.UpdateBOM = new UpdateBOMCommand(this);
+            // Create Commands
+            this.Update = new UpdateCommand(this);
         }
 
-        protected override void RefreshControl()
-        {
-            base.RefreshControl();
-
-            // Update
-            this.Update();
-        }
-
-        public class SaveCommand : Aras.ViewModel.Command
+        public class UpdateCommand : Aras.ViewModel.Command
         {
             public Order Order { get; private set; }
 
@@ -454,69 +480,11 @@ namespace Aras.ViewModel.Design
 
             protected override bool Run(IEnumerable<Control> Parameters)
             {
-                if (this.Order.Transaction != null)
-                {
-                    if (this.Order.OrderModel.Part != null)
-                    {
-                        // Process BOM
-                        this.Order.OrderModel.UpdateBOM();
-
-                        // Commit current transaction
-                        this.Order.Transaction.Commit();
-
-                        // Create new Transaction
-                        this.Order.Transaction = this.Order.OrderModel.Session.BeginTransaction();
-                        this.Order.OrderModel.Update(this.Order.Transaction);
-
-                        // Update Grids
-                        this.Order.UpdateConfigurationGrid();
-                        this.Order.UpdateBOMGrid();
-
-                        this.CanExecute = true;
-                    }
-                    else
-                    {
-                        this.CanExecute = false;
-                    }
-                }
-
+                this.Order.UpdateItem();
                 return true;
             }
 
-            internal SaveCommand(Order Order)
-            {
-                this.Order = Order;
-                this.CanExecute = false;
-            }
-        }
-
-        public class UpdateBOMCommand : Aras.ViewModel.Command
-        {
-            public Order Order { get; private set; }
-
-            internal void UpdateCanExecute(Boolean CanExecute)
-            {
-                this.CanExecute = CanExecute;
-            }
-
-            protected override bool Run(IEnumerable<Control> Parameters)
-            {
-                if (this.Order.Transaction != null)
-                {
-                    // Process BOM
-                    this.Order.OrderModel.UpdateBOM();
-
-                    // Update Grids
-                    this.Order.UpdateConfigurationGrid();
-                    this.Order.UpdateBOMGrid();
-
-                    this.CanExecute = true;
-                }
-
-                return true;
-            }
-
-            internal UpdateBOMCommand(Order Order)
+            internal UpdateCommand(Order Order)
             {
                 this.Order = Order;
                 this.CanExecute = false;

@@ -38,18 +38,18 @@ namespace Aras.ViewModel.Design.RelationshipFormatters
             {
                 if (Relationship.Related != null)
                 {
-                    if ((Relationship is Model.Design.PartBOM) && (Relationship.Related is Model.Design.Part))
+                    if (Relationship.RelationshipType.Name.Equals("Part BOM"))
                     {
-                        Model.Design.PartBOM partbom = (Model.Design.PartBOM)Relationship;
-                        Model.Design.Part part = (Model.Design.Part)Relationship.Related;
+                        Double? quantity = (Double?)Relationship.Property("quantity").Value;
+                        String item_number = (String)Relationship.Related.Property("item_number").Value;
 
-                        if (partbom.Quantity > 1)
+                        if ((quantity != null) && (quantity > 1))
                         {
-                            return part.ItemNumber + "." + part.MajorRev + " " + " " + (String)part.Property("name").Value + " (" + partbom.Quantity.ToString() + ")";
+                            return item_number + "." + Relationship.Related.MajorRev + " " + " " + (String)Relationship.Related.Property("name").Value + " (" + quantity.ToString() + ")";
                         }
                         else
                         {
-                            return part.ItemNumber + "." + part.MajorRev + " " + " " + (String)part.Property("name").Value;
+                            return item_number + "." + Relationship.Related.MajorRev + " " + " " + (String)Relationship.Related.Property("name").Value;
                         }
                     }
                     else

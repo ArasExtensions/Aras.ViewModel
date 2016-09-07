@@ -36,10 +36,9 @@ namespace Aras.ViewModel.Design.ItemFormatters
         {
             if (Item != null)
             {
-                if (Item is Model.Design.Part)
+                if (Item.ItemType.Name.Equals("Part"))
                 {
-                    Model.Design.Part part = (Model.Design.Part)Item;
-                    return part.ItemNumber + "." + part.MajorRev + " " + " " + (String)Item.Property("name").Value;
+                    return (String)Item.Property("item_number").Value + "." + Item.MajorRev + " " + " " + (String)Item.Property("name").Value;
                 }
                 else
                 {

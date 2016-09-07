@@ -118,41 +118,13 @@ namespace Aras.ViewModel
             this.ErrorMessage = ErrorMessage;
         }
 
-        public void SetBinding(Model.Session Session, String Context)
+        protected virtual void CheckBinding(Object Binding)
         {
-            Model.Item item = this.GetContext(Session, Context);
 
-            if (item != null)
-            {
-                try
-                {
-                    if (item.Locked(true))
-                    {
-                        Model.Transaction transaction = Session.BeginTransaction();
-                        item.Update(transaction);
-                    }
-
-                    this.Binding = item;
-                }
-                catch (Model.Exceptions.UnLockException e)
-                {
-                    // Failed to unlock Item
-                    this.OnError(e.Item.ItemType.Name + " Locked By: " + e.Item.LockedBy.KeyedName + " " + e.Item.KeyedName);
-                }
-            }
-            else
-            {
-                throw new Model.Exceptions.ArgumentException("Invalid Context ID");
-            }
-        }
-
-        protected virtual Model.Item GetContext(Model.Session Sesison, String ID)
-        {
-            throw new NotImplementedException();
         }
 
         private Object _binding;
-        public virtual Object Binding
+        public Object Binding
         {
             get
             {
@@ -164,6 +136,7 @@ namespace Aras.ViewModel
                 {
                     if (value != null)
                     {
+                        this.CheckBinding(value);
                         this.BeforeBindingChanged();
                         this._binding = value;
                         this.AfterBindingChanged();
@@ -174,6 +147,7 @@ namespace Aras.ViewModel
                 {
                     if (!this._binding.Equals(value))
                     {
+                        this.CheckBinding(value);
                         this.BeforeBindingChanged();
                         this._binding = value;
                         this.AfterBindingChanged();
