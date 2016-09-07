@@ -68,23 +68,21 @@ namespace Aras.ViewModel
             }
         }
 
-        protected abstract Boolean Run(IEnumerable<Control> Parameters);
+        protected abstract void Run(IEnumerable<Control> Parameters);
 
-        public Boolean Execute(IEnumerable<Control> Parameters)
+        public void Execute(IEnumerable<Control> Parameters)
         {
             if (this.CanExecute)
             {
-                return this.Run(Parameters);
-            }
-            else
-            {
-                return false;
+                this.CanExecute = false;
+                this.Run(Parameters);
+                this.CanExecute = true;
             }
         }
 
-        public Boolean Execute()
+        public void Execute()
         {
-            return this.Execute(null);
+            this.Execute(null);
         }
 
         public Command()

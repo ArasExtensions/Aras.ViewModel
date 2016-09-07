@@ -35,6 +35,9 @@ namespace Aras.ViewModel
         [ViewModel.Attributes.Command("Save")]
         public SaveCommand Save { get; private set; }
 
+        [ViewModel.Attributes.Command("SaveUnLock")]
+        public SaveUnLockCommand SaveUnLock { get; private set; }
+
         [ViewModel.Attributes.Command("Edit")]
         public EditCommand Edit { get; private set; }
 
@@ -212,8 +215,48 @@ namespace Aras.ViewModel
                     // Run Before Save
                     this.BeforeSave();
 
+                    // Committ Transaction without UnLock
+                    this.ModelTransaction.Commit(false);
+
+                    // Remove current Transaction
+                    this.ModelTransaction = null;
+
+                    // Run After Save
+                    this.AfterSave();
+
+                    this.SetCommandsCanExecute();
+                }
+
+                // Put Item into Edit
+                this.EditItem();
+            }
+            else
+            {
+                this.SetCommandsCanExecute();
+            }
+        }
+
+        protected virtual void BeforeSaveUnLock()
+        {
+
+        }
+
+        protected virtual void AfterSaveUnLock()
+        {
+
+        }
+
+        private void SaveUnLockItem()
+        {
+            if (this.ModelItem != null)
+            {
+                if (this.ModelTransaction != null)
+                {
+                    // Run Before Save
+                    this.BeforeSave();
+
                     // Committ Transaction
-                    this.ModelTransaction.Commit();
+                    this.ModelTransaction.Commit(true);
                     this.ModelTransaction = null;
 
                     // Run After Save
@@ -229,6 +272,7 @@ namespace Aras.ViewModel
         {
             this.Edit = new EditCommand(this);
             this.Save = new SaveCommand(this);
+            this.SaveUnLock = new SaveUnLockCommand(this);
             this.Undo = new UndoCommand(this);
         }
 
@@ -241,10 +285,9 @@ namespace Aras.ViewModel
                 this.CanExecute = CanExecute;
             }
 
-            protected override bool Run(IEnumerable<Control> Parameters)
+            protected override void Run(IEnumerable<Control> Parameters)
             {
                 this.Item.SaveItem();
-                return true;
             }
 
             internal SaveCommand(Item Item)
@@ -254,6 +297,27 @@ namespace Aras.ViewModel
             }
         }
 
+        public class SaveUnLockCommand : Aras.ViewModel.Command
+        {
+            public Item Item { get; private set; }
+
+            internal void UpdateCanExecute(Boolean CanExecute)
+            {
+                this.CanExecute = CanExecute;
+            }
+
+            protected override void Run(IEnumerable<Control> Parameters)
+            {
+                this.Item.SaveUnLockItem();
+            }
+
+            internal SaveUnLockCommand(Item Item)
+            {
+                this.Item = Item;
+                this.CanExecute = false;
+            }
+
+        }
         public class EditCommand : Aras.ViewModel.Command
         {
             public Item Item { get; private set; }
@@ -263,10 +327,9 @@ namespace Aras.ViewModel
                 this.CanExecute = CanExecute;
             }
 
-            protected override bool Run(IEnumerable<Control> Parameters)
+            protected override void Run(IEnumerable<Control> Parameters)
             {
                 this.Item.EditItem();
-                return true;
             }
 
             internal EditCommand(Item Item)
@@ -285,10 +348,9 @@ namespace Aras.ViewModel
                 this.CanExecute = CanExecute;
             }
 
-            protected override bool Run(IEnumerable<Control> Parameters)
+            protected override void Run(IEnumerable<Control> Parameters)
             {
                 this.Item.UndoItem();
-                return true;
             }
 
             internal UndoCommand(Item Item)

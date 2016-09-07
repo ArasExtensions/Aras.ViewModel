@@ -382,14 +382,12 @@ namespace Aras.ViewModel
         {
             public Search<T> Search { get; private set; }
 
-            protected override bool Run(IEnumerable<Control> Parameters)
+            protected override void Run(IEnumerable<Control> Parameters)
             {
                 if (this.Search.Page < this.Search.NoPages)
                 {
                     this.Search.Page = this.Search.Page + 1;
                 }
-
-                return true;
             }
 
             internal void Refesh()
@@ -416,14 +414,12 @@ namespace Aras.ViewModel
         {
             public Search<T> Search { get; private set; }
 
-            protected override bool Run(IEnumerable<Control> Parameters)
+            protected override void Run(IEnumerable<Control> Parameters)
             {
                 if (this.Search.Page > 1)
                 {
                     this.Search.Page = this.Search.Page - 1;
                 }
-            
-                return true;
             }
 
             internal void Refesh()

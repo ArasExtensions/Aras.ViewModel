@@ -214,7 +214,7 @@ namespace Aras.ViewModel
         {
             public TreeNode TreeNode { get; private set; }
 
-            protected override bool Run(IEnumerable<Control> Parameters)
+            protected override void Run(IEnumerable<Control> Parameters)
             {
                 if (!this.TreeNode.ChildrenLoaded)
                 {
@@ -222,8 +222,6 @@ namespace Aras.ViewModel
                     this.TreeNode.ChildrenLoaded = true;
                     this.CanExecute = false;
                 }
-
-                return true;
             }
 
             internal LoadCommand(TreeNode TreeNode)

@@ -25,48 +25,19 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Aras.ViewModel.WebService.Models
+namespace Aras.ViewModel.Attributes
 {
-    public class Control
+    [AttributeUsage(AttributeTargets.Class)]
+    public class ClientControl : Attribute
     {
-        public String ID { get; set; }
+        public Type Type { get; private set; }
 
-        public String Type { get; set; }
-
-        public List<Property> Properties { get; set; }
-
-        public List<Command> Commands { get; set; }
-
-        public Control()
+        public ClientControl(Type Type)
         {
-
-        }
-
-        public Control(ViewModel.Control Control)
-        {
-            // Set ID
-            this.ID = ViewModel.Utilities.GuidToString(Control.ID);
-            
-            // Set Type
-            this.Type = Control.ClientControlName;
-
-            // Add Properties
-            this.Properties = new List<Property>();
-
-            foreach(String name in Control.Properties)
-            {
-                this.Properties.Add(new Property(Control, name));
-            }
-
-            // Add Commands
-            this.Commands = new List<Command>();
-
-            foreach (String name in Control.Commands)
-            {
-                this.Commands.Add(new Command(name, Control.GetCommand(name)));
-            }
+            this.Type = Type;
         }
     }
 }

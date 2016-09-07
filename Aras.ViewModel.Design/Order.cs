@@ -148,7 +148,7 @@ namespace Aras.ViewModel.Design
         private void LockItems()
         {
             // Need to lock all Variant Orders
-            if (this.OrderContexts != null)
+            if ((this.OrderContexts != null) && (this.ModelTransaction != null))
             {
                 foreach (Model.Design.OrderContext ordercontext in this.OrderContexts.CurrentItems())
                 {
@@ -478,10 +478,9 @@ namespace Aras.ViewModel.Design
                 this.CanExecute = CanExecute;
             }
 
-            protected override bool Run(IEnumerable<Control> Parameters)
+            protected override void Run(IEnumerable<Control> Parameters)
             {
                 this.Order.UpdateItem();
-                return true;
             }
 
             internal UpdateCommand(Order Order)

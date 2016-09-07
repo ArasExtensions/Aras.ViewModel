@@ -309,7 +309,7 @@ namespace Aras.ViewModel
         {
             public RelationshipTree RelationshipTree { get; private set; }
 
-            protected override bool Run(IEnumerable<Control> Parameters)
+            protected override void Run(IEnumerable<Control> Parameters)
             {
                 if (Parameters != null)
                 {
@@ -323,8 +323,6 @@ namespace Aras.ViewModel
 
                     this.RelationshipTree.RefreshCommands();
                 }
-
-                return true;
             }
 
             internal SelectCommand(RelationshipTree RelationshipTree)
@@ -357,7 +355,7 @@ namespace Aras.ViewModel
                 }
             }
 
-            protected override bool Run(IEnumerable<Control> Parameters)
+            protected override void Run(IEnumerable<Control> Parameters)
             {
                 if (this.RelationshipTree.Selected != null)
                 {
@@ -367,8 +365,6 @@ namespace Aras.ViewModel
                 {
                     this.RelationshipTree.ShowSearch = false;
                 }
-
-                return true;
             }
 
             internal AddCommand(RelationshipTree RelationshipTree)
@@ -401,7 +397,7 @@ namespace Aras.ViewModel
                 }
             }
 
-            protected override bool Run(IEnumerable<Control> Parameters)
+            protected override void Run(IEnumerable<Control> Parameters)
             {
                 if ((this.RelationshipTree.Selected != null) && (this.RelationshipTree.Selected.Parent != null))
                 {
@@ -426,8 +422,6 @@ namespace Aras.ViewModel
                     // Refresh Commands
                     this.RelationshipTree.RefreshCommands();
                 }
-
-                return true;
             }
 
             internal CutCommand(RelationshipTree RelationshipTree)
@@ -476,7 +470,7 @@ namespace Aras.ViewModel
                 }
             }
 
-            protected override bool Run(IEnumerable<Control> Parameters)
+            protected override void Run(IEnumerable<Control> Parameters)
             {
                 if (this.RelationshipTree.Selected != null)
                 {
@@ -486,8 +480,6 @@ namespace Aras.ViewModel
                     // Refresh Commands
                     this.RelationshipTree.RefreshCommands();
                 }
-
-                return true;
             }
 
             internal CopyCommand(RelationshipTree RelationshipTree)
@@ -520,7 +512,7 @@ namespace Aras.ViewModel
                 }
             }
 
-            protected override bool Run(IEnumerable<Control> Parameters)
+            protected override void Run(IEnumerable<Control> Parameters)
             {
                 if ((this.RelationshipTree.Selected != null) && (this.RelationshipTree.CopyPasteBuffer != null))
                 {
@@ -536,8 +528,6 @@ namespace Aras.ViewModel
                     // Refresh Commands
                     this.RelationshipTree.RefreshCommands();
                 }
-
-                return true;
             }
 
             internal PasteCommand(RelationshipTree RelationshipTree)
@@ -570,7 +560,7 @@ namespace Aras.ViewModel
                 }
             }
 
-            protected override bool Run(IEnumerable<Control> Parameters)
+            protected override void Run(IEnumerable<Control> Parameters)
             {
                 if ((this.RelationshipTree.Selected != null) && (this.RelationshipTree.Selected.Parent != null))
                 {
@@ -595,8 +585,6 @@ namespace Aras.ViewModel
                     // Refresh Commands
                     this.RelationshipTree.RefreshCommands();
                 }
-
-                return true;
             }
 
             internal DeleteCommand(RelationshipTree RelationshipTree)
@@ -622,18 +610,16 @@ namespace Aras.ViewModel
                 }
             }
 
-            protected override bool Run(IEnumerable<Control> Parameters)
+            protected override void Run(IEnumerable<Control> Parameters)
             {
                 if (this.RelationshipTree._transaction != null)
                 {
-                    this.RelationshipTree._transaction.Commit();
+                    this.RelationshipTree._transaction.Commit(false);
                     this.RelationshipTree._transaction = null;
 
                     // Refresh Commands
                     this.RelationshipTree.RefreshCommands();
                 }
-
-                return true;
             }
 
             internal SaveCommand(RelationshipTree RelationshipTree)
@@ -659,7 +645,7 @@ namespace Aras.ViewModel
                 }
             }
 
-            protected override bool Run(IEnumerable<Control> Parameters)
+            protected override void Run(IEnumerable<Control> Parameters)
             {
                 if (this.RelationshipTree._transaction != null)
                 {
@@ -672,8 +658,6 @@ namespace Aras.ViewModel
                     // Refresh Commands
                     this.RelationshipTree.RefreshCommands();
                 }
-
-                return true;
             }
 
             internal UndoCommand(RelationshipTree RelationshipTree)
@@ -706,7 +690,7 @@ namespace Aras.ViewModel
                 }
             }
 
-            protected override bool Run(IEnumerable<Control> Parameters)
+            protected override void Run(IEnumerable<Control> Parameters)
             {
                 if ((this.RelationshipTree.Selected != null) && (this.RelationshipTree.Selected.Parent != null) && (this.RelationshipTree.Selected.Parent.Parent != null))
                 {
@@ -746,8 +730,6 @@ namespace Aras.ViewModel
                     // Refresh Commands
                     this.RelationshipTree.RefreshCommands();
                 }
-
-                return true;
             }
 
             internal OutdentCommand(RelationshipTree RelationshipTree)
@@ -818,7 +800,7 @@ namespace Aras.ViewModel
                 }
             }
 
-            protected override bool Run(IEnumerable<Control> Parameters)
+            protected override void Run(IEnumerable<Control> Parameters)
             {
                 if ((this.RelationshipTree.Selected != null) && (this.RelationshipTree.Selected.Parent != null) && !this.RelationshipTree.Selected.Parent.Children.First().Equals(this.RelationshipTree.Selected))
                 {
@@ -855,8 +837,6 @@ namespace Aras.ViewModel
                     // Refresh Commands
                     this.RelationshipTree.RefreshCommands();
                 }
-
-                return true;
             }
 
             internal IndentCommand(RelationshipTree RelationshipTree)
@@ -870,11 +850,9 @@ namespace Aras.ViewModel
         {
             public RelationshipTree RelationshipTree { get; private set; }
 
-            protected override bool Run(IEnumerable<Control> Parameters)
+            protected override void Run(IEnumerable<Control> Parameters)
             {
                 this.RelationshipTree.ShowSearch = false;
-
-                return true;
             }
 
             internal SearchClosedCommand(RelationshipTree RelationshipTree)

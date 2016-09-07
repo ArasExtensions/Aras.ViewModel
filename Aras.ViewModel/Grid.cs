@@ -151,7 +151,7 @@ namespace Aras.ViewModel
                 this.CanExecute = CanExecute;
             }
 
-            protected override bool Run(IEnumerable<Control> Parameters)
+            protected override void Run(IEnumerable<Control> Parameters)
             {
                 this.Grid.SelectedRows.NotifyListChanged = false;
                 this.Grid.SelectedRows.Clear();
@@ -168,8 +168,6 @@ namespace Aras.ViewModel
                 }
 
                 this.Grid.SelectedRows.NotifyListChanged = true;
-
-                return true;
             }
 
             internal SelectCommand(Grid Grid)

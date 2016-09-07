@@ -30,6 +30,7 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel.Design.Properties
 {
+    [Attributes.ClientControl(typeof(ViewModel.Properties.List))]
     public class OrderContextList : ViewModel.Properties.List
     {
         protected override void CheckBinding(object Binding)
@@ -99,13 +100,13 @@ namespace Aras.ViewModel.Design.Properties
                     default:
                         throw new Model.Exceptions.ArgumentException("Invalid Variant Context Type: " + ((Model.Design.OrderContext)this.Binding).VariantContext.ContextType.Value);
                 }
-        
+
                 this.Values.NotifyListChanged = true;
             }
         }
 
         public OrderContextList()
-            :base()
+            : base()
         {
 
         }
