@@ -46,6 +46,9 @@ namespace Aras.ViewModel.Design.Debug
 
             ViewModel.Design.Order vmorder = new ViewModel.Design.Order();
             vmorder.Binding = order;
+            vmorder.Edit.Execute();
+            vmorder.Update.Execute();
+            vmorder.Save.Execute();
         }
     }
 }

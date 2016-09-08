@@ -147,13 +147,19 @@ namespace Aras.ViewModel.Design
 
         private void LockItems()
         {
-            // Need to lock all Variant Orders
+            // Lock all Variant Orders
             if ((this.OrderContexts != null) && (this.ModelTransaction != null))
             {
                 foreach (Model.Design.OrderContext ordercontext in this.OrderContexts.CurrentItems())
                 {
                     ordercontext.Update(this.ModelTransaction);
                 }
+            }
+
+            // Lock Configured Part
+            if (this.ConfiguredPart != null)
+            {
+                this.ConfiguredPart.Update(this.ModelTransaction);
             }
         }
 
@@ -395,14 +401,13 @@ namespace Aras.ViewModel.Design
         }
 
         // Caches to hold current configured state
-        private Dictionary<Model.Design.VariantContext, Double> VariantContextCache;
-        private List<Model.Design.Part> PartCache;
-        private Dictionary<Model.Design.Part, Model.Store<Model.Design.PartBOM>> BOMStoreCache;
-        private Dictionary<Model.Design.Part, Model.Store<Model.Design.PartVariant>> VariantStoreCache;
+        private Dictionary<Model.Design.Part, Double> PartCache;
+        private Dictionary<Model.Design.Part, Model.Stores.Relationship<Model.Design.PartBOM>> BOMStoreCache;
+        private Dictionary<Model.Design.Part, Model.Stores.Relationship<Model.Design.PartVariant>> VariantStoreCache;
+        private Dictionary<Model.Design.PartVariant, Model.Stores.Relationship<Model.Design.PartVariantRule>> PartVariantRuleCache;
 
-        private void RefeshCache()
+        private void RefeshPartCache()
         {
-            this.VariantContextCache.Clear();
             this.PartCache.Clear();
 
             if (this.ModelItem != null)
@@ -412,23 +417,263 @@ namespace Aras.ViewModel.Design
 
         }
 
+        private Model.Design.OrderContext OrderContext(Model.Design.VariantContext VariantContext)
+        {
+            Model.Design.OrderContext ret = null;
+
+            foreach(Model.Design.OrderContext ordercontext in this.OrderContexts)
+            {
+                if (ordercontext.VariantContext.Equals(VariantContext))
+                {
+                    ret = ordercontext;
+                    break;
+                }
+            }
+
+            if (ret == null)
+            {
+                ret = this.OrderContexts.Create(VariantContext, this.ModelTransaction);
+            }
+
+            return ret;
+        }
+
         private void RefeshPart(Model.Design.Part Part, Double Quantity)
         {
+            // Process Part Variants
             if (Part.IsVariant)
             {
+                if (!this.VariantStoreCache.ContainsKey(Part))
+                {
+                    this.VariantStoreCache[Part] = new Model.Stores.Relationship<Model.Design.PartVariant>(Part, "Part Variants");
+                }
 
+                foreach (Model.Design.PartVariant partvariant in this.VariantStoreCache[Part])
+                {
+                    if (!this.PartVariantRuleCache.ContainsKey(partvariant))
+                    {
+                        this.PartVariantRuleCache[partvariant] = new Model.Stores.Relationship<Model.Design.PartVariantRule>(partvariant, "Part Variant Rule");
+                    }
+
+                    Boolean selected = true;
+                    Double variant_quantity = 0.0;
+
+                    foreach (Model.Design.PartVariantRule partvariantrule in this.PartVariantRuleCache[partvariant])
+                    {
+                        if (partvariantrule.Related != null)
+                        {
+                            // Get Order Context
+                            Model.Design.OrderContext ordercontext = this.OrderContext(partvariantrule.VariantContext);
+                            String order_context_value = null;
+                            Double order_context_quantity = 0.0;
+
+                            switch (partvariantrule.VariantContext.ContextType.Value)
+                            {
+                                case "Boolean":
+                                case "List":
+
+                                    order_context_value = ordercontext.Value;
+                                    order_context_quantity = ordercontext.Quantity;
+
+                                    break;
+
+                                case "Method":
+
+                                    Model.IO.Item dborder = new Model.IO.Item(this.ModelItem.ItemType.Name, partvariantrule.VariantContext.Method);
+                                    dborder.ID = this.ModelItem.ID;
+
+                                    // Add this Order Context
+                                    Model.IO.Item dbordercontext = ordercontext.GetIOItem();
+                                    dborder.AddRelationship(dbordercontext);
+
+                                    // Add all other order Context
+                                    foreach (Model.Design.OrderContext otherordercontext in this.OrderContexts)
+                                    {
+                                        if (!otherordercontext.Equals(ordercontext))
+                                        {
+                                            Model.IO.Item dbotherordercontext = otherordercontext.GetIOItem();
+                                            dborder.AddRelationship(dbotherordercontext);
+                                        }
+                                    }
+
+                                    Model.IO.SOAPRequest request = new Model.IO.SOAPRequest(Model.IO.SOAPOperation.ApplyItem, this.ModelSession, dborder);
+                                    Model.IO.SOAPResponse response = request.Execute();
+
+                                    if (!response.IsError)
+                                    {
+                                        if (response.Items.Count() == 1)
+                                        {
+                                            order_context_value = response.Items.First().GetProperty("value");
+                                            order_context_quantity = Double.Parse(response.Items.First().GetProperty("quantity"));
+                                        }
+                                        else
+                                        {
+                                            throw new Model.Exceptions.ServerException("Variant Method failed to return a result: " + partvariantrule.VariantContext.Method);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        throw new Model.Exceptions.ServerException(response);
+                                    }
+
+                                    break;
+
+                                default:
+                                    throw new Model.Exceptions.ArgumentException("Unsupported Variant Context Type: " + partvariantrule.VariantContext.ContextType.Value);
+                            }
+
+                            if (String.Compare(partvariantrule.Value, order_context_value) == 0)
+                            {
+                                Double calc_quantity = Quantity * partvariant.Quantity * order_context_quantity;
+
+                                if (calc_quantity > variant_quantity)
+                                {
+                                    variant_quantity = calc_quantity;
+                                }
+                            }
+                            else
+                            {
+                                selected = false;
+                            }
+                        }
+                        else
+                        {
+                            selected = false;
+                        }
+
+                        if (!selected)
+                        {
+                            break;
+                        }
+                    }
+
+                    if (selected)
+                    {
+                        this.RefeshPart((Model.Design.Part)partvariant.Related, variant_quantity);
+                    }
+                }
+            }
+            else
+            {
+                // Add this Part to Cache
+                if (!this.PartCache.ContainsKey(Part))
+                {
+                    this.PartCache[Part] = Quantity;
+                }
+                else
+                {
+                    this.PartCache[Part] += Quantity;
+                }
             }
 
             // Process Part BOM
+            if (!this.BOMStoreCache.ContainsKey(Part))
+            {
+                this.BOMStoreCache[Part] = new Model.Stores.Relationship<Model.Design.PartBOM>(Part, "Part BOM");
+            }
 
+            foreach (Model.Design.PartBOM partbom in this.BOMStoreCache[Part])
+            {
+                if (partbom.Related != null)
+                {
+                    Double part_bom_quantity = Quantity * partbom.Quantity;
+                    this.RefeshPart((Model.Design.Part)partbom.Related, part_bom_quantity);
+                }
+            }
         }
 
         private void UpdateItem()
         {
+            // Ensure Configured Part exists
+            if (this.ConfiguredPart == null)
+            {
+                Model.Stores.Item<Model.Design.Part> partsstore = new Model.Stores.Item<Model.Design.Part>(this.ModelSession, "Part", Aras.Conditions.Eq("item_number", ((Model.Design.Part)this.ModelItem).ItemNumber));
 
+                if (partsstore.Count() == 0)
+                {
+                    // Create ConfiguredPart
+                    this.ConfiguredPart = (Model.Design.Part)partsstore.Create(this.ModelTransaction);
+                    this.ConfiguredPart.ItemNumber = ((Model.Design.Part)this.ModelItem).ItemNumber;
+                }
+                else
+                {
+                    // Use Existing Configured Part
+                    this.ConfiguredPart = (Model.Design.Part)partsstore.First();
+                    this.ConfiguredPart.Update(this.ModelTransaction);
+                }
+            }
+
+            // Update Configured Part Properties
+            this.ConfiguredPart.Class = this.ConfiguredPart.ItemType.GetClassName("TopLevel");
+            this.ConfiguredPart.Property("name").Value = this.ModelItem.Property("name").Value;
+            this.ConfiguredPart.Property("cmb_name").Value = this.ModelItem.Property("name").Value;
+
+            // Refesh Part Cache
+            this.RefeshPartCache();
+
+            // Build List of Parts
+            List<Model.Design.Part> requiredparts = new List<Model.Design.Part>();
+
+            foreach (Model.Design.Part part in this.PartCache.Keys)
+            {
+                if (part.Class.Name == "BOM")
+                {
+                    requiredparts.Add(part);
+                }
+            }
+
+            // Build list of current Parts and remove Part not need anymore
+            List<Model.Design.Part> currentparts = new List<Model.Design.Part>();
+
+            foreach (Model.Design.PartBOM currentpartbom in this.ConfiguredPartBOMS)
+            {
+                Model.Design.Part currentpart = (Model.Design.Part)currentpartbom.Related;
+
+                if (requiredparts.Contains(currentpart))
+                {
+                    currentparts.Add(currentpart);
+
+                    // Update Quanity
+                    currentpartbom.Update(this.ModelTransaction);
+                    currentpartbom.Quantity = this.PartCache[currentpart];
+                }
+                else
+                {
+                    // Remove PartBOM
+                    currentpartbom.Delete(this.ModelTransaction, true);
+                }
+            }
+
+            // Add any new Parts
+            foreach (Model.Design.Part requiredpart in requiredparts)
+            {
+                if (!currentparts.Contains(requiredpart))
+                {
+                    Model.Design.PartBOM newpartbom = this.ConfiguredPartBOMS.Create(requiredpart, this.ModelTransaction);
+                    newpartbom.Quantity = this.PartCache[requiredpart];
+                }
+            }
+
+            // Set Sequence Number
+            int cnt = 10;
+            
+            foreach(Model.Design.PartBOM partbom in this.ConfiguredPartBOMS.CurrentItems())
+            {
+                if (partbom.SortOrder != cnt)
+                {
+                    partbom.Update(this.ModelTransaction);
+                    partbom.SortOrder = cnt;
+                }
+
+                cnt += 10;
+            }
+
+            // Update BOM Grid
+            this.UpdateBOMGrid();
+
+            // Update Commands
+            this.SetCommandsCanExecute();
         }
-
-
 
         private void SetCommandsCanExecute()
         {
@@ -453,10 +698,10 @@ namespace Aras.ViewModel.Design
             : base()
         {
             // Create Caches
-            this.VariantContextCache = new Dictionary<Model.Design.VariantContext, Double>();
-            this.PartCache = new List<Model.Design.Part>();
-            this.BOMStoreCache = new Dictionary<Model.Design.Part, Model.Store<Model.Design.PartBOM>>();
-            this.VariantStoreCache = new Dictionary<Model.Design.Part, Model.Store<Model.Design.PartVariant>>();
+            this.PartCache = new Dictionary<Model.Design.Part, Double>();
+            this.BOMStoreCache = new Dictionary<Model.Design.Part, Model.Stores.Relationship<Model.Design.PartBOM>>();
+            this.VariantStoreCache = new Dictionary<Model.Design.Part, Model.Stores.Relationship<Model.Design.PartVariant>>();
+            this.PartVariantRuleCache = new Dictionary<Model.Design.PartVariant, Model.Stores.Relationship<Model.Design.PartVariantRule>>();
             this.PartBOMNumberCache = new ControlCache<Model.Design.PartBOM, ViewModel.Properties.String>();
             this.PartBOMRevisionCache = new ControlCache<Model.Design.PartBOM, ViewModel.Properties.String>();
             this.PartBOMNameCache = new ControlCache<Model.Design.PartBOM, ViewModel.Properties.String>();

@@ -96,6 +96,7 @@ namespace Aras.ViewModel
             else
             {
                 this.ModelTransaction = null;
+                this.SetCommandsCanExecute();
             }
         }
 
