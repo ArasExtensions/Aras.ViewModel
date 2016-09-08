@@ -44,9 +44,48 @@ namespace Aras.ViewModel
         [ViewModel.Attributes.Command("Undo")]
         public UndoCommand Undo { get; private set; }
 
-        public virtual void SetBinding(Model.Session Sesison, String ID)
+        protected virtual Model.Item GetBindingItem(Model.Session Sesison, String ID)
         {
             throw new NotImplementedException();
+        }
+
+        public void SetBinding(Model.Session Session, String ID)
+        {
+            try
+            {
+                Model.Item context = this.GetBindingItem(Session, ID);
+                context.Refresh();
+                this.Binding = context;
+            }
+            catch(Exception e)
+            {
+                throw new Model.Exceptions.ServerException("Failed to set Context: " + ID, e);
+            }
+        }
+
+        protected override void RefreshControl()
+        {
+            base.RefreshControl();
+
+            if (this.ModelItem != null)
+            {
+                this.ModelItem.Refresh();
+
+                if (this.ModelItem.Locked(true))
+                {
+                    // Item is Locked by User set to Edit
+                    this.EditItem();
+                }
+                else
+                {
+                    this.ModelTransaction = null;
+                    this.SetCommandsCanExecute();
+                }
+            }
+            else
+            {
+                this.SetCommandsCanExecute();
+            }
         }
 
         protected Model.Transaction ModelTransaction { get; private set; }

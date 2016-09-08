@@ -76,16 +76,9 @@ namespace Aras.ViewModel.Design
             }
         }
 
-        public override void SetBinding(Model.Session Sesison, String ID)
+        protected override Model.Item GetBindingItem(Model.Session Sesison, string ID)
         {
-            try
-            {
-                this.Binding = Sesison.Cache("v_Order").Get(ID);
-            }
-            catch (Exception e)
-            {
-                throw new Model.Exceptions.ArgumentException("Invalid Context Item: " + ID, e);
-            }
+            return Sesison.Cache("v_Order").Get(ID);
         }
 
         protected override void CheckBinding(object Binding)
@@ -132,6 +125,30 @@ namespace Aras.ViewModel.Design
             this.SetCommandsCanExecute();
         }
 
+        protected override void RefreshControl()
+        {
+            base.RefreshControl();
+        
+            if (this.OrderContexts != null)
+            {
+                this.OrderContexts.Refresh();
+            }
+
+            if (this.ConfiguredPartBOMS != null)
+            {
+                this.ConfiguredPartBOMS.Refresh();
+            }
+
+            // Update Configuration Grid
+            this.UpdateConfigurationGrid();
+
+            // Update BOM Grid
+            this.UpdateBOMGrid();
+
+            // Update Commands
+            this.SetCommandsCanExecute();
+        }
+
         protected override void AfterSave()
         {
             base.AfterSave();
@@ -157,7 +174,7 @@ namespace Aras.ViewModel.Design
             }
 
             // Lock Configured Part
-            if (this.ConfiguredPart != null)
+            if ((this.ConfiguredPart != null) && (this.ModelTransaction != null))
             {
                 this.ConfiguredPart.Update(this.ModelTransaction);
             }
