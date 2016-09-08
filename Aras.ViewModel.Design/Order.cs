@@ -694,6 +694,14 @@ namespace Aras.ViewModel.Design
             }
         }
 
+        protected override void BeforeSave()
+        {
+            base.BeforeSave();
+
+            // Update Item
+            this.UpdateItem();
+        }
+
         public Order()
             : base()
         {

@@ -63,6 +63,7 @@ namespace Aras.ViewModel.Properties
         {
             this._value = Value;
             this.OnPropertyChanged("Value");
+            this.OnAfterSetValue();
         }
 
         protected virtual void OnAfterSetValue()
