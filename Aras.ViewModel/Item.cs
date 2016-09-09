@@ -44,6 +44,9 @@ namespace Aras.ViewModel
         [ViewModel.Attributes.Command("Undo")]
         public UndoCommand Undo { get; private set; }
 
+        [ViewModel.Attributes.Command("Process")]
+        public ProcessCommand Process { get; private set; }
+
         protected virtual Model.Item GetBindingItem(Model.Session Sesison, String ID)
         {
             throw new NotImplementedException();
@@ -148,12 +151,14 @@ namespace Aras.ViewModel
                     this.Edit.UpdateCanExecute(true);
                     this.Save.UpdateCanExecute(false);
                     this.Undo.UpdateCanExecute(false);
+                    this.Process.UpdateCanExecute(false);
                 }
                 else
                 {
                     this.Edit.UpdateCanExecute(false);
                     this.Save.UpdateCanExecute(true);
                     this.Undo.UpdateCanExecute(true);
+                    this.Process.UpdateCanExecute(true);
                 }
             }
             else
@@ -161,6 +166,7 @@ namespace Aras.ViewModel
                 this.Edit.UpdateCanExecute(false);
                 this.Save.UpdateCanExecute(false);
                 this.Undo.UpdateCanExecute(false);
+                this.Process.UpdateCanExecute(false);
             }
         }
 
@@ -307,6 +313,35 @@ namespace Aras.ViewModel
             this.SetCommandsCanExecute();
         }
 
+        protected virtual void BeforeProcess()
+        {
+
+        }
+
+        protected virtual void AfterProcess()
+        {
+
+
+        }
+
+        private void ProcessItem()
+        {
+            if (this.ModelItem != null)
+            {
+                if (this.ModelTransaction != null)
+                {
+                    // Run Before Process
+                    this.BeforeProcess();
+
+                    // Process
+                    this.ModelItem.Process(this.ModelTransaction);
+
+                    // Run After Process
+                    this.AfterProcess();
+                }
+            }
+        }
+
         public Item()
             : base()
         {
@@ -314,6 +349,7 @@ namespace Aras.ViewModel
             this.Save = new SaveCommand(this);
             this.SaveUnLock = new SaveUnLockCommand(this);
             this.Undo = new UndoCommand(this);
+            this.Process = new ProcessCommand(this);
         }
 
         public class SaveCommand : Aras.ViewModel.Command
@@ -394,6 +430,27 @@ namespace Aras.ViewModel
             }
 
             internal UndoCommand(Item Item)
+            {
+                this.Item = Item;
+                this.CanExecute = false;
+            }
+        }
+
+        public class ProcessCommand : Aras.ViewModel.Command
+        {
+            public Item Item { get; private set; }
+
+            internal void UpdateCanExecute(Boolean CanExecute)
+            {
+                this.CanExecute = CanExecute;
+            }
+
+            protected override void Run(IEnumerable<Control> Parameters)
+            {
+                this.Item.ProcessItem();
+            }
+
+            internal ProcessCommand(Item Item)
             {
                 this.Item = Item;
                 this.CanExecute = false;

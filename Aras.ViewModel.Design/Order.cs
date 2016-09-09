@@ -32,9 +32,6 @@ namespace Aras.ViewModel.Design
 {
     public class Order : Aras.ViewModel.Item
     {
-        [ViewModel.Attributes.Command("Update")]
-        public UpdateCommand Update { get; private set; }
-
         private ViewModel.Grid _bOM;
         [ViewModel.Attributes.Property("BOM", Aras.ViewModel.Attributes.PropertyTypes.Control, true)]
         public ViewModel.Grid BOM
@@ -111,28 +108,28 @@ namespace Aras.ViewModel.Design
 
             // Update BOM Grid
             this.UpdateBOMGrid();
-
-            // Update Commands
-            this.SetCommandsCanExecute();
         }
 
         protected override void RefreshControl()
         {
             base.RefreshControl();
-        
-            if (this.Binding != null)
-            {
-                ((Model.Design.Order)this.Binding).Refresh();
-            }
 
             // Update Configuration Grid
             this.UpdateConfigurationGrid();
 
             // Update BOM Grid
             this.UpdateBOMGrid();
+        }
 
-            // Update Commands
-            this.SetCommandsCanExecute();
+        protected override void AfterProcess()
+        {
+            base.AfterProcess();
+
+            // Update Configuration Grid
+            this.UpdateConfigurationGrid();
+
+            // Update BOM Grid
+            this.UpdateBOMGrid();
         }
 
         // PartBOM Control Caches
@@ -291,31 +288,12 @@ namespace Aras.ViewModel.Design
             this.OnPropertyChanged("Configuration");
         }
 
-        private void SetCommandsCanExecute()
-        {
-            if (this.ModelItem != null)
-            {
-                if (this.ModelTransaction == null)
-                {
-                    this.Update.UpdateCanExecute(false);
-                }
-                else
-                {
-                    this.Update.UpdateCanExecute(true);
-                }
-            }
-            else
-            {
-                this.Update.UpdateCanExecute(false);
-            }
-        }
-
         protected override void BeforeSave()
         {
             base.BeforeSave();
 
-            // Update Item
-            this.ModelItem.Process(this.ModelTransaction);
+            // Process Item
+            this.Process.Execute();
         }
 
         public Order()
@@ -329,30 +307,6 @@ namespace Aras.ViewModel.Design
             this.ConfigQuestionCache = new ControlCache<Model.Design.OrderContext, ViewModel.Properties.String>();
             this.ConfigValueCache = new ControlCache<Model.Design.OrderContext, Properties.OrderContextList>();
             this.ConfigQuantityCache = new ControlCache<Model.Design.OrderContext, ViewModel.Properties.Float>();
-
-            // Create Commands
-            this.Update = new UpdateCommand(this);
-        }
-
-        public class UpdateCommand : Aras.ViewModel.Command
-        {
-            public Order Order { get; private set; }
-
-            internal void UpdateCanExecute(Boolean CanExecute)
-            {
-                this.CanExecute = CanExecute;
-            }
-
-            protected override void Run(IEnumerable<Control> Parameters)
-            {
-                this.Order.ModelItem.Process(this.Order.ModelTransaction);
-            }
-
-            internal UpdateCommand(Order Order)
-            {
-                this.Order = Order;
-                this.CanExecute = false;
-            }
         }
     }
 }
