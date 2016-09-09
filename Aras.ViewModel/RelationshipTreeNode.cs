@@ -84,7 +84,7 @@ namespace Aras.ViewModel
             }
         }
 
-        internal Model.Stores.Relationship<Model.Relationship> Store { get; private set; }
+        internal Model.Stores.Relationship Store { get; private set; }
 
         protected override void LoadChildren()
         {
@@ -99,11 +99,11 @@ namespace Aras.ViewModel
                 // Check Store has correct Source Item
                 if (!this.Item.ID.Equals(this.Store.Source.ID))
                 {
-                    this.Store = new Model.Stores.Relationship<Model.Relationship>(this.Item, this.RelationshipTree.RelationshipType);
+                    //this.Store = new Model.Stores.Relationship<Model.Relationship>(this.Item, this.RelationshipTree.RelationshipType);
                 }
 
                 // Refresh Store
-                this.Store.Refresh();
+                //this.Store.Refresh();
 
                 foreach (Model.Relationship relationship in this.Store.CurrentItems())
                 {
@@ -162,7 +162,7 @@ namespace Aras.ViewModel
                 }
 
                 // Create Store
-                this.Store = new Model.Stores.Relationship<Model.Relationship>(this.Item, this.RelationshipTree.RelationshipType);
+                //this.Store = new Model.Stores.Relationship<Model.Relationship>(this.Item, this.RelationshipTree.RelationshipType);
 
                 // Watch for versioning on Item
                 this.Item.Superceded += Item_Superceded;

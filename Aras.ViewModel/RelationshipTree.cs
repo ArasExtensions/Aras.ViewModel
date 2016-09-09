@@ -250,7 +250,7 @@ namespace Aras.ViewModel
                     }
 
                     // Set Binding for Search Control
-                    this.Search.Binding = new Model.Stores.Item<Model.Item>(((Model.Item)this.Binding).ItemType);
+                    //this.Search.Binding = new Model.Stores.Item<Model.Item>(((Model.Item)this.Binding).ItemType);
                 }
                 else
                 {

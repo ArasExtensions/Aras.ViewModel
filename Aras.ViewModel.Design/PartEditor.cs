@@ -45,16 +45,16 @@ namespace Aras.ViewModel.Design
             if (this.Binding != null && this.Binding is Model.Session)
             {
                 // Get Part Store
-                Model.Stores.Item<Model.Item> partstore = new Model.Stores.Item<Model.Item>((Model.Session)this.Binding, "Part");
+                //Model.Stores.Item<Model.Item> partstore = new Model.Stores.Item<Model.Item>((Model.Session)this.Binding, "Part");
 
                 // Set Part Properties to Select
-                partstore.ItemType.AddToSelect("item_number,major_rev,name,keyed_name");
+                //partstore.ItemType.AddToSelect("item_number,major_rev,name,keyed_name");
                 
                 // Set Properties to display in Parts Search
                 this.Parts.SetPropertyNames("item_number,major_rev,name");
 
                 // Set Binding for Parts
-                this.Parts.Binding = partstore;
+                //this.Parts.Binding = partstore;
 
                 // Watch for changes in Parts selection
                 this.Parts.Selected.ListChanged += Selected_ListChanged;

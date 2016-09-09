@@ -41,8 +41,8 @@ namespace Aras.ViewModel.Design.Debug
             Model.Database database = server.Database("CMB");
             Model.Session session = database.Login("admin", Model.Server.PasswordHash("innovator"));
 
-            Model.Stores.Item<Model.Item> store = new Model.Stores.Item<Model.Item>(session, "v_Order", Aras.Conditions.Eq("item_number", "RJMTest001"));
-            Model.Item order = store.First();
+            Model.Queries.Item query = session.Store("v_Order").Query(Aras.Conditions.Eq("item_number", "RJMTest001"));
+            Model.Item order = query.First();
 
             ViewModel.Design.Order vmorder = new ViewModel.Design.Order();
             vmorder.Binding = order;
