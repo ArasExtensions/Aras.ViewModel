@@ -88,6 +88,17 @@ namespace Aras.ViewModel.Design
             }
         }
 
+        protected override void BeforeBindingChanged()
+        {
+            base.BeforeBindingChanged();
+
+            if (this.ModelItem != null)
+            {
+                // Stop watching for changes in Model
+                this.ModelItem.PropertyChanged -= ModelItem_PropertyChanged;
+            }
+        }
+
         protected override void AfterBindingChanged()
         {
             base.AfterBindingChanged();
@@ -103,11 +114,33 @@ namespace Aras.ViewModel.Design
                 this.ModelSession.ItemType("User").AddToSelect("keyed_name");
             }
 
+            if (this.ModelItem != null)
+            {
+                // Watch for changes in Model
+                this.ModelItem.PropertyChanged += ModelItem_PropertyChanged;
+            }
+
             // Update Configuration Grid
             this.UpdateConfigurationGrid();
 
             // Update BOM Grid
             this.UpdateBOMGrid();
+        }
+
+        void ModelItem_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            switch(e.PropertyName)
+            {
+                case "part":
+
+                    // Process Item
+                    this.Process.Execute();
+                    break;
+                
+                default:
+
+                    break;
+            }
         }
 
         protected override void RefreshControl()
