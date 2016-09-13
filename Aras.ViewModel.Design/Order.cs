@@ -120,6 +120,12 @@ namespace Aras.ViewModel.Design
                 this.ModelItem.PropertyChanged += ModelItem_PropertyChanged;
             }
 
+            // Update Item
+            if (this.ModelTransaction != null)
+            {
+                ((Model.Design.Order)this.ModelItem).Process(this.ModelTransaction);
+            }
+
             // Update Configuration Grid
             this.UpdateConfigurationGrid();
 
@@ -146,6 +152,12 @@ namespace Aras.ViewModel.Design
         protected override void RefreshControl()
         {
             base.RefreshControl();
+
+            // Update Item
+            if (this.ModelTransaction != null)
+            {
+                ((Model.Design.Order)this.ModelItem).Process(this.ModelTransaction);
+            }
 
             // Update Configuration Grid
             this.UpdateConfigurationGrid();
