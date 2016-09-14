@@ -153,10 +153,13 @@ namespace Aras.ViewModel.Design
         {
             base.RefreshControl();
 
-            // Update Item
-            if (this.ModelTransaction != null)
+            if (this.ModelItem != null)
             {
-                ((Model.Design.Order)this.ModelItem).Process(this.ModelTransaction);
+                // Update Item
+                if (this.ModelTransaction != null)
+                {
+                    ((Model.Design.Order)this.ModelItem).Process(this.ModelTransaction);
+                }
             }
 
             // Update Configuration Grid
@@ -302,6 +305,8 @@ namespace Aras.ViewModel.Design
                     {
                         valuecontrol.Enabled = false;
                     }
+
+                    valuecontrol.Refresh.Execute();
 
                     // Add Quantity
                     ViewModel.Properties.Float quantitycontrol = this.ConfigQuantityCache.Get(ordercontext);
