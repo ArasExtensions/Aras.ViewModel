@@ -28,6 +28,7 @@ must enter into a commercial licence agreement with Processwall Limited.
 
 #### Prerequisites
 
+ * [ArasExtensions/Aras.IO](https://github.com/ArasExtensions/Aras.IO)
  * [ArasExtensions/Aras.Model](https://github.com/ArasExtensions/Aras.Model)
  
 #### Contact Details

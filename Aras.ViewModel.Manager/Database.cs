@@ -48,7 +48,7 @@ namespace Aras.ViewModel.Manager
         {
             get
             {
-                return this.Model.ID;
+                return this.Model.IO.ID;
             }
         }
 
@@ -56,7 +56,7 @@ namespace Aras.ViewModel.Manager
         {
             get
             {
-                return this.Model.Name;
+                return this.Model.IO.ID;
             }
         }
 
