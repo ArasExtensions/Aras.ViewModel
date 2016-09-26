@@ -39,7 +39,7 @@ namespace Aras.ViewModel.Design.Debug
             server.LoadAssembly("Aras.Model.Design");
             server.LoadAssembly("Aras.ViewModel.Design");
             Model.Database database = server.Database("CMB");
-            Model.Session session = database.Login("admin", Model.Server.PasswordHash("innovator"));
+            Model.Session session = database.Login("admin", IO.Server.PasswordHash("innovator"));
 
             Model.Queries.Item query = session.Store("v_Order").Query(Aras.Conditions.Eq("item_number", "RJMTest001"));
             Model.Item order = query.First();
@@ -47,7 +47,6 @@ namespace Aras.ViewModel.Design.Debug
             ViewModel.Design.Order vmorder = new ViewModel.Design.Order();
             vmorder.Binding = order;
             vmorder.Edit.Execute();
-            vmorder.Update.Execute();
             vmorder.Save.Execute();
         }
     }

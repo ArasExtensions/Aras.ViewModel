@@ -49,6 +49,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Aras.IO\Aras.IO\Aras.IO.csproj">
+      <Project>{5acc089e-892b-4fa7-891d-b2f6d74a4d7b}</Project>
+      <Name>Aras.IO</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Aras.Model\Aras.Model.Design\Aras.Model.Design.csproj">
       <Project>{d99031a4-f91e-4d94-8080-be0375d3e83b}</Project>
       <Name>Aras.Model.Design</Name>

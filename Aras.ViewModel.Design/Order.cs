@@ -32,6 +32,9 @@ namespace Aras.ViewModel.Design
 {
     public class Order : Aras.ViewModel.Item
     {
+        [ViewModel.Attributes.Command("BuildFlatBOM")]
+        public BuildFlatBOMCommand BuildFlatBOM { get; private set; }
+
         private ViewModel.Grid _bOM;
         [ViewModel.Attributes.Property("BOM", Aras.ViewModel.Attributes.PropertyTypes.Control, true)]
         public ViewModel.Grid BOM
@@ -123,7 +126,7 @@ namespace Aras.ViewModel.Design
             // Update Item
             if (this.ModelTransaction != null)
             {
-                ((Model.Design.Order)this.ModelItem).Process(this.ModelTransaction);
+                ((Model.Design.Order)this.ModelItem).BuildFlatBOM(this.ModelTransaction);
             }
 
             // Update Configuration Grid
@@ -140,7 +143,7 @@ namespace Aras.ViewModel.Design
                 case "part":
 
                     // Process Item
-                    this.Process.Execute();
+                    this.BuildFlatBOM.Execute();
                     break;
                 
                 default:
@@ -158,20 +161,9 @@ namespace Aras.ViewModel.Design
                 // Update Item
                 if (this.ModelTransaction != null)
                 {
-                    ((Model.Design.Order)this.ModelItem).Process(this.ModelTransaction);
+                    ((Model.Design.Order)this.ModelItem).BuildFlatBOM(this.ModelTransaction);
                 }
             }
-
-            // Update Configuration Grid
-            this.UpdateConfigurationGrid();
-
-            // Update BOM Grid
-            this.UpdateBOMGrid();
-        }
-
-        protected override void AfterProcess()
-        {
-            base.AfterProcess();
 
             // Update Configuration Grid
             this.UpdateConfigurationGrid();
@@ -343,12 +335,32 @@ namespace Aras.ViewModel.Design
             base.BeforeSave();
 
             // Process Item
-            this.Process.Execute();
+            this.BuildFlatBOM.Execute();
+        }
+
+        private void ProcessFlatBOM()
+        {
+            if (this.ModelItem != null)
+            {
+                if (this.ModelTransaction != null)
+                {
+                    // Process
+                    ((Model.Design.Order)this.ModelItem).BuildFlatBOM(this.ModelTransaction);
+                }
+
+                // Update Configuration Grid
+                this.UpdateConfigurationGrid();
+
+                // Update BOM Grid
+                this.UpdateBOMGrid();
+            }
         }
 
         public Order()
             : base()
         {
+            this.BuildFlatBOM = new BuildFlatBOMCommand(this);
+
             // Create Caches
             this.PartBOMNumberCache = new ControlCache<Model.Design.PartBOM, ViewModel.Properties.String>();
             this.PartBOMRevisionCache = new ControlCache<Model.Design.PartBOM, ViewModel.Properties.String>();
@@ -357,6 +369,27 @@ namespace Aras.ViewModel.Design
             this.ConfigQuestionCache = new ControlCache<Model.Design.OrderContext, ViewModel.Properties.String>();
             this.ConfigValueCache = new ControlCache<Model.Design.OrderContext, Properties.OrderContextList>();
             this.ConfigQuantityCache = new ControlCache<Model.Design.OrderContext, ViewModel.Properties.Float>();
+        }
+
+        public class BuildFlatBOMCommand : Aras.ViewModel.Command
+        {
+            public Order Order { get; private set; }
+
+            internal void UpdateCanExecute(Boolean CanExecute)
+            {
+                this.CanExecute = CanExecute;
+            }
+
+            protected override void Run(IEnumerable<Control> Parameters)
+            {
+                this.Order.ProcessFlatBOM();
+            }
+
+            internal BuildFlatBOMCommand(Order Order)
+            {
+                this.Order = Order;
+                this.CanExecute = false;
+            }
         }
     }
 }
