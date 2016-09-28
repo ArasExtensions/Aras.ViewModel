@@ -41,7 +41,8 @@ namespace Aras.ViewModel.WebService.Controllers
             try
             {
                 Models.Responses.Control ret = new Models.Responses.Control();
-                ret.Value = new Models.Control(this.Session.Application(Application.Name));
+                ViewModel.Control applicationcontrol = this.Session.Application(Application.Name);
+                ret.Value = new Models.Control(applicationcontrol, this.Session.Database.Server.ClientControlType(applicationcontrol));
                 this.UpdateResponse(ret);
 
                 return ret;

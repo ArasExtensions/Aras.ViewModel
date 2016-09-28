@@ -35,20 +35,9 @@ namespace Aras.ViewModel.Manager.Debug
         static void Main(string[] args)
         {
             Logging.Console log = new Logging.Console();
-            Server server = new Server("http://localhost/11SP1", log);
-            server.LoadAssembly("Aras.Model.Design");
-            server.LoadAssembly("Aras.ViewModel.Design");
-            Database database = server.Database("VariantsDemo11SP1");
-            Session session = database.Login("admin", Model.Server.PasswordHash("innovator"));
-
-            ViewModel.Design.Order order = (ViewModel.Design.Order)session.Plugin("Aras.ViewModel.Design.Order", "72EFACFB322A4F1FA4C5B9FE78102AF6");
-            order.Refresh.Execute();
-            //String test1 = ((ViewModel.Properties.String)order.BOM.Rows[6].Cells[2].Value).Value;
-            //Cell cell = order.Configuration.Rows[0].Cells[1];
-            //ViewModel.Properties.List list = (ViewModel.Properties.List)cell.Value;
-            //list.Value = list.Values[2].Value;
-            //String test2 = ((ViewModel.Properties.String)order.BOM.Rows[6].Cells[2].Value).Value;
-
+            Server server = new Server("http://localhost/11SP6_ITGDEV", log);
+            Database database = server.Database("BOM Development");
+            Session session = database.Login("admin", IO.Server.PasswordHash("innovator"));
 
         }
     }

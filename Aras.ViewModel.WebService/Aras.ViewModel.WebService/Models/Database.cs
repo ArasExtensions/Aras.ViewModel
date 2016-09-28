@@ -33,8 +33,6 @@ namespace Aras.ViewModel.WebService.Models
     {
         public String ID { get; set; }
 
-        public String Name { get; set; }
-
         public Database()
         {
         }
@@ -42,7 +40,6 @@ namespace Aras.ViewModel.WebService.Models
         public Database(ViewModel.Manager.Database Database)
         {
             this.ID = Database.ID;
-            this.Name = Database.Name;
         }
     }
 }

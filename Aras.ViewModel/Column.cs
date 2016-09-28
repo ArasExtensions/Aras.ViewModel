@@ -30,6 +30,7 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel
 {
+    [Attributes.ClientControl("Aras.View.Column")]
     public class Column : Control
     {
         public Grid Grid { get; private set; }

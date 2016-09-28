@@ -30,7 +30,6 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel.Design.Properties
 {
-    [Attributes.ClientControl(typeof(ViewModel.Properties.List))]
     public class OrderContextList : ViewModel.Properties.List
     {
         protected override void CheckBinding(object Binding)

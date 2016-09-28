@@ -30,6 +30,7 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel.Properties
 {
+    [Attributes.ClientControl("Aras.View.Properties.List")]
     public class List : Property
     {
         private System.String _value;

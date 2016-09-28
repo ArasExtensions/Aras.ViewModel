@@ -33,11 +33,11 @@ namespace Aras.ViewModel.Attributes
     [AttributeUsage(AttributeTargets.Class)]
     public class ClientControl : Attribute
     {
-        public Type Type { get; private set; }
+        public String Name { get; private set; }
 
-        public ClientControl(Type Type)
+        public ClientControl(String Name)
         {
-            this.Type = Type;
+            this.Name = Name;
         }
     }
 }

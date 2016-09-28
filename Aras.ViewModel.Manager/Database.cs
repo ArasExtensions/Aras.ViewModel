@@ -52,14 +52,6 @@ namespace Aras.ViewModel.Manager
             }
         }
 
-        public String Name
-        {
-            get
-            {
-                return this.Model.IO.ID;
-            }
-        }
-
         public Session Login(String Username, String Password)
         {
             Model.Session modelsession = this.Model.Login(Username, Password);
@@ -78,7 +70,7 @@ namespace Aras.ViewModel.Manager
 
         public override string ToString()
         {
-            return this.Name;
+            return this.Model.ToString();
         }
 
         internal Database(Server Server, Model.Database Model)

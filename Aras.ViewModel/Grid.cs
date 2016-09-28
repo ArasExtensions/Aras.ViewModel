@@ -30,6 +30,7 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel
 {
+    [Attributes.ClientControl("Aras.View.Grid")]
     public class Grid : Control
     {
         [ViewModel.Attributes.Command("Select")]

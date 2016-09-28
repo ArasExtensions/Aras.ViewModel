@@ -30,6 +30,7 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel.Properties
 {
+    [Attributes.ClientControl("Aras.View.Properties.Float")]
     public class Float : Property
     {
         const System.Double DefaultMinValue = -10000.0;

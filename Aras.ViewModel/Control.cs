@@ -46,29 +46,6 @@ namespace Aras.ViewModel
             }
         }
 
-        private String _clientControlName;
-        public String ClientControlName
-        {
-            get
-            {
-                if (this._clientControlName == null)
-                {
-                    object[] attributes = this.GetType().GetCustomAttributes(typeof(ViewModel.Attributes.ClientControl), false);
-
-                    if (attributes.Length > 0)
-                    {
-                        this._clientControlName = ((ViewModel.Attributes.ClientControl)attributes[0]).Type.FullName;
-                    }
-                    else
-                    {
-                        this._clientControlName = this.GetType().FullName;
-                    }
-                }
-
-                return this._clientControlName;
-            }
-        }
-
         [ViewModel.Attributes.Command("Refresh")]
         public RefreshCommand Refresh { get; private set; }
 

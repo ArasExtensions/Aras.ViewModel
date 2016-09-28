@@ -34,9 +34,6 @@ namespace Aras.ViewModel.Manager
 {
     public class Server
     {
-        private readonly String[] assemblyexclusions = new String[8] { "Aras.IO", "Aras.Licence", "Aras.Logging", "Aras.Logging.Events", "Aras.Model", "Aras.ViewModel", "Aras.ViewModel.Manager", "Aras.ViewModel.WebService" };
-        private readonly String[] assemblyprefixexclusions = new String[2] { "System", "Newtonsoft" };
-
         private const String ApplicationID = "AAD";
         private const double MinExpireSession = 1;
         private const double MaxExpireSession = 60;
@@ -87,17 +84,17 @@ namespace Aras.ViewModel.Manager
             }
         }
 
-        public Database Database(String Name)
+        public Database Database(String ID)
         {
             foreach (Database database in this.Databases)
             {
-                if (database.Name.Equals(Name))
+                if (database.ID.Equals(ID))
                 {
                     return database;
                 }
             }
 
-            throw new Model.Exceptions.ArgumentException("Invalid Database Name: " + Name);
+            throw new Model.Exceptions.ArgumentException("Invalid Database Name: " + ID);
         }
 
         private double _expireSession;
@@ -124,69 +121,16 @@ namespace Aras.ViewModel.Manager
             }
         }
 
-        public DirectoryInfo AssemblyDirectory
+        private void LoadAllAssemblies()
         {
-            get
+            this.ControlTypeCache = new Dictionary<String, Type>();
+            this.ClientControlTypeCache = new Dictionary<Type, String>();
+
+            FileInfo thisdlllocation = new FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location);
+
+            foreach (FileInfo dllfile in thisdlllocation.Directory.GetFiles("*.dll"))
             {
-                return this.Model.AssemblyDirectory;
-            }
-            set
-            {
-                this.Model.AssemblyDirectory = value;
-
-                // Reset ControlCache
-                this.ControlTypeCache = new Dictionary<String, Type>();
-
-                // Load Base Control Library
-                this.LoadAssembly("Aras.ViewModel");
-            }
-        }
-
-        public void LoadAssembly(String AssemblyFile)
-        {
-            // Load Assembly into Model
-            this.Model.LoadAssembly(AssemblyFile);
-
-            // Load Controls
-            this.LoadAssembly(new FileInfo(this.AssemblyDirectory.FullName + "\\" + AssemblyFile + ".dll"));
-
-            this.Log.Add(Logging.Log.Levels.Information, "Assembly Loaded: " + AssemblyFile);
-        }
-
-        public void LoadAllAssemblies()
-        {
-            foreach(FileInfo dllfile in this.AssemblyDirectory.GetFiles("*.dll"))
-            {
-                String assemblyname = Path.GetFileNameWithoutExtension(dllfile.Name);
-
-                if (!assemblyexclusions.Contains(assemblyname))
-                {
-                    int pos = assemblyname.IndexOf('.');
-                    String assemblyprefix = null;
-
-                    if (pos > 0)
-                    {
-                        assemblyprefix = assemblyname.Substring(0, pos);
-                    }
-                    else
-                    {
-                        assemblyprefix = assemblyname;
-                    }
-
-                    if (!assemblyprefixexclusions.Contains(assemblyprefix))
-                    {
-                        this.LoadAssembly(assemblyname);
-                    }
-                }
-            }
-        }
-
-        private void LoadAssembly(FileInfo AssemblyFile)
-        {
-            if (AssemblyFile.Exists)
-            {
-                // Load Controls
-                Assembly assembly = Assembly.LoadFrom(AssemblyFile.FullName);
+                Assembly assembly = Assembly.LoadFrom(dllfile.FullName);
 
                 // Find all Controls
                 foreach (Type type in assembly.GetTypes())
@@ -194,12 +138,22 @@ namespace Aras.ViewModel.Manager
                     if (type.IsSubclassOf(typeof(Control)) && !type.IsAbstract)
                     {
                         this.ControlTypeCache[type.FullName] = type;
+
+                        // Get Atttribute
+                        ViewModel.Attributes.ClientControl clientcontrolatt = (ViewModel.Attributes.ClientControl)type.GetCustomAttribute(typeof(ViewModel.Attributes.ClientControl));
+
+                        if (clientcontrolatt != null)
+                        {
+                            this.ClientControlTypeCache[type] = clientcontrolatt.Name;
+                        }
                     }
                 }
             }
         }
 
         private Dictionary<String, Type> ControlTypeCache;
+
+        private Dictionary<Type, String> ClientControlTypeCache;
 
         internal Type ControlType(String Name)
         {
@@ -210,6 +164,20 @@ namespace Aras.ViewModel.Manager
             else
             {
                 throw new Model.Exceptions.ArgumentException("Invalid Control Type: " + Name);
+            }
+        }
+
+        public String ClientControlType(Control Control)
+        {
+            Type controltype = Control.GetType();
+
+            if (this.ClientControlTypeCache.ContainsKey(controltype))
+            {
+                return this.ClientControlTypeCache[controltype];
+            }
+            else
+            {
+                throw new Model.Exceptions.ArgumentException("Client Control Type not specified for: " + controltype.FullName);
             }
         }
 
@@ -249,6 +217,11 @@ namespace Aras.ViewModel.Manager
             return this.GetSessionFromCache(Token);
         }
 
+        public override string ToString()
+        {
+            return this.Model.ToString();
+        }
+
         public Server(String URL, Licence.IManager Licence, Logging.Log Log)
         {
             // Store Log
@@ -266,8 +239,8 @@ namespace Aras.ViewModel.Manager
             // Create Model Server
             this.Model = new Model.Server(URL);
             
-            // Default Assembly Directory
-            this.AssemblyDirectory = new DirectoryInfo(Environment.CurrentDirectory);
+            // Load Assemblies
+            this.LoadAllAssemblies();
         }
 
         public Server(String URL, Logging.Log Log)

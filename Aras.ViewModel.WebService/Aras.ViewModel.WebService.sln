@@ -23,6 +23,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aras.Licence", "..\..\Aras.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aras.IO", "..\..\Aras.IO\Aras.IO\Aras.IO.csproj", "{5ACC089E-892B-4FA7-891D-B2F6D74A4D7B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITG.Model", "..\..\ITG\ITG.Model\ITG.Model.csproj", "{A681CA1B-A915-4196-8F76-D04A7FB7864A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITG.ViewModel", "..\..\ITG\ITG.ViewModel\ITG.ViewModel.csproj", "{18A270FB-2BBB-4E84-822E-4854ACF95E4D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +73,14 @@ Global
 		{5ACC089E-892B-4FA7-891D-B2F6D74A4D7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5ACC089E-892B-4FA7-891D-B2F6D74A4D7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5ACC089E-892B-4FA7-891D-B2F6D74A4D7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A681CA1B-A915-4196-8F76-D04A7FB7864A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A681CA1B-A915-4196-8F76-D04A7FB7864A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A681CA1B-A915-4196-8F76-D04A7FB7864A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A681CA1B-A915-4196-8F76-D04A7FB7864A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18A270FB-2BBB-4E84-822E-4854ACF95E4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18A270FB-2BBB-4E84-822E-4854ACF95E4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18A270FB-2BBB-4E84-822E-4854ACF95E4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18A270FB-2BBB-4E84-822E-4854ACF95E4D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -290,6 +290,11 @@ namespace Aras.ViewModel.Manager
             return this.CommandNameCache[ID];
         }
 
+        public override string ToString()
+        {
+            return this.Model.ToString();
+        }
+
         internal Session(Database Database, Model.Session Model)
         {
             this.Database = Database;

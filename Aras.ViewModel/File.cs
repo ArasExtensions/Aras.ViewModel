@@ -30,6 +30,7 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel
 {
+    [Attributes.ClientControl("Aras.View.File")]
     public class File : Control
     {
         [ViewModel.Attributes.Property("URL", Aras.ViewModel.Attributes.PropertyTypes.String, true)]

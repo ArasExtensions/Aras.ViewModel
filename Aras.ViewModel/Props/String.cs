@@ -30,6 +30,7 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel.Properties
 {
+    [Attributes.ClientControl("Aras.View.Properties.String")]
     public class String : Property
     {
         private const System.Int32 MinLength = 1;
