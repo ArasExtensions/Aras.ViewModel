@@ -28,19 +28,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Aras.ViewModel.Manager.Debug
+namespace Aras.ViewModel
 {
-    class Program
+    public abstract class Layout : Container
     {
-        static void Main(string[] args)
+        public Layout()
+            :base()
         {
-            Logging.Console log = new Logging.Console();
-            Server server = new Server("http://localhost/11SP6_ITGDEV", log);
-            Database database = server.Database("BOM Development");
-            Session session = database.Login("admin", IO.Server.PasswordHash("innovator"));
 
-            ApplicationType applicationtype = server.ApplicationTypes.First();
-            ViewModel.Application application = session.Application(applicationtype);
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿/*  
   Aras.ViewModel provides a .NET library for building Aras Innovator Applications
 
-  Copyright (C) 2015 Processwall Limited.
+  Copyright (C) 2016 Processwall Limited.
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as published
@@ -28,19 +28,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Aras.ViewModel.Manager.Debug
+namespace Aras.ViewModel
 {
-    class Program
+    public interface IContained
     {
-        static void Main(string[] args)
-        {
-            Logging.Console log = new Logging.Console();
-            Server server = new Server("http://localhost/11SP6_ITGDEV", log);
-            Database database = server.Database("BOM Development");
-            Session session = database.Login("admin", IO.Server.PasswordHash("innovator"));
 
-            ApplicationType applicationtype = server.ApplicationTypes.First();
-            ViewModel.Application application = session.Application(applicationtype);
-        }
     }
 }

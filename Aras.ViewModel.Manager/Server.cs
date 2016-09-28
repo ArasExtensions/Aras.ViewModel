@@ -123,8 +123,9 @@ namespace Aras.ViewModel.Manager
 
         private void LoadAllAssemblies()
         {
-            this.ControlTypeCache = new Dictionary<String, Type>();
-            this.ClientControlTypeCache = new Dictionary<Type, String>();
+            this.ControlTypeCache = new Dictionary<String, ControlType>();
+            this.ApplicationTypeCache = new Dictionary<String, ApplicationType>();
+            this.PluginTypeCache = new Dictionary<String, PluginType>();
 
             FileInfo thisdlllocation = new FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location);
 
@@ -135,27 +136,33 @@ namespace Aras.ViewModel.Manager
                 // Find all Controls
                 foreach (Type type in assembly.GetTypes())
                 {
-                    if (type.IsSubclassOf(typeof(Control)) && !type.IsAbstract)
+                    if (type.IsSubclassOf(typeof(Control)))
                     {
-                        this.ControlTypeCache[type.FullName] = type;
-
-                        // Get Atttribute
-                        ViewModel.Attributes.ClientControl clientcontrolatt = (ViewModel.Attributes.ClientControl)type.GetCustomAttribute(typeof(ViewModel.Attributes.ClientControl));
-
-                        if (clientcontrolatt != null)
+                        if (!type.IsAbstract)
                         {
-                            this.ClientControlTypeCache[type] = clientcontrolatt.Name;
+                            // Create ControlType
+
+                            if (type.IsSubclassOf(typeof(Application)))
+                            {
+                                this.ApplicationTypeCache[type.FullName] = new ApplicationType(type);
+                            }
+                            else if (type.IsSubclassOf(typeof(Application)))
+                            {
+                                this.PluginTypeCache[type.FullName] = new PluginType(type);
+                            }
+                            else
+                            {
+                                this.ControlTypeCache[type.FullName] = new ControlType(type);
+                            }                    
                         }
                     }
                 }
             }
         }
 
-        private Dictionary<String, Type> ControlTypeCache;
+        private Dictionary<String, ControlType> ControlTypeCache;
 
-        private Dictionary<Type, String> ClientControlTypeCache;
-
-        internal Type ControlType(String Name)
+        internal ControlType ControlType(String Name)
         {
             if (this.ControlTypeCache.ContainsKey(Name))
             {
@@ -167,17 +174,47 @@ namespace Aras.ViewModel.Manager
             }
         }
 
-        public String ClientControlType(Control Control)
-        {
-            Type controltype = Control.GetType();
+        private Dictionary<String, ApplicationType> ApplicationTypeCache;
 
-            if (this.ClientControlTypeCache.ContainsKey(controltype))
+        public ApplicationType ApplicationType(String Name)
+        {
+            if (!this.ApplicationTypeCache.ContainsKey(Name))
             {
-                return this.ClientControlTypeCache[controltype];
+                return this.ApplicationTypeCache[Name];
             }
             else
             {
-                throw new Model.Exceptions.ArgumentException("Client Control Type not specified for: " + controltype.FullName);
+                throw new Model.Exceptions.ArgumentException("Inavlid ApplicationType Name: " + Name);
+            }
+        }
+
+        public IEnumerable<ApplicationType> ApplicationTypes
+        {
+            get
+            {
+                return this.ApplicationTypeCache.Values;
+            }
+        }
+
+        private Dictionary<String, PluginType> PluginTypeCache;
+
+        public PluginType PluginType(String Name)
+        {
+            if (!this.PluginTypeCache.ContainsKey(Name))
+            {
+                return this.PluginTypeCache[Name];
+            }
+            else
+            {
+                throw new Model.Exceptions.ArgumentException("Inavlid PluginType Name: " + Name);
+            }
+        }
+
+        public IEnumerable<PluginType> PluginTypes
+        {
+            get
+            {
+                return this.PluginTypeCache.Values;
             }
         }
 

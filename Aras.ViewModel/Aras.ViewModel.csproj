@@ -42,6 +42,8 @@
     <Compile Include="Attributes\ClientControl.cs" />
     <Compile Include="Attributes\Command.cs" />
     <Compile Include="Attributes\Property.cs" />
+    <Compile Include="Contained.cs" />
+    <Compile Include="Container.cs" />
     <Compile Include="ControlCache.cs" />
     <Compile Include="Cell.cs" />
     <Compile Include="Form.cs" />
@@ -50,6 +52,11 @@
     <Compile Include="IItemFormatter.cs" />
     <Compile Include="Item.cs" />
     <Compile Include="ItemFormatters\Default.cs" />
+    <Compile Include="Layout.cs" />
+    <Compile Include="Layouts\TabContainer.cs" />
+    <Compile Include="Plugin.cs" />
+    <Compile Include="Application.cs" />
+    <Compile Include="Layouts\BorderContainer.cs" />
     <Compile Include="ObservableControlList.cs" />
     <Compile Include="Props\ListValue.cs" />
     <Compile Include="RelationshipFormatters\Default.cs" />

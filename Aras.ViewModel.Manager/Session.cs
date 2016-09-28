@@ -88,16 +88,16 @@ namespace Aras.ViewModel.Manager
             }
         }
 
-        public ViewModel.Control Plugin(String Name, String Context)
+        public ViewModel.Plugin Plugin(PluginType PluginType, String Context)
         {
             // Check Licence
             this.Database.Server.CheckLicence();
 
             // Create Control
-            Control plugin = (Control)Activator.CreateInstance(this.Database.Server.ControlType(Name), new object[] { });
+            ViewModel.Plugin plugin = (ViewModel.Plugin)Activator.CreateInstance(PluginType.Type, new object[] { });
 
             // Set Context
-            ((ViewModel.Item)plugin).SetBinding(this.Model, Context);
+            ((ViewModel.Plugin)plugin).SetBinding(this.Model, Context);
 
             // Add Plugin to Cache
             this.AddControlToCache(plugin, false);
@@ -105,13 +105,13 @@ namespace Aras.ViewModel.Manager
             return plugin;
         }
 
-        public ViewModel.Control Application(String Name)
+        public ViewModel.Application Application(ApplicationType ApplicationType)
         {
             // Check Licence
             this.Database.Server.CheckLicence();
 
             // Create Control
-            Control application = (Control)Activator.CreateInstance(this.Database.Server.ControlType(Name), new object[] { });
+            ViewModel.Application application = (ViewModel.Application)Activator.CreateInstance(ApplicationType.Type, new object[] { });
 
             // Set Binding to Session
             application.Binding = this.Model;

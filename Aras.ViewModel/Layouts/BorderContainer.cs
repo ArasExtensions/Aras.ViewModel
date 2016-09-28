@@ -28,19 +28,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Aras.ViewModel.Manager.Debug
+namespace Aras.ViewModel.Layouts
 {
-    class Program
+    [Attributes.ClientControl("Aras.View.Layouts.BorderContainer")]
+    public class BorderContainer : Layout, IContained
     {
-        static void Main(string[] args)
-        {
-            Logging.Console log = new Logging.Console();
-            Server server = new Server("http://localhost/11SP6_ITGDEV", log);
-            Database database = server.Database("BOM Development");
-            Session session = database.Login("admin", IO.Server.PasswordHash("innovator"));
 
-            ApplicationType applicationtype = server.ApplicationTypes.First();
-            ViewModel.Application application = session.Application(applicationtype);
+        public BorderContainer()
+            :base()
+        {
+
         }
     }
 }
