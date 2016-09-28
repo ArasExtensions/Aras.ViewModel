@@ -34,6 +34,9 @@ namespace Aras.ViewModel.Manager
 {
     public class Server
     {
+        private readonly String[] assemblyexclusions = new String[8] { "Aras.IO", "Aras.Licence", "Aras.Logging", "Aras.Logging.Events", "Aras.Model", "Aras.ViewModel", "Aras.ViewModel.Manager", "Aras.ViewModel.WebService" };
+        private readonly String[] assemblyprefixexclusions = new String[2] { "System", "Newtonsoft" };
+
         private const String ApplicationID = "AAD";
         private const double MinExpireSession = 1;
         private const double MaxExpireSession = 60;
@@ -146,6 +149,36 @@ namespace Aras.ViewModel.Manager
 
             // Load Controls
             this.LoadAssembly(new FileInfo(this.AssemblyDirectory.FullName + "\\" + AssemblyFile + ".dll"));
+
+            this.Log.Add(Logging.Log.Levels.Information, "Assembly Loaded: " + AssemblyFile);
+        }
+
+        public void LoadAllAssemblies()
+        {
+            foreach(FileInfo dllfile in this.AssemblyDirectory.GetFiles("*.dll"))
+            {
+                String assemblyname = Path.GetFileNameWithoutExtension(dllfile.Name);
+
+                if (!assemblyexclusions.Contains(assemblyname))
+                {
+                    int pos = assemblyname.IndexOf('.');
+                    String assemblyprefix = null;
+
+                    if (pos > 0)
+                    {
+                        assemblyprefix = assemblyname.Substring(0, pos);
+                    }
+                    else
+                    {
+                        assemblyprefix = assemblyname;
+                    }
+
+                    if (!assemblyprefixexclusions.Contains(assemblyprefix))
+                    {
+                        this.LoadAssembly(assemblyname);
+                    }
+                }
+            }
         }
 
         private void LoadAssembly(FileInfo AssemblyFile)
@@ -156,7 +189,6 @@ namespace Aras.ViewModel.Manager
                 Assembly assembly = Assembly.LoadFrom(AssemblyFile.FullName);
 
                 // Find all Controls
-
                 foreach (Type type in assembly.GetTypes())
                 {
                     if (type.IsSubclassOf(typeof(Control)) && !type.IsAbstract)

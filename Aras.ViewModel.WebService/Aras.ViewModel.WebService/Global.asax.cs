@@ -60,8 +60,7 @@ namespace Aras.ViewModel.WebService
             this.ViewModel.AssemblyDirectory = new DirectoryInfo(System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath + "\\bin");
 
             // Load Assemblies
-            this.ViewModel.LoadAssembly("Aras.Model.Design");
-            this.ViewModel.LoadAssembly("Aras.ViewModel.Design");
+            this.ViewModel.LoadAllAssemblies();
 
             // Create Activator
             GlobalConfiguration.Configuration.Services.Replace(typeof(IHttpControllerActivator), new ControllerActivator(this.ViewModel));
