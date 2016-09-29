@@ -42,7 +42,8 @@ namespace Aras.ViewModel.WebService.Controllers
                 Models.Responses.Control ret = new Models.Responses.Control();
                 Guid viewmodelid = ViewModel.Utilities.StringToGuid(ID);
                 ViewModel.Control control = this.Session.Control(viewmodelid);
-                ret.Value = new Models.Control(control, this.Session.Database.Server.ClientControlType(control));
+                Manager.ControlType controltype = this.Session.Database.Server.ControlType(control);
+                ret.Value = new Models.Control(control, controltype);
                 this.UpdateResponse(ret);
                 return ret;
             }

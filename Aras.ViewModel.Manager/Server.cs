@@ -162,15 +162,25 @@ namespace Aras.ViewModel.Manager
 
         private Dictionary<String, ControlType> ControlTypeCache;
 
-        internal ControlType ControlType(String Name)
+        public IEnumerable<ControlType> ControlTypes
         {
-            if (this.ControlTypeCache.ContainsKey(Name))
+            get
             {
-                return this.ControlTypeCache[Name];
+                return this.ControlTypeCache.Values;
+            }
+        }
+
+        public ControlType ControlType(Control Control)
+        {
+            String name = Control.GetType().FullName;
+
+            if (this.ControlTypeCache.ContainsKey(name))
+            {
+                return this.ControlTypeCache[name];
             }
             else
             {
-                throw new Model.Exceptions.ArgumentException("Invalid Control Type: " + Name);
+                throw new Model.Exceptions.ArgumentException("Invalid Control Type: " + name);
             }
         }
 

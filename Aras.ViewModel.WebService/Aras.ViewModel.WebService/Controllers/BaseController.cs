@@ -59,7 +59,7 @@ namespace Aras.ViewModel.WebService.Controllers
             // Add Control Queue
             foreach (ViewModel.Control control in this.Session.GetControlsFromQueue())
             {
-                Response.ControlQueue.Add(new Models.Control(control, this.Session.Database.Server.ClientControlType(control)));
+                Response.ControlQueue.Add(new Models.Control(control, this.Session.Database.Server.ControlType(control)));
             }
 
             // Add Command Queue

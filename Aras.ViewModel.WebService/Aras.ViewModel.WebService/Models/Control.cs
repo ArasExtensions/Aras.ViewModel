@@ -44,13 +44,13 @@ namespace Aras.ViewModel.WebService.Models
 
         }
 
-        public Control(ViewModel.Control Control, String ClientType)
+        public Control(ViewModel.Control Control, Manager.ControlType ControlType)
         {
             // Set ID
             this.ID = ViewModel.Utilities.GuidToString(Control.ID);
             
             // Set Type
-            this.Type = ClientType;
+            this.Type = ControlType.ClientType;
 
             // Add Properties
             this.Properties = new List<Property>();

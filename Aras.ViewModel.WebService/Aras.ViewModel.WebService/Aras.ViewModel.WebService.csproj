@@ -96,7 +96,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Plugin.cs" />
-    <Compile Include="Models\Application.cs" />
+    <Compile Include="Models\ApplicationType.cs" />
     <Compile Include="Models\Command.cs" />
     <Compile Include="Models\Control.cs" />
     <Compile Include="Models\Credentials.cs" />

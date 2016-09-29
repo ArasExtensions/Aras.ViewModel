@@ -34,15 +34,40 @@ namespace Aras.ViewModel.WebService.Controllers
 {
     public class ApplicationsController : BaseController
     {
+        [Route("applicationtypes")]
+        [HttpGet]
+        public IEnumerable<Models.ApplicationType> GetAllApplicationTypes()
+        {
+            try
+            {
+                List<Models.ApplicationType> ret = new List<Models.ApplicationType>();
+
+                foreach (ViewModel.Manager.ApplicationType apptype in this.Session.Database.Server.ApplicationTypes)
+                {
+                    Models.ApplicationType modelapptype = new Models.ApplicationType();
+                    modelapptype.Name = apptype.Name;
+                    modelapptype.Label = apptype.Name;
+                    ret.Add(modelapptype);
+                }
+
+                return ret;
+            }
+            catch (Exception e)
+            {
+                throw this.ProcessException(e);
+            }
+        }
+
         [Route("applications")]
         [HttpPut]
-        public Models.Responses.Control GetApplication(Models.Application Application)
+        public Models.Responses.Control GetApplication(Models.ApplicationType ApplicationType)
         {
             try
             {
                 Models.Responses.Control ret = new Models.Responses.Control();
-                ViewModel.Control applicationcontrol = this.Session.Application(Application.Name);
-                ret.Value = new Models.Control(applicationcontrol, this.Session.Database.Server.ClientControlType(applicationcontrol));
+                Manager.ApplicationType apptype = this.Session.Database.Server.ApplicationType(ApplicationType.Name);
+                ViewModel.Application applicationcontrol = this.Session.Application(apptype);
+                ret.Value = new Models.Control(applicationcontrol, apptype);
                 this.UpdateResponse(ret);
 
                 return ret;

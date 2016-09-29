@@ -29,11 +29,13 @@ using System.Web;
 
 namespace Aras.ViewModel.WebService.Models
 {
-    public class Application
+    public class ApplicationType
     {
         public String Name { get; set; }
 
-        public Application()
+        public String Label { get; set; }
+
+        public ApplicationType()
         {
         }
     }
