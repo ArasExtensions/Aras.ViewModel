@@ -41,8 +41,8 @@ namespace Aras.ViewModel.WebService.Controllers
             try
             {
                 Models.Responses.Control ret = new Models.Responses.Control();
-                Manager.PluginType plugintype = this.Session.Database.Server.PluginType(Plugin.Name);
-                ViewModel.Plugin plugincontrol = this.Session.Plugin(plugintype, Plugin.Context);
+                Manager.ControlType plugintype = this.Session.Database.Server.ControlType(Plugin.Name);
+                ViewModel.Control plugincontrol = this.Session.Plugin(plugintype, Plugin.Context);
                 ret.Value = new Models.Control(plugincontrol, plugintype);
                 this.UpdateResponse(ret);
 

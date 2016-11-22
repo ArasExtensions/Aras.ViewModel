@@ -121,40 +121,47 @@ namespace Aras.ViewModel.Manager
             }
         }
 
-        private void LoadAllAssemblies()
+        public DirectoryInfo AssemblyDirectory
         {
-            this.ControlTypeCache = new Dictionary<String, ControlType>();
-            this.ApplicationTypeCache = new Dictionary<String, ApplicationType>();
-            this.PluginTypeCache = new Dictionary<String, PluginType>();
-
-            FileInfo thisdlllocation = new FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location);
-
-            foreach (FileInfo dllfile in thisdlllocation.Directory.GetFiles("*.dll"))
+            get
             {
-                Assembly assembly = Assembly.LoadFrom(dllfile.FullName);
+                return this.Model.AssemblyDirectory;
+            }
+            set
+            {
+                this.Model.AssemblyDirectory = value;
+
+                // Reset ControlCache
+                this.ControlTypeCache = new Dictionary<String, ControlType>();
+
+                // Load Base Control Library
+                this.LoadAssembly("Aras.ViewModel");
+            }
+        }
+
+        public void LoadAssembly(String AssemblyFile)
+        {
+            // Load Assembly into Model
+            this.Model.LoadAssembly(AssemblyFile);
+
+            // Load Controls
+            this.LoadAssembly(new FileInfo(this.AssemblyDirectory.FullName + "\\" + AssemblyFile + ".dll"));
+        }
+
+        private void LoadAssembly(FileInfo AssemblyFile)
+        {
+            if (AssemblyFile.Exists)
+            {
+                // Load Controls
+                Assembly assembly = Assembly.LoadFrom(AssemblyFile.FullName);
 
                 // Find all Controls
+
                 foreach (Type type in assembly.GetTypes())
                 {
-                    if (type.IsSubclassOf(typeof(Control)))
+                    if (type.IsSubclassOf(typeof(Control)) && !type.IsAbstract)
                     {
-                        if (!type.IsAbstract)
-                        {
-                            // Create ControlType
-
-                            if (type.IsSubclassOf(typeof(Application)))
-                            {
-                                this.ApplicationTypeCache[type.FullName] = new ApplicationType(type);
-                            }
-                            else if (type.IsSubclassOf(typeof(Application)))
-                            {
-                                this.PluginTypeCache[type.FullName] = new PluginType(type);
-                            }
-                            else
-                            {
-                                this.ControlTypeCache[type.FullName] = new ControlType(type);
-                            }                    
-                        }
+                        this.ControlTypeCache[type.FullName] = new ControlType(type);
                     }
                 }
             }
@@ -170,6 +177,18 @@ namespace Aras.ViewModel.Manager
             }
         }
 
+        public ControlType ControlType(String Name)
+        {
+            if (this.ControlTypeCache.ContainsKey(Name))
+            {
+                return this.ControlTypeCache[Name];
+            }
+            else
+            {
+                throw new Model.Exceptions.ArgumentException("Invalid Control Type: " + Name);
+            }
+        }
+
         public ControlType ControlType(Control Control)
         {
             String name = Control.GetType().FullName;
@@ -181,50 +200,6 @@ namespace Aras.ViewModel.Manager
             else
             {
                 throw new Model.Exceptions.ArgumentException("Invalid Control Type: " + name);
-            }
-        }
-
-        private Dictionary<String, ApplicationType> ApplicationTypeCache;
-
-        public ApplicationType ApplicationType(String Name)
-        {
-            if (!this.ApplicationTypeCache.ContainsKey(Name))
-            {
-                return this.ApplicationTypeCache[Name];
-            }
-            else
-            {
-                throw new Model.Exceptions.ArgumentException("Inavlid ApplicationType Name: " + Name);
-            }
-        }
-
-        public IEnumerable<ApplicationType> ApplicationTypes
-        {
-            get
-            {
-                return this.ApplicationTypeCache.Values;
-            }
-        }
-
-        private Dictionary<String, PluginType> PluginTypeCache;
-
-        public PluginType PluginType(String Name)
-        {
-            if (!this.PluginTypeCache.ContainsKey(Name))
-            {
-                return this.PluginTypeCache[Name];
-            }
-            else
-            {
-                throw new Model.Exceptions.ArgumentException("Inavlid PluginType Name: " + Name);
-            }
-        }
-
-        public IEnumerable<PluginType> PluginTypes
-        {
-            get
-            {
-                return this.PluginTypeCache.Values;
             }
         }
 
@@ -271,11 +246,17 @@ namespace Aras.ViewModel.Manager
 
         public Server(String URL, Licence.IManager Licence, Logging.Log Log)
         {
+            // Initialise Control Cache
+            this.ControlTypeCache = new Dictionary<String, ControlType>();
+
             // Store Log
             this.Log = Log;
 
             // Store Licence
             this.Licence = Licence;
+
+            // Create Model Server
+            this.Model = new Model.Server(URL);
 
             // Set Default Session Expire
             this.ExpireSession = DefaultExpireSession;
@@ -283,15 +264,12 @@ namespace Aras.ViewModel.Manager
             // Initialiase Session Cache
             this.SessionCache = new Dictionary<String, Session>();
 
-            // Create Model Server
-            this.Model = new Model.Server(URL);
-            
-            // Load Assemblies
-            this.LoadAllAssemblies();
+            // Set Default Assembly Directory
+            this.AssemblyDirectory = new DirectoryInfo(Environment.CurrentDirectory);
         }
 
         public Server(String URL, Logging.Log Log)
-            :this(URL, new DefaultLicence(), Log)
+            : this(URL, new DefaultLicence(), Log)
         {
 
         }

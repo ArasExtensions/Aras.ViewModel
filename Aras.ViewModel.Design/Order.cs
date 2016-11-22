@@ -30,6 +30,7 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel.Design
 {
+    [Attributes.ClientControl("Aras.View.Design.Order")]
     public class Order : Aras.ViewModel.Item
     {
         [ViewModel.Attributes.Command("BuildFlatBOM")]
@@ -76,7 +77,7 @@ namespace Aras.ViewModel.Design
             }
         }
 
-        protected override Model.Item GetBindingItem(Model.Session Sesison, string ID)
+        protected override Model.Item GetBindingItem(Model.Session Sesison, String ID)
         {
             return Sesison.Store("v_Order").Get(ID);
         }
@@ -170,6 +171,24 @@ namespace Aras.ViewModel.Design
 
             // Update BOM Grid
             this.UpdateBOMGrid();
+
+            // Update Build BOM Button
+
+            if (this.ModelItem != null)
+            {
+                if (this.ModelItem.Locked(false))
+                {
+                    this.BuildFlatBOM.UpdateCanExecute(true);
+                }
+                else
+                {
+                    this.BuildFlatBOM.UpdateCanExecute(false);
+                }
+            }
+            else
+            {
+                this.BuildFlatBOM.UpdateCanExecute(false);
+            }
         }
 
         // PartBOM Control Caches

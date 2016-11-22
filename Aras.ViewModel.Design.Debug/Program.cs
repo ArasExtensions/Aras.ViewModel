@@ -37,9 +37,11 @@ namespace Aras.ViewModel.Design.Debug
             // Connect to Server
             Model.Server server = new Model.Server("http://localhost/InnovatorServer100SP4");
             server.LoadAssembly("Aras.Model.Design");
-            server.LoadAssembly("Aras.ViewModel.Design");
+            //server.LoadAssembly("Aras.ViewModel.Design");
             Model.Database database = server.Database("CMB");
             Model.Session session = database.Login("admin", IO.Server.PasswordHash("innovator"));
+
+            //Model.Design.Order order = (Model.Design.Order)session.Store("v_Order").Get("D2F760CC3F9E4CA18E825BEAC170AFAF");
 
             Model.Queries.Item query = session.Store("v_Order").Query(Aras.Conditions.Eq("item_number", "RJMTest001"));
             Model.Item order = query.First();

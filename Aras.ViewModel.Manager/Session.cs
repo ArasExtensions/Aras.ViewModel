@@ -88,16 +88,19 @@ namespace Aras.ViewModel.Manager
             }
         }
 
-        public ViewModel.Plugin Plugin(PluginType PluginType, String Context)
+        public ViewModel.Control Plugin(ControlType PluginType, String Context)
         {
             // Check Licence
             this.Database.Server.CheckLicence();
 
             // Create Control
-            ViewModel.Plugin plugin = (ViewModel.Plugin)Activator.CreateInstance(PluginType.Type, new object[] { });
+            ViewModel.Control plugin = (ViewModel.Control)Activator.CreateInstance(PluginType.Type, new object[] { });
 
             // Set Context
-            ((ViewModel.Plugin)plugin).SetBinding(this.Model, Context);
+            ((Aras.ViewModel.Item)plugin).SetBinding(this.Model, Context);
+
+            // Refresh Plugin
+            plugin.Refresh.Execute();
 
             // Add Plugin to Cache
             this.AddControlToCache(plugin, false);

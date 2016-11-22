@@ -73,14 +73,6 @@
       <Project>{e5b4196a-00d0-4de7-8104-487a7bc60784}</Project>
       <Name>Aras.Model</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\ITG\ITG.Model\ITG.Model.csproj">
-      <Project>{a681ca1b-a915-4196-8f76-d04a7fb7864a}</Project>
-      <Name>ITG.Model</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\ITG\ITG.ViewModel\ITG.ViewModel.csproj">
-      <Project>{18a270fb-2bbb-4e84-822e-4854acf95e4d}</Project>
-      <Name>ITG.ViewModel</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Aras.ViewModel.Design\Aras.ViewModel.Design.csproj">
       <Project>{6e26fc31-50b0-402e-aabe-1974fefb4d6c}</Project>
       <Name>Aras.ViewModel.Design</Name>

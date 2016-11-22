@@ -42,6 +42,7 @@ namespace Aras.ViewModel.WebService.Controllers
             {
                 List<Models.ApplicationType> ret = new List<Models.ApplicationType>();
 
+                /*
                 foreach (ViewModel.Manager.ApplicationType apptype in this.Session.Database.Server.ApplicationTypes)
                 {
                     Models.ApplicationType modelapptype = new Models.ApplicationType();
@@ -49,6 +50,7 @@ namespace Aras.ViewModel.WebService.Controllers
                     modelapptype.Label = apptype.Name;
                     ret.Add(modelapptype);
                 }
+                */
 
                 return ret;
             }
@@ -65,10 +67,13 @@ namespace Aras.ViewModel.WebService.Controllers
             try
             {
                 Models.Responses.Control ret = new Models.Responses.Control();
+
+                /*
                 Manager.ApplicationType apptype = this.Session.Database.Server.ApplicationType(ApplicationType.Name);
                 ViewModel.Application applicationcontrol = this.Session.Application(apptype);
                 ret.Value = new Models.Control(applicationcontrol, apptype);
                 this.UpdateResponse(ret);
+                */
 
                 return ret;
             }

@@ -35,12 +35,15 @@ namespace Aras.ViewModel.Manager.Debug
         static void Main(string[] args)
         {
             Logging.Console log = new Logging.Console();
-            Server server = new Server("http://localhost/11SP6_ITGDEV", log);
-            Database database = server.Database("BOM Development");
+            Server server = new Server("http://localhost/InnovatorServer100SP4", log);
+            server.LoadAssembly("Aras.Model.Design");
+            server.LoadAssembly("Aras.ViewModel.Design");
+            Database database = server.Database("CMB");
             Session session = database.Login("admin", IO.Server.PasswordHash("innovator"));
 
-            ApplicationType applicationtype = server.ApplicationTypes.First();
-            ViewModel.Application application = session.Application(applicationtype);
+            ControlType plugintype = server.ControlType("Aras.ViewModel.Design.Order");
+            ViewModel.Design.Order plugin = (ViewModel.Design.Order)session.Plugin(plugintype, "D2F760CC3F9E4CA18E825BEAC170AFAF");
+        
         }
     }
 }
