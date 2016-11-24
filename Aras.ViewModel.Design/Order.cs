@@ -111,11 +111,13 @@ namespace Aras.ViewModel.Design
             if (this.ModelSession != null)
             {
                 this.ModelSession.ItemType("v_Order Context").AddToSelect("quantity,value,locked_by_id");
-                this.ModelSession.ItemType("Variant Context").AddToSelect("context_type,min_quantity,max_quantity,sort_order");
-                this.ModelSession.ItemType("Part").AddToSelect("item_number,locked_by_id");
+                this.ModelSession.ItemType("Variant Context").AddToSelect("context_type,min_quantity,max_quantity,sort_order,method,list,question");
+                this.ModelSession.ItemType("Part").AddToSelect("item_number,cmb_var_structure_ref,locked_by_id,name");
                 this.ModelSession.ItemType("Part Variants").AddToSelect("quantity");
                 this.ModelSession.ItemType("Part BOM").AddToSelect("quantity,locked_by_id,sort_order");
                 this.ModelSession.ItemType("User").AddToSelect("keyed_name");
+                this.ModelSession.ItemType("Method").AddToSelect("name");
+                this.ModelSession.ItemType("Part Variant Rule").AddToSelect("value");     
             }
 
             if (this.ModelItem != null)
