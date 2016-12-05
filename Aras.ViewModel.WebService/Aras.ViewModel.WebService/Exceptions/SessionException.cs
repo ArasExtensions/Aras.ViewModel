@@ -38,7 +38,8 @@ namespace Aras.ViewModel.WebService.Exceptions
         public SessionException(Controllers.BaseController Controller, ViewModel.Manager.Exceptions.SessionException e)
             : base(Controller.Request.CreateResponse(HttpStatusCode.Unauthorized, e.Message))
         {
-      
+            // Log Debug Message
+            Controller.Server.Log.Add(Logging.Log.Levels.Debug, e.Message + Environment.NewLine + e.ToString());
         }
     }
 }
