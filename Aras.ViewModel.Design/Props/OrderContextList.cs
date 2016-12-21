@@ -78,6 +78,20 @@ namespace Aras.ViewModel.Design.Properties
                         }
 
                         break;
+
+                    case "Quantity":
+
+                        // Add True
+                        ViewModel.Properties.ListValue quantityvalue = new ViewModel.Properties.ListValue();
+                        quantityvalue.Label = "Yes";
+                        quantityvalue.Value = "1";
+                        this.Values.Add(quantityvalue);
+
+                        // Set Value
+                        this.Value = ((Model.Design.OrderContext)this.Binding).Value;
+
+                        break;
+
                     case "Boolean":
                     case "Method":
 
