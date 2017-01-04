@@ -49,10 +49,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Aras.Common\Aras.Licence\Aras.Licence.csproj">
-      <Project>{7964b2f8-3989-415a-b9c6-f4d417945a7a}</Project>
-      <Name>Aras.Licence</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Aras.Common\Aras.Logging.Console\Aras.Logging.Console.csproj">
       <Project>{ada1688f-9a38-42aa-88cd-e0493972ba68}</Project>
       <Name>Aras.Logging.Console</Name>

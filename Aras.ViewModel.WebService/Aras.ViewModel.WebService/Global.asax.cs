@@ -41,7 +41,7 @@ namespace Aras.ViewModel.WebService
         {
             // Create Log
             Logging.Events log = new Aras.Logging.Events("Aras Web Service");
-            log.Level = (Aras.Logging.Log.Levels)Properties.Settings.Default.LogLevel;
+            log.Level = (Aras.Logging.Levels)Properties.Settings.Default.LogLevel;
 
             // Create Mananger
             String url = Properties.Settings.Default.URL;

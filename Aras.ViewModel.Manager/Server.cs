@@ -34,36 +34,13 @@ namespace Aras.ViewModel.Manager
 {
     public class Server
     {
-        private const String ApplicationID = "AAD";
         private const double MinExpireSession = 1;
         private const double MaxExpireSession = 60;
         private const double DefaultExpireSession = 10;
 
         public Logging.Log Log { get; private set; }
 
-        public Licence.IManager Licence { get; private set; }
-
         public Model.Server Model { get; private set; }
-
-        internal void CheckLicence()
-        {
-            switch (this.Licence.Check(ApplicationID))
-            {
-                case Aras.Licence.LicenceStates.CorruptLicenceFile:
-                    throw new Exceptions.LicenceException("Licence file is corrupted");
-                case Aras.Licence.LicenceStates.Expired:
-                    throw new Exceptions.LicenceException("Licence for " + ApplicationID + " has expired");
-                case Aras.Licence.LicenceStates.InvalidApplicationID:
-                    throw new Exceptions.LicenceException("No licence for ApplicationID: " + ApplicationID);
-                case Aras.Licence.LicenceStates.InvalidHostID:
-                    throw new Exceptions.LicenceException("Licence not available for this Server");
-                case Aras.Licence.LicenceStates.MissingLicenceFile:
-                    throw new Exceptions.LicenceException("Licence file not found");
-                default:
-                    break;
-                throw new Exceptions.LicenceException(ApplicationID);
-            }
-        }
 
         private List<Database> _databases;
         public IEnumerable<Database> Databases
@@ -244,16 +221,13 @@ namespace Aras.ViewModel.Manager
             return this.Model.ToString();
         }
 
-        public Server(String URL, Licence.IManager Licence, Logging.Log Log)
+        public Server(String URL, Logging.Log Log)
         {
             // Initialise Control Cache
             this.ControlTypeCache = new Dictionary<String, ControlType>();
 
             // Store Log
             this.Log = Log;
-
-            // Store Licence
-            this.Licence = Licence;
 
             // Create Model Server
             this.Model = new Model.Server(URL);
@@ -266,12 +240,6 @@ namespace Aras.ViewModel.Manager
 
             // Set Default Assembly Directory
             this.AssemblyDirectory = new DirectoryInfo(Environment.CurrentDirectory);
-        }
-
-        public Server(String URL, Logging.Log Log)
-            : this(URL, new DefaultLicence(), Log)
-        {
-
         }
     }
 }

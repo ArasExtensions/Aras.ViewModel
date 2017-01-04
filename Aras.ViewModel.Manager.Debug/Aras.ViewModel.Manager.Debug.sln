@@ -32,8 +32,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aras.Model", "..\..\Aras.Mo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aras.IO", "..\..\Aras.IO\Aras.IO\Aras.IO.csproj", "{5ACC089E-892B-4FA7-891D-B2F6D74A4D7B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aras.Licence", "..\..\Aras.Common\Aras.Licence\Aras.Licence.csproj", "{7964B2F8-3989-415A-B9C6-F4D417945A7A}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -102,14 +100,6 @@ Global
 		{5ACC089E-892B-4FA7-891D-B2F6D74A4D7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5ACC089E-892B-4FA7-891D-B2F6D74A4D7B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5ACC089E-892B-4FA7-891D-B2F6D74A4D7B}.Release|x64.ActiveCfg = Release|Any CPU
-		{7964B2F8-3989-415A-B9C6-F4D417945A7A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7964B2F8-3989-415A-B9C6-F4D417945A7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7964B2F8-3989-415A-B9C6-F4D417945A7A}.Debug|x64.ActiveCfg = Debug|x64
-		{7964B2F8-3989-415A-B9C6-F4D417945A7A}.Debug|x64.Build.0 = Debug|x64
-		{7964B2F8-3989-415A-B9C6-F4D417945A7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7964B2F8-3989-415A-B9C6-F4D417945A7A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7964B2F8-3989-415A-B9C6-F4D417945A7A}.Release|x64.ActiveCfg = Release|x64
-		{7964B2F8-3989-415A-B9C6-F4D417945A7A}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
