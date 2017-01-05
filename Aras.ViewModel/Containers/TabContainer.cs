@@ -1,7 +1,7 @@
 ﻿/*  
   Aras.ViewModel provides a .NET library for building Aras Innovator Applications
 
-  Copyright (C) 2016 Processwall Limited.
+  Copyright (C) 2015 Processwall Limited.
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as published
@@ -28,17 +28,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Aras.ViewModel
+namespace Aras.ViewModel.Containers
 {
-    public abstract class Container : Control
+    [Attributes.ClientControl("Aras.View.Containers.TabContainer")]
+    public class TabContainer : Layout, IContained
     {
-        [ViewModel.Attributes.Property("Children", Aras.ViewModel.Attributes.PropertyTypes.ControlList, true)]
-        public Model.ObservableList<Control> Children { get; private set; }
 
-        public Container()
+        public TabContainer()
             :base()
         {
-            this.Children = new Model.ObservableList<Control>();
+
         }
     }
 }

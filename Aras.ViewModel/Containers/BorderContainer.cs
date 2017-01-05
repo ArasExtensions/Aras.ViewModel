@@ -28,13 +28,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Aras.ViewModel.Layouts
+namespace Aras.ViewModel.Containers
 {
-    [Attributes.ClientControl("Aras.View.Layouts.TabContainer")]
-    public class TabContainer : Layout, IContained
+    [Attributes.ClientControl("Aras.View.Containers.BorderContainer")]
+    public class BorderContainer : Layout, IContained
     {
 
-        public TabContainer()
+        public BorderContainer()
             :base()
         {
 

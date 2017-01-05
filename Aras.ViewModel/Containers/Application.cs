@@ -28,9 +28,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Aras.ViewModel
+namespace Aras.ViewModel.Containers
 {
-    public abstract class Application : Layouts.BorderContainer
+    [Attributes.ClientControl("Aras.View.Containers.Application")]
+    public abstract class Application : Containers.BorderContainer
     {
 
         public Application()

@@ -41,9 +41,9 @@ namespace Aras.ViewModel.Manager.Debug
             Database database = server.Database("CMB");
             Session session = database.Login("admin", IO.Server.PasswordHash("innovator"));
 
-            ControlType plugintype = server.ControlType("Aras.ViewModel.Design.Order");
-            ViewModel.Design.Order plugin = (ViewModel.Design.Order)session.Plugin(plugintype, "D2F760CC3F9E4CA18E825BEAC170AFAF");
-        
+            IEnumerable<ControlType> test = server.ControlTypes;
+            IEnumerable<ApplicationType> test2 = server.ApplicationTypes;
+            ViewModel.Containers.Application app = session.Application(test2.First());
         }
     }
 }

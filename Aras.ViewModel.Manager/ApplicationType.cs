@@ -27,15 +27,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Reflection;
 
 namespace Aras.ViewModel.Manager
 {
     public class ApplicationType : ControlType
     {
+        public String Label { get; private set; }
+
+        public String Icon { get; private set; }
+
         internal ApplicationType(Type Type)
             :base(Type)
         {
+            // Get Atttribute
+            ViewModel.Attributes.Application applicationattribute = (ViewModel.Attributes.Application)Type.GetCustomAttribute(typeof(ViewModel.Attributes.Application));
 
+            if (applicationattribute != null)
+            {
+                this.Label = applicationattribute.Label;
+                this.Icon = applicationattribute.Icon;
+            }
         }
     }
 }

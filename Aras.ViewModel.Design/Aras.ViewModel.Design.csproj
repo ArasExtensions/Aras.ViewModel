@@ -57,6 +57,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Application.cs" />
     <Compile Include="ItemFormatters\Part.cs" />
     <Compile Include="PartRelationshipTree.cs" />
     <Compile Include="PartEditor.cs" />

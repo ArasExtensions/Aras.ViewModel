@@ -57,7 +57,7 @@ namespace Aras.ViewModel.Manager
         {
             get
             {
-                lock(this._expireLock)
+                lock (this._expireLock)
                 {
                     return this._expire;
                 }
@@ -66,7 +66,7 @@ namespace Aras.ViewModel.Manager
 
         internal void UpdateExpire()
         {
-            lock(this._expireLock)
+            lock (this._expireLock)
             {
                 this._expire = DateTime.UtcNow.AddMinutes(this.Database.Server.ExpireSession);
             }
@@ -105,18 +105,35 @@ namespace Aras.ViewModel.Manager
             return plugin;
         }
 
-        public ViewModel.Application Application(ApplicationType ApplicationType)
+        public IEnumerable<ApplicationType> ApplicationTypes
         {
-            // Create Control
-            ViewModel.Application application = (ViewModel.Application)Activator.CreateInstance(ApplicationType.Type, new object[] { });
+            get
+            {
+                return this.Database.Server.ApplicationTypes;
+            }
+        }
 
-            // Set Binding to Session
-            application.Binding = this.Model;
+        public ApplicationType ApplicationType(String Name)
+        {
+            return this.Database.Server.ApplicationType(Name);
+        }
 
-            // Add Application to Cache
-            this.AddControlToCache(application, false);
+        private Dictionary<ApplicationType, ViewModel.Containers.Application> ApplicationCache;
+        public ViewModel.Containers.Application Application(ApplicationType ApplicationType)
+        {
+            if (!this.ApplicationCache.ContainsKey(ApplicationType))
+            {
+                // Create Control
+                this.ApplicationCache[ApplicationType] = (ViewModel.Containers.Application)Activator.CreateInstance(ApplicationType.Type, new object[] { });
 
-            return application;
+                // Set Binding to Session
+                this.ApplicationCache[ApplicationType].Binding = this.Model;
+
+                // Add Application to Cache
+                this.AddControlToCache(this.ApplicationCache[ApplicationType], false);
+            }
+
+            return this.ApplicationCache[ApplicationType];
         }
 
         private object ControlCacheLock = new object();
@@ -251,7 +268,7 @@ namespace Aras.ViewModel.Manager
 
         private void AddCommandToQueue(ViewModel.Command Command)
         {
-            lock(this.CommandQueueLock)
+            lock (this.CommandQueueLock)
             {
                 this.CommandQueue.Enqueue(Command);
             }
@@ -296,6 +313,7 @@ namespace Aras.ViewModel.Manager
         {
             this.Database = Database;
             this.Model = Model;
+            this.ApplicationCache = new Dictionary<ApplicationType, Containers.Application>();
             this.ControlCache = new Dictionary<Guid, ViewModel.Control>();
             this.ControlQueue = new Queue<ViewModel.Control>();
             this.CommandCache = new Dictionary<Guid, ViewModel.Command>();

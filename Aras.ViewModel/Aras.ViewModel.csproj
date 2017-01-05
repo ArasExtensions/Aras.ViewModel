@@ -57,10 +57,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\Application.cs" />
     <Compile Include="Attributes\ClientControl.cs" />
     <Compile Include="Attributes\Command.cs" />
     <Compile Include="Attributes\Property.cs" />
-    <Compile Include="Contained.cs" />
+    <Compile Include="Containers\Plugin.cs" />
+    <Compile Include="IContained.cs" />
     <Compile Include="Container.cs" />
     <Compile Include="ControlCache.cs" />
     <Compile Include="Cell.cs" />
@@ -71,10 +73,10 @@
     <Compile Include="Item.cs" />
     <Compile Include="ItemFormatters\Default.cs" />
     <Compile Include="Layout.cs" />
-    <Compile Include="Layouts\TabContainer.cs" />
+    <Compile Include="Containers\TabContainer.cs" />
     <Compile Include="Plugin.cs" />
-    <Compile Include="Application.cs" />
-    <Compile Include="Layouts\BorderContainer.cs" />
+    <Compile Include="Containers\Application.cs" />
+    <Compile Include="Containers\BorderContainer.cs" />
     <Compile Include="ObservableControlList.cs" />
     <Compile Include="Props\ListValue.cs" />
     <Compile Include="RelationshipFormatters\Default.cs" />

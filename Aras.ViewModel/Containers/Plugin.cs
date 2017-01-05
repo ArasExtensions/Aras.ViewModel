@@ -1,8 +1,7 @@
-<!DOCTYPE html>
-<!--
+﻿/*  
   Aras.ViewModel provides a .NET library for building Aras Innovator Applications
 
-  Copyright (C) 2015 Processwall Limited.
+  Copyright (C) 2016 Processwall Limited.
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as published
@@ -21,44 +20,24 @@
   Address: The Winnowing House, Mill Lane, Askham Richard, York, YO23 3NW, United Kingdom
   Tel:     +44 113 815 3440
   Email:   support@processwall.com
--->
+*/
 
-<html>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-	<head>
-		<title>AAD</title>
-		
-		<link href="favicon.ico" rel="icon" type="image/x-icon" />
-		
-		<style>
-			@import "./js/Aras/Themes/claro/claro.css";
-		</style>
-		
-		<script>
-			dojoConfig={
-				has: {"dojo-firebug": true},
-				parseOnLoad: false,
-				async: true
-			};
-		</script>
-		
-		<script type="text/javascript" src="./js/dojo/dojo.js"></script>
-		
-		<script>
-			require(['Aras/View/ApplicationContainer', 'dojo/dom', 'dojo/domReady!'], function(ApplicationContainer, dom) {
-				var target = dom.byId('main');			
-				var applicationcontainer = new ApplicationContainer({ URL: '.', style: 'width: 100%; height: 100%'}, target);
-				applicationcontainer.startup();
-			});
-		</script>
-		
-	</head>
-	
-	<body class="claro">
-	
-		<div id="main">
-		</div>
-		
-	</body>
-	
-</html>
+namespace Aras.ViewModel.Containers
+{
+    [Attributes.ClientControl("Aras.View.Containers.Plugin")]
+    public abstract class Plugin : Containers.BorderContainer
+    {
+
+        public Plugin()
+            :base()
+        {
+
+        }
+    }
+}

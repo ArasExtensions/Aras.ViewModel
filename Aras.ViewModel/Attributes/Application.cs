@@ -28,16 +28,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Aras.ViewModel.Layouts
+namespace Aras.ViewModel.Attributes
 {
-    [Attributes.ClientControl("Aras.View.Layouts.BorderContainer")]
-    public class BorderContainer : Layout, IContained
+    [AttributeUsage(AttributeTargets.Class)]
+    public class Application : Attribute
     {
+        public String Label { get; private set; }
 
-        public BorderContainer()
-            :base()
+        public String Icon { get; private set; }
+
+        public Application(String Label, String Icon)
         {
-
+            this.Label = Label;
+            this.Icon = Icon;
         }
     }
 }

@@ -129,22 +129,39 @@ namespace Aras.ViewModel.Manager
         {
             if (AssemblyFile.Exists)
             {
-                // Load Controls
+                // Load Assembly
                 Assembly assembly = Assembly.LoadFrom(AssemblyFile.FullName);
 
-                // Find all Controls
-
+                // Cache all Controls
                 foreach (Type type in assembly.GetTypes())
                 {
                     if (type.IsSubclassOf(typeof(Control)) && !type.IsAbstract)
                     {
-                        this.ControlTypeCache[type.FullName] = new ControlType(type);
+                        if (!this.ControlTypeCache.ContainsKey(type.FullName))
+                        {
+                            if (type.IsSubclassOf(typeof(Containers.Application)))
+                            {
+                                this.ApplicationTypeCache[type.FullName] = new ApplicationType(type);
+                                this.ControlTypeCache[type.FullName] = this.ApplicationTypeCache[type.FullName];
+                            }
+                            else if (type.IsSubclassOf(typeof(Containers.Plugin)))
+                            {
+                                this.PluginTypeCache[type.FullName] = new PluginType(type);
+                                this.ControlTypeCache[type.FullName] = this.PluginTypeCache[type.FullName];
+                            }
+                            else
+                            {
+                                this.ControlTypeCache[type.FullName] = new ControlType(type);
+                            }
+                        }
                     }
                 }
             }
         }
 
         private Dictionary<String, ControlType> ControlTypeCache;
+        private Dictionary<String, PluginType> PluginTypeCache;
+        private Dictionary<String, ApplicationType> ApplicationTypeCache;
 
         public IEnumerable<ControlType> ControlTypes
         {
@@ -177,6 +194,26 @@ namespace Aras.ViewModel.Manager
             else
             {
                 throw new Model.Exceptions.ArgumentException("Invalid Control Type: " + name);
+            }
+        }
+
+        internal IEnumerable<ApplicationType> ApplicationTypes
+        {
+            get
+            {
+                return this.ApplicationTypeCache.Values;
+            }
+        }
+
+        internal ApplicationType ApplicationType(String Name)
+        {
+            if (this.ApplicationTypeCache.ContainsKey(Name))
+            {
+                return this.ApplicationTypeCache[Name];
+            }
+            else
+            {
+                throw new Model.Exceptions.ArgumentException("Invalid Application Type: " + Name);
             }
         }
 
@@ -223,8 +260,10 @@ namespace Aras.ViewModel.Manager
 
         public Server(String URL, Logging.Log Log)
         {
-            // Initialise Control Cache
+            // Initialise Caches
             this.ControlTypeCache = new Dictionary<String, ControlType>();
+            this.PluginTypeCache = new Dictionary<String, PluginType>();
+            this.ApplicationTypeCache = new Dictionary<String, ApplicationType>();
 
             // Store Log
             this.Log = Log;

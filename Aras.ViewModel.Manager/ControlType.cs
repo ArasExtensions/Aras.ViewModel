@@ -31,7 +31,7 @@ using System.Reflection;
 
 namespace Aras.ViewModel.Manager
 {
-    public class ControlType
+    public class ControlType : IEquatable<ControlType>
     {
         public Type Type { get; private set; }
 
@@ -79,6 +79,40 @@ namespace Aras.ViewModel.Manager
 
                 return this._clientType;
             }
+        }
+
+        public bool Equals(ControlType other)
+        {
+            if (other != null)
+            {
+                return this.Name.Equals(other.Name);
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is ControlType)
+            {
+                return this.Equals((ControlType)obj);
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public override int GetHashCode()
+        {
+            return this.Name.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return this.Name;
         }
 
         internal ControlType(Type Type)
