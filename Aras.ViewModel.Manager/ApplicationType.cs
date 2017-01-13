@@ -37,6 +37,8 @@ namespace Aras.ViewModel.Manager
 
         public String Icon { get; private set; }
 
+        public String Path { get; private set; }
+
         internal ApplicationType(Type Type)
             :base(Type)
         {
@@ -47,6 +49,7 @@ namespace Aras.ViewModel.Manager
             {
                 this.Label = applicationattribute.Label;
                 this.Icon = applicationattribute.Icon;
+                this.Path = applicationattribute.Path;
             }
         }
     }

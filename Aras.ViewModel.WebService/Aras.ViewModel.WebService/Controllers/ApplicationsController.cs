@@ -34,6 +34,7 @@ namespace Aras.ViewModel.WebService.Controllers
 {
     public class ApplicationsController : BaseController
     {
+
         [Route("applicationtypes")]
         [HttpGet]
         public IEnumerable<Models.ApplicationType> GetAllApplicationTypes()
@@ -48,6 +49,7 @@ namespace Aras.ViewModel.WebService.Controllers
                     modelapptype.Name = apptype.Name;
                     modelapptype.Label = apptype.Label;
                     modelapptype.Icon = apptype.Icon;
+                    modelapptype.Path = apptype.Path;
                     ret.Add(modelapptype);
                 }
 

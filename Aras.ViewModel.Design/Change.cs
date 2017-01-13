@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel.Design
 {
-    [ViewModel.Attributes.Application("Design", "")]
-    public class Application : ViewModel.Containers.Application
+    [ViewModel.Attributes.Application("Change", "", "Design")]
+    public class Change : ViewModel.Containers.Application
     {
-        public Application()
+        public Change()
             : base()
         {
 

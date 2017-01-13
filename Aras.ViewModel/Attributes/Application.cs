@@ -37,10 +37,19 @@ namespace Aras.ViewModel.Attributes
 
         public String Icon { get; private set; }
 
-        public Application(String Label, String Icon)
+        public String Path { get; private set; }
+
+        public Application(String Label, String Icon, String Path)
         {
             this.Label = Label;
             this.Icon = Icon;
+            this.Path = Path;
+        }
+
+         public Application(String Label, String Icon)
+             :this(Label, Icon, null)
+        {
+
         }
     }
 }

@@ -37,8 +37,11 @@ namespace Aras.ViewModel.WebService.Models
 
         public String Icon { get; set; }
 
+        public String Path { get; set; }
+
         public ApplicationType()
         {
+
         }
     }
 }
