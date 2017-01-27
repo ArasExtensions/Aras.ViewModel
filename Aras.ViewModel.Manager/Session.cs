@@ -105,7 +105,7 @@ namespace Aras.ViewModel.Manager
             return plugin;
         }
 
-        public IEnumerable<ApplicationType> ApplicationTypes
+        public IEnumerable<ControlTypes.ApplicationType> ApplicationTypes
         {
             get
             {
@@ -113,13 +113,13 @@ namespace Aras.ViewModel.Manager
             }
         }
 
-        public ApplicationType ApplicationType(String Name)
+        public ControlTypes.ApplicationType ApplicationType(String Name)
         {
             return this.Database.Server.ApplicationType(Name);
         }
 
-        private Dictionary<ApplicationType, ViewModel.Containers.Application> ApplicationCache;
-        public ViewModel.Containers.Application Application(ApplicationType ApplicationType)
+        private Dictionary<ControlTypes.ApplicationType, ViewModel.Containers.Application> ApplicationCache;
+        public ViewModel.Containers.Application Application(ControlTypes.ApplicationType ApplicationType)
         {
             if (!this.ApplicationCache.ContainsKey(ApplicationType))
             {
@@ -313,7 +313,7 @@ namespace Aras.ViewModel.Manager
         {
             this.Database = Database;
             this.Model = Model;
-            this.ApplicationCache = new Dictionary<ApplicationType, Containers.Application>();
+            this.ApplicationCache = new Dictionary<ControlTypes.ApplicationType, Containers.Application>();
             this.ControlCache = new Dictionary<Guid, ViewModel.Control>();
             this.ControlQueue = new Queue<ViewModel.Control>();
             this.CommandCache = new Dictionary<Guid, ViewModel.Command>();

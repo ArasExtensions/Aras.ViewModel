@@ -63,6 +63,8 @@ namespace Aras.ViewModel.WebService
             // Load Assemblies
             this.ViewModel.LoadAssembly("Aras.Model.Design");
             this.ViewModel.LoadAssembly("Aras.ViewModel.Design");
+            this.ViewModel.LoadAssembly("CMB.Model");
+            this.ViewModel.LoadAssembly("CMB.ViewModel");
 
             // Create Activator
             GlobalConfiguration.Configuration.Services.Replace(typeof(IHttpControllerActivator), new ControllerActivator(this.ViewModel));

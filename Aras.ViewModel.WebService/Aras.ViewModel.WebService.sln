@@ -25,6 +25,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aras.ViewModel.WebService",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aras.IO", "..\..\Aras.IO\Aras.IO\Aras.IO.csproj", "{5ACC089E-892B-4FA7-891D-B2F6D74A4D7B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CMB.ViewModel", "..\..\CMB\CMB.ViewModel\CMB.ViewModel.csproj", "{F36D4357-E41A-4D2E-88F0-B032CD9C92E0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CMB.Model", "..\..\CMB\CMB.Model\CMB.Model.csproj", "{A6487A8D-17F8-452F-BFF6-1E8863E85CE3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -67,6 +71,14 @@ Global
 		{5ACC089E-892B-4FA7-891D-B2F6D74A4D7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5ACC089E-892B-4FA7-891D-B2F6D74A4D7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5ACC089E-892B-4FA7-891D-B2F6D74A4D7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F36D4357-E41A-4D2E-88F0-B032CD9C92E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F36D4357-E41A-4D2E-88F0-B032CD9C92E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F36D4357-E41A-4D2E-88F0-B032CD9C92E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F36D4357-E41A-4D2E-88F0-B032CD9C92E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6487A8D-17F8-452F-BFF6-1E8863E85CE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6487A8D-17F8-452F-BFF6-1E8863E85CE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6487A8D-17F8-452F-BFF6-1E8863E85CE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6487A8D-17F8-452F-BFF6-1E8863E85CE3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

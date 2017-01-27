@@ -32,28 +32,88 @@ using System.Web.Http;
 
 namespace Aras.ViewModel.WebService.Controllers
 {
+
     public class ApplicationsController : BaseController
     {
+        private Models.ApplicationType Child(Models.ApplicationType Parent, String Path)
+        {
+            if (Path != null)
+            {
+                String thispath = null;
+                String remainingpath = null;
+                Int32 seppos = Path.IndexOf('/');
+
+                if (seppos > 0)
+                {
+                    thispath = Path.Substring(0, seppos);
+                    remainingpath = Path.Substring(seppos + 1, Path.Length - seppos - 1);
+                }
+                else
+                {
+                    thispath = Path;
+                    remainingpath = null;
+                }
+
+                Models.ApplicationType thischild = null;
+
+                foreach(Models.ApplicationType child in Parent.Children)
+                {
+                   if (child.Name.Equals(thispath))
+                   {
+                       thischild = child;
+                       break;
+                   }
+                }
+
+                if (thischild == null)
+                {
+                    thischild = new Models.ApplicationType();
+                    thischild.ID = Guid.NewGuid().ToString();
+                    thischild.Name = null;
+                    thischild.Label = thispath;
+                    thischild.Children = new List<Models.ApplicationType>();
+                    Parent.Children.Add(thischild);
+                }
+
+                if (remainingpath == null)
+                {
+                    return thischild;
+                }
+                else
+                {
+                    return this.Child(thischild, remainingpath);
+                }
+            }
+            else
+            {
+                return Parent;
+            }
+        }
 
         [Route("applicationtypes")]
         [HttpGet]
-        public IEnumerable<Models.ApplicationType> GetAllApplicationTypes()
+        public Models.ApplicationType GetAllApplicationTypes()
         {
             try
             {
-                List<Models.ApplicationType> ret = new List<Models.ApplicationType>();
+                // Create Root
+                Models.ApplicationType root = new Models.ApplicationType();
+                root.ID = Guid.NewGuid().ToString();
+                root.Name = null;
+                root.Label = "Root";
+                root.Children = new List<Models.ApplicationType>();
 
-                foreach (ViewModel.Manager.ApplicationType apptype in this.Session.ApplicationTypes)
+                foreach (ViewModel.Manager.ControlTypes.ApplicationType apptype in this.Session.ApplicationTypes)
                 {
+                    Models.ApplicationType parent = this.Child(root, apptype.Path);
                     Models.ApplicationType modelapptype = new Models.ApplicationType();
                     modelapptype.Name = apptype.Name;
                     modelapptype.Label = apptype.Label;
                     modelapptype.Icon = apptype.Icon;
-                    modelapptype.Path = apptype.Path;
-                    ret.Add(modelapptype);
+                    parent.Children.Add(modelapptype);
                 }
 
-                return ret;
+                return root;
             }
             catch (Exception e)
             {
@@ -69,7 +129,7 @@ namespace Aras.ViewModel.WebService.Controllers
             {
                 Models.Responses.Control ret = new Models.Responses.Control();
 
-                Manager.ApplicationType apptype = this.Session.ApplicationType(ApplicationType.Name);
+                Manager.ControlTypes.ApplicationType apptype = this.Session.ApplicationType(ApplicationType.Name);
                 ViewModel.Containers.Application applicationcontrol = this.Session.Application(apptype);
                 ret.Value = new Models.Control(applicationcontrol, apptype);
                 this.UpdateResponse(ret);

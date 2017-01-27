@@ -141,12 +141,12 @@ namespace Aras.ViewModel.Manager
                         {
                             if (type.IsSubclassOf(typeof(Containers.Application)))
                             {
-                                this.ApplicationTypeCache[type.FullName] = new ApplicationType(type);
+                                this.ApplicationTypeCache[type.FullName] = new ControlTypes.ApplicationType(type);
                                 this.ControlTypeCache[type.FullName] = this.ApplicationTypeCache[type.FullName];
                             }
                             else if (type.IsSubclassOf(typeof(Containers.Plugin)))
                             {
-                                this.PluginTypeCache[type.FullName] = new PluginType(type);
+                                this.PluginTypeCache[type.FullName] = new ControlTypes.PluginType(type);
                                 this.ControlTypeCache[type.FullName] = this.PluginTypeCache[type.FullName];
                             }
                             else
@@ -160,8 +160,8 @@ namespace Aras.ViewModel.Manager
         }
 
         private Dictionary<String, ControlType> ControlTypeCache;
-        private Dictionary<String, PluginType> PluginTypeCache;
-        private Dictionary<String, ApplicationType> ApplicationTypeCache;
+        private Dictionary<String, ControlTypes.PluginType> PluginTypeCache;
+        private Dictionary<String, ControlTypes.ApplicationType> ApplicationTypeCache;
 
         public IEnumerable<ControlType> ControlTypes
         {
@@ -197,7 +197,7 @@ namespace Aras.ViewModel.Manager
             }
         }
 
-        internal IEnumerable<ApplicationType> ApplicationTypes
+        internal IEnumerable<ControlTypes.ApplicationType> ApplicationTypes
         {
             get
             {
@@ -205,7 +205,7 @@ namespace Aras.ViewModel.Manager
             }
         }
 
-        internal ApplicationType ApplicationType(String Name)
+        internal ControlTypes.ApplicationType ApplicationType(String Name)
         {
             if (this.ApplicationTypeCache.ContainsKey(Name))
             {
@@ -262,8 +262,8 @@ namespace Aras.ViewModel.Manager
         {
             // Initialise Caches
             this.ControlTypeCache = new Dictionary<String, ControlType>();
-            this.PluginTypeCache = new Dictionary<String, PluginType>();
-            this.ApplicationTypeCache = new Dictionary<String, ApplicationType>();
+            this.PluginTypeCache = new Dictionary<String, ControlTypes.PluginType>();
+            this.ApplicationTypeCache = new Dictionary<String, ControlTypes.ApplicationType>();
 
             // Store Log
             this.Log = Log;

@@ -31,13 +31,15 @@ namespace Aras.ViewModel.WebService.Models
 {
     public class ApplicationType
     {
+        public String ID { get; set; }
+
         public String Name { get; set; }
 
         public String Label { get; set; }
 
         public String Icon { get; set; }
 
-        public String Path { get; set; }
+        public List<ApplicationType> Children { get; set; }
 
         public ApplicationType()
         {

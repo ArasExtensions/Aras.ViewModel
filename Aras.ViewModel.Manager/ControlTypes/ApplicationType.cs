@@ -29,7 +29,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 
-namespace Aras.ViewModel.Manager
+namespace Aras.ViewModel.Manager.ControlTypes
 {
     public class ApplicationType : ControlType
     {

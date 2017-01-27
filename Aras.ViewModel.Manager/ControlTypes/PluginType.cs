@@ -28,7 +28,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Aras.ViewModel.Manager
+namespace Aras.ViewModel.Manager.ControlTypes
 {
     public class PluginType : ControlType
     {
