@@ -58,7 +58,7 @@ namespace Aras.ViewModel.WebService.Controllers
 
                 foreach(Models.ApplicationType child in Parent.Children)
                 {
-                   if (child.Name.Equals(thispath))
+                   if (child.Label.Equals(thispath))
                    {
                        thischild = child;
                        break;
@@ -107,6 +107,7 @@ namespace Aras.ViewModel.WebService.Controllers
                 {
                     Models.ApplicationType parent = this.Child(root, apptype.Path);
                     Models.ApplicationType modelapptype = new Models.ApplicationType();
+                    modelapptype.ID = Guid.NewGuid().ToString();
                     modelapptype.Name = apptype.Name;
                     modelapptype.Label = apptype.Label;
                     modelapptype.Icon = apptype.Icon;
