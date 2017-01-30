@@ -34,6 +34,24 @@ namespace Aras.ViewModel.Containers
     public abstract class Application : Containers.BorderContainer
     {
 
+        private System.String _name;
+        [Attributes.Property("Name", Attributes.PropertyTypes.String, true)]
+        public System.String Name
+        {
+            get
+            {
+                return this._name;
+            }
+            set
+            {
+                if (this._name != value)
+                {
+                    this._name = value;
+                    this.OnPropertyChanged("Name");
+                }
+            }
+        }
+
         public Application()
             :base()
         {

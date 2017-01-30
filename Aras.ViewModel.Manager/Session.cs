@@ -125,6 +125,7 @@ namespace Aras.ViewModel.Manager
             {
                 // Create Control
                 this.ApplicationCache[ApplicationType] = (ViewModel.Containers.Application)Activator.CreateInstance(ApplicationType.Type, new object[] { });
+                this.ApplicationCache[ApplicationType].Name = ApplicationType.Name;
 
                 // Set Binding to Session
                 this.ApplicationCache[ApplicationType].Binding = this.Model;
