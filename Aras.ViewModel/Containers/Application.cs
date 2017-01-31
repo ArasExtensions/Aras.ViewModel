@@ -52,6 +52,42 @@ namespace Aras.ViewModel.Containers
             }
         }
 
+        private System.String _label;
+        [Attributes.Property("Label", Attributes.PropertyTypes.String, true)]
+        public System.String Label
+        {
+            get
+            {
+                return this._label;
+            }
+            set
+            {
+                if (this._label != value)
+                {
+                    this._label = value;
+                    this.OnPropertyChanged("Label");
+                }
+            }
+        }
+
+        private System.String _icon;
+        [Attributes.Property("Icon", Attributes.PropertyTypes.String, true)]
+        public System.String Icon
+        {
+            get
+            {
+                return this._icon;
+            }
+            set
+            {
+                if (this._icon != value)
+                {
+                    this._icon = value;
+                    this.OnPropertyChanged("Icon");
+                }
+            }
+        }
+
         public Application()
             :base()
         {
