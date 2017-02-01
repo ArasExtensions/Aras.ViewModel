@@ -1,7 +1,7 @@
 ﻿/*  
   Aras.ViewModel provides a .NET library for building Aras Innovator Applications
 
-  Copyright (C) 2015 Processwall Limited.
+  Copyright (C) 2017 Processwall Limited.
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as published
@@ -28,38 +28,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Aras.ViewModel.Searches
+namespace Aras.ViewModel
 {
-    public class Relationship : Search<Model.Relationship>
+    [Attributes.ClientControl("Aras.View.Button")]
+    public class Button : Control
     {
-        private Model.Query<Model.Relationship> _query;
-        protected override Model.Query<Model.Relationship> Query
-        {
-            get
-            {
-                if (this._query == null)
-                {
-                    if ((this.Binding != null) && (this.Binding is Model.Stores.Relationship))
-                    {
-                        // Create Query
-                        this._query = ((Model.Stores.Relationship)this.Binding).Query();
+        [Attributes.Property("Icon", Attributes.PropertyTypes.String, true)]
+        public System.String Icon { get; set; }
 
-                        // Switch on Paging
-                        this._query.Paging = true;
-
-                        // Update Page Size on Control
-                        this.PageSize.Value = this._query.PageSize;
-
-                        // Update Page on Control
-                        this.Page.Value = this._query.Page;
-                    }
-                }
-
-                return this._query;
-            }
-        }
-
-        public Relationship()
+        public Button()
             :base()
         {
 

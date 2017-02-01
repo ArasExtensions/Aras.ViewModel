@@ -61,6 +61,8 @@
     <Compile Include="Attributes\ClientControl.cs" />
     <Compile Include="Attributes\Command.cs" />
     <Compile Include="Attributes\Property.cs" />
+    <Compile Include="ToolBarSeparator.cs" />
+    <Compile Include="Button.cs" />
     <Compile Include="Containers\Plugin.cs" />
     <Compile Include="IContained.cs" />
     <Compile Include="Container.cs" />
@@ -78,6 +80,7 @@
     <Compile Include="Containers\Application.cs" />
     <Compile Include="Containers\BorderContainer.cs" />
     <Compile Include="ObservableControlList.cs" />
+    <Compile Include="Props\Integer.cs" />
     <Compile Include="Props\ListValue.cs" />
     <Compile Include="RelationshipFormatters\Default.cs" />
     <Compile Include="RelationshipTree.cs" />
@@ -96,6 +99,7 @@
     <Compile Include="Search.cs" />
     <Compile Include="Searches\Item.cs" />
     <Compile Include="Searches\Relationship.cs" />
+    <Compile Include="Containers\ToolBar.cs" />
     <Compile Include="Tree.cs" />
     <Compile Include="TreeNode.cs" />
     <Compile Include="Utilities.cs" />

@@ -30,7 +30,8 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel
 {
-    public abstract class Search<T> : Control where T : Model.Item
+    [Attributes.ClientControl("Aras.View.Containers.BorderContainer")]
+    public abstract class Search<T> : Containers.BorderContainer where T : Model.Item
     {
         private List<String> _propertyNames;
         
@@ -75,78 +76,15 @@ namespace Aras.ViewModel
         [ViewModel.Attributes.Command("PreviousPage")]
         public PreviousPageCommand PreviousPage { get; private set; }
 
-        private Int32 _page;
-        [ViewModel.Attributes.Property("Page", Aras.ViewModel.Attributes.PropertyTypes.Int32, false)]
-        public Int32 Page
-        {
-            get
-            {
-                return this._page;
-            }
-            set
-            {
-                if (this._page != value)
-                {
-                    this._page = value;
+        protected Properties.Integer Page { get; private set; }
 
-                    if (this.Query != null)
-                    {
-                        this.Query.Page = this._page;
-                        this.RefreshControl();
-                        this.OnPropertyChanged("Page");
-                    }
-                }
-            }
-        }
+        protected Properties.Integer PageSize { get; private set; }
 
-        private Int32 _pageSize;
-        [ViewModel.Attributes.Property("PageSize", Aras.ViewModel.Attributes.PropertyTypes.Int32, false)]
-        public Int32 PageSize
-        {
-            get
-            {
-                return this._pageSize;
-            }
-            set
-            {
-                if (this._pageSize != value)
-                {
-                    this._pageSize = value;
-                    this._page = 1;
-
-                    if (this.Query != null)
-                    {
-                        this.Query.PageSize = this._pageSize;
-                        this.Query.Page = this._page;
-                        this.RefreshControl();
-                        this.OnPropertyChanged("PageSize");
-                        this.OnPropertyChanged("Page");
-                    }
-                }
-            }
-        }
-
-        private Int32 _noPages;
-        [ViewModel.Attributes.Property("NoPages", Aras.ViewModel.Attributes.PropertyTypes.Int32, true)]
-        public Int32 NoPages
-        {
-            get
-            {
-                return this._noPages;
-            }
-            private set
-            {
-                if (this._noPages != value)
-                {
-                    this._noPages = value;
-                    this.OnPropertyChanged("NoPages");
-                }
-            }
-        }
+        private System.Int32 NoPages { get; set; }
 
         private void ProcessQueryString()
         {
-            if (String.IsNullOrEmpty(this.QueryString))
+            if (String.IsNullOrEmpty(this.QueryString.Value))
             {
                 this.Query.Condition = null;
             }
@@ -171,47 +109,11 @@ namespace Aras.ViewModel
             }
         }
 
-        private String _queryString;
-        [ViewModel.Attributes.Property("QueryString", Aras.ViewModel.Attributes.PropertyTypes.String, false)]
-        public String QueryString
-        {
-            get
-            {
-                return this._queryString;
-            }
-            set
-            {
-                if (value == null)
-                {
-                    if (this._queryString != null)
-                    {
-                        this._queryString = value;
-                        this.ProcessQueryString();
-                        this._page = 1;
-                        this.Query.Page = this._page;
-                        this.RefreshControl();
-                        this.OnPropertyChanged("QueryString");
-                        this.OnPropertyChanged("Page");
-                    }
-                }
-                else
-                {
-                    if (!value.Equals(this._queryString))
-                    {
-                        this._queryString = value;
-                        this.ProcessQueryString();
-                        this._page = 1;
-                        this.Query.Page = this._page;
-                        this.RefreshControl();
-                        this.OnPropertyChanged("QueryString");
-                        this.OnPropertyChanged("Page");
-                    }
-                }
-            }
-        }
+        private Properties.String QueryString { get; set; }
 
-        [ViewModel.Attributes.Property("Grid", Aras.ViewModel.Attributes.PropertyTypes.Control, true)]
-        public Grid Grid { get; private set; }
+        private Containers.ToolBar ToolBar { get; set; }
+
+        private Grid Grid { get; set; }
 
         protected override void AfterBindingChanged()
         {
@@ -278,32 +180,8 @@ namespace Aras.ViewModel
             }
         }
 
-        private Model.Query<T> _query;
-        private Model.Query<T> Query
-        {
-            get
-            {
-                if (this._query == null)
-                {
-                    if (this.Binding != null && this.Binding is Model.Store<T>)
-                    {
-                        // Create Query
-                        this._query = (Model.Query<T>)this.Binding;
-                        
-                        // Switch on Paging
-                        this._query.Paging = true;
 
-                        // Update Page Size on Control
-                        this.PageSize = this._query.PageSize;
-
-                        // Update Page on Control
-                        this.Page = this._query.Page;
-                    }
-                }
-
-                return this._query;
-            }
-        }
+        protected abstract Model.Query<T> Query { get; }
 
         private void LoadRows()
         {
@@ -327,6 +205,9 @@ namespace Aras.ViewModel
                                 case "String":
                                     this.Grid.Rows[i].Cells[j].Value = new Properties.String();
                                     break;
+                                case "Integer":
+                                    this.Grid.Rows[i].Cells[j].Value = new Properties.Integer();
+                                    break;
                                 default:
                                     throw new Model.Exceptions.ArgumentException("PropertyType not implmented: " + property.GetType().Name);
                             }
@@ -346,13 +227,70 @@ namespace Aras.ViewModel
         public Search()
             :base()
         {
+            // Create Lists
+            this._propertyNames = new List<String>();
+            this.Selected = new Model.ObservableList<T>();
+
+            // Create Page
+            this.Page = new Properties.Integer();
+
+            // Create PageSize
+            this.PageSize = new Properties.Integer();
+            this.PageSize.MinValue = 5;
+            this.PageSize.MaxValue = 100;
+            this.PageSize.Tooltip = "Page Size";
+
+            // Create ToolBar
+            this.ToolBar = new Containers.ToolBar();
+            this.ToolBar.Region = Regions.Top;
+            this.Children.Add(this.ToolBar);
+
+            // Create Grid
             this.Grid = new Grid();
             this.Grid.SelectedRows.ListChanged += SelectedRows_ListChanged;
-            this.Selected = new Model.ObservableList<T>();
+            this.Children.Add(this.Grid);
+
+            // Create Search Button
+            Button searchbutton = new Button();
+            searchbutton.Icon = "Search";
+            searchbutton.Tooltip = "Search";
+            searchbutton.Binding = this.Refresh;
+            this.ToolBar.Children.Add(searchbutton);
+
+            // Add Seperator
+            this.ToolBar.Children.Add(new ToolBarSeparator());
+
+            // Add PageSize
+            this.ToolBar.Children.Add(this.PageSize);
+
+            // Create Next Page Commands
             this.NextPage = new NextPageCommand(this);
+
+            // Create Next Page Button
+            Button nextpage = new Button();
+            nextpage.Binding = this.NextPage;
+            nextpage.Icon = "NextPage";
+            nextpage.Tooltip = "Next Page";
+            this.ToolBar.Children.Add(nextpage);
+
+            // Create Previous Page Command
             this.PreviousPage = new PreviousPageCommand(this);
-            this._propertyNames = new List<String>();
-            this._queryString = null;
+
+            // Create Previous Page Button
+            Button prevpage = new Button();
+            prevpage.Binding = this.PreviousPage;
+            prevpage.Icon = "PreviousPage";
+            prevpage.Tooltip = "Previous Page";
+            this.ToolBar.Children.Add(prevpage);
+
+            // Add Seperator
+            this.ToolBar.Children.Add(new ToolBarSeparator());
+
+            // Add Query String
+            this.QueryString = new Properties.String();
+            this.QueryString.Value = null;
+            this.QueryString.Tooltip = "Search String";
+            this.ToolBar.Children.Add(this.QueryString);
         }
 
         void SelectedRows_ListChanged(object sender, EventArgs e)
@@ -384,15 +322,15 @@ namespace Aras.ViewModel
 
             protected override void Run(IEnumerable<Control> Parameters)
             {
-                if (this.Search.Page < this.Search.NoPages)
+                if (this.Search.Page.Value < this.Search.NoPages)
                 {
-                    this.Search.Page = this.Search.Page + 1;
+                    this.Search.Page.Value = this.Search.Page.Value + 1;
                 }
             }
 
             internal void Refesh()
             {
-                if (this.Search.Page < this.Search.NoPages)
+                if (this.Search.Page.Value < this.Search.NoPages)
                 {
                     this.CanExecute = true;
                 }
@@ -416,15 +354,15 @@ namespace Aras.ViewModel
 
             protected override void Run(IEnumerable<Control> Parameters)
             {
-                if (this.Search.Page > 1)
+                if (this.Search.Page.Value > 1)
                 {
-                    this.Search.Page = this.Search.Page - 1;
+                    this.Search.Page.Value = this.Search.Page.Value - 1;
                 }
             }
 
             internal void Refesh()
             {
-                if (this.Search.Page > 1)
+                if (this.Search.Page.Value > 1)
                 {
                     this.CanExecute = true;
                 }

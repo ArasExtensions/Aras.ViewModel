@@ -31,9 +31,17 @@ using System.ComponentModel;
 
 namespace Aras.ViewModel
 {
+    public enum Regions { Top=1, Bottom=2, Right=3, Left=4, Center=5, Leading=6, Trailing=7 };
+
     public abstract class Control : IEquatable<Control>, INotifyPropertyChanged
     {
         public Guid ID { get; private set; }
+
+        [Attributes.Property("Region", Attributes.PropertyTypes.Int32, true)]
+        public Regions Region { get; set; }
+
+        [Attributes.Property("Tooltip", Attributes.PropertyTypes.String, true)]
+        public System.String Tooltip { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -355,6 +363,7 @@ namespace Aras.ViewModel
             this.Close = new CloseCommand(this);
             this.ErrorMessage = null;
             this.InError = false;
+            this.Region = Regions.Center;
         }
 
         public class RefreshCommand : Aras.ViewModel.Command

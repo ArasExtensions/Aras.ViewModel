@@ -32,6 +32,32 @@ namespace Aras.ViewModel.Searches
 {
     public class Item : Search<Model.Item>
     {
+        private Model.Query<Model.Item> _query;
+        protected override Model.Query<Model.Item> Query
+        {
+            get
+            {
+                if (this._query == null)
+                {
+                    if ((this.Binding != null) && (this.Binding is Model.Stores.Item))
+                    {
+                        // Create Query
+                        this._query = ((Model.Stores.Item)this.Binding).Query();
+
+                        // Switch on Paging
+                        this._query.Paging = true;
+
+                        // Update Page Size on Control
+                        this.PageSize.Value = this._query.PageSize;
+
+                        // Update Page on Control
+                        this.Page.Value = this._query.Page;
+                    }
+                }
+
+                return this._query;
+            }
+        }
 
         public Item()
             :base()
