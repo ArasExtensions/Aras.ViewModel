@@ -61,6 +61,14 @@
     <Compile Include="Attributes\ClientControl.cs" />
     <Compile Include="Attributes\Command.cs" />
     <Compile Include="Attributes\Property.cs" />
+    <Compile Include="Manager\ControlType.cs" />
+    <Compile Include="Manager\ControlTypes\ApplicationType.cs" />
+    <Compile Include="Manager\ControlTypes\PluginType.cs" />
+    <Compile Include="Manager\Database.cs" />
+    <Compile Include="Manager\Exceptions\LicenceException.cs" />
+    <Compile Include="Manager\Exceptions\SessionException.cs" />
+    <Compile Include="Manager\Server.cs" />
+    <Compile Include="Manager\Session.cs" />
     <Compile Include="ToolBarSeparator.cs" />
     <Compile Include="Button.cs" />
     <Compile Include="Containers\Plugin.cs" />
@@ -105,6 +113,10 @@
     <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Aras.Common\Aras.Logging\Aras.Logging.csproj">
+      <Project>{95ccb1e3-f2fa-423a-bae6-a5a3ec0cec94}</Project>
+      <Name>Aras.Logging</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Aras.IO\Aras.IO\Aras.IO.csproj">
       <Project>{5acc089e-892b-4fa7-891d-b2f6d74a4d7b}</Project>
       <Name>Aras.IO</Name>

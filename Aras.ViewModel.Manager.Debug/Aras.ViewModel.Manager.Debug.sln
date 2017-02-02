@@ -5,8 +5,6 @@ VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aras.ViewModel.Manager.Debug", "Aras.ViewModel.Manager.Debug.csproj", "{D290B5F8-CF25-4395-88FB-5A4282F59568}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aras.ViewModel.Manager", "..\Aras.ViewModel.Manager\Aras.ViewModel.Manager.csproj", "{552D4742-0C11-4FDF-BDEC-986697CCDEE2}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aras.ViewModel", "..\Aras.ViewModel\Aras.ViewModel.csproj", "{103CE8D0-A7EA-47B1-ADB3-4BE57C02DB18}"
 	ProjectSection(ProjectDependencies) = postProject
 		{E5B4196A-00D0-4DE7-8104-487A7BC60784} = {E5B4196A-00D0-4DE7-8104-487A7BC60784}
@@ -46,12 +44,6 @@ Global
 		{D290B5F8-CF25-4395-88FB-5A4282F59568}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D290B5F8-CF25-4395-88FB-5A4282F59568}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D290B5F8-CF25-4395-88FB-5A4282F59568}.Release|x64.ActiveCfg = Release|Any CPU
-		{552D4742-0C11-4FDF-BDEC-986697CCDEE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{552D4742-0C11-4FDF-BDEC-986697CCDEE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{552D4742-0C11-4FDF-BDEC-986697CCDEE2}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{552D4742-0C11-4FDF-BDEC-986697CCDEE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{552D4742-0C11-4FDF-BDEC-986697CCDEE2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{552D4742-0C11-4FDF-BDEC-986697CCDEE2}.Release|x64.ActiveCfg = Release|Any CPU
 		{103CE8D0-A7EA-47B1-ADB3-4BE57C02DB18}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{103CE8D0-A7EA-47B1-ADB3-4BE57C02DB18}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{103CE8D0-A7EA-47B1-ADB3-4BE57C02DB18}.Debug|x64.ActiveCfg = Debug|Any CPU

@@ -42,8 +42,7 @@ namespace Aras.ViewModel.Manager.Debug
             Session session = database.Login("admin", IO.Server.PasswordHash("innovator"));
 
             IEnumerable<ControlType> test = server.ControlTypes;
-            IEnumerable<ApplicationType> test2 = server.ApplicationTypes;
-            ViewModel.Containers.Application app = session.Application(test2.First());
+            IEnumerable<Manager.ControlTypes.ApplicationType> test2 = session.ApplicationTypes;
         }
     }
 }

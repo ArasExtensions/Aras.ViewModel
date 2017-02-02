@@ -162,10 +162,6 @@
       <Project>{6e26fc31-50b0-402e-aabe-1974fefb4d6c}</Project>
       <Name>Aras.ViewModel.Design</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Aras.ViewModel.Manager\Aras.ViewModel.Manager.csproj">
-      <Project>{552d4742-0c11-4fdf-bdec-986697ccdee2}</Project>
-      <Name>Aras.ViewModel.Manager</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Aras.ViewModel\Aras.ViewModel.csproj">
       <Project>{103ce8d0-a7ea-47b1-adb3-4be57c02db18}</Project>
       <Name>Aras.ViewModel</Name>
