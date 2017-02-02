@@ -47,6 +47,56 @@ namespace Aras.ViewModel
         [ViewModel.Attributes.Property("Children", Aras.ViewModel.Attributes.PropertyTypes.ControlList, true)]
         public Model.ObservableList<Control> Children { get; private set; }
 
+        private Containers.Toolbar _toolbar;
+        public virtual Containers.Toolbar Toolbar
+        {
+            get
+            {
+                if (this._toolbar == null)
+                {
+                    // Create Toolbar
+                    this._toolbar = new Containers.Toolbar(this.Session);
+
+                    // Add Refresh Button
+                    Button refreshbutton = new Button(this.Session);
+                    refreshbutton.Icon = "Refresh";
+                    refreshbutton.Tooltip = "Refresh";
+                    this._toolbar.Children.Add(refreshbutton);
+                    refreshbutton.Binding = this.Refresh;
+
+                    // Add Edit Button
+                    Button editbutton = new Button(this.Session);
+                    editbutton.Icon = "Edit";
+                    editbutton.Tooltip = "Edit";
+                    this._toolbar.Children.Add(editbutton);
+                    editbutton.Binding = this.Edit;
+
+                    // Add Undo Button
+                    Button undobutton = new Button(this.Session);
+                    undobutton.Icon = "Undo";
+                    undobutton.Tooltip = "Undo";
+                    this._toolbar.Children.Add(undobutton);
+                    undobutton.Binding = this.Undo;
+
+                    // Add Save Button
+                    Button savebutton = new Button(this.Session);
+                    savebutton.Icon = "Save";
+                    savebutton.Tooltip = "Save";
+                    this._toolbar.Children.Add(savebutton);
+                    savebutton.Binding = this.Save;
+
+                    // Add SaveUnlock Button
+                    Button saveunlockbutton = new Button(this.Session);
+                    saveunlockbutton.Icon = "SaveUnlock";
+                    saveunlockbutton.Tooltip = "Save Unlock";
+                    this._toolbar.Children.Add(saveunlockbutton);
+                    saveunlockbutton.Binding = this.Save;
+                }
+
+                return this._toolbar;
+            }
+        }
+
         protected override void AfterBindingChanged()
         {
             base.AfterBindingChanged();
