@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aras.IO", "..\..\Aras.IO\Ar
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aras.Logging", "..\..\Aras.Common\Aras.Logging\Aras.Logging.csproj", "{95CCB1E3-F2FA-423A-BAE6-A5A3EC0CEC94}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aras.Logging.Console", "..\..\Aras.Common\Aras.Logging.Console\Aras.Logging.Console.csproj", "{ADA1688F-9A38-42AA-88CD-E0493972BA68}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,6 +79,12 @@ Global
 		{95CCB1E3-F2FA-423A-BAE6-A5A3EC0CEC94}.Release|Any CPU.Build.0 = Release|Any CPU
 		{95CCB1E3-F2FA-423A-BAE6-A5A3EC0CEC94}.Release|x64.ActiveCfg = Release|x64
 		{95CCB1E3-F2FA-423A-BAE6-A5A3EC0CEC94}.Release|x64.Build.0 = Release|x64
+		{ADA1688F-9A38-42AA-88CD-E0493972BA68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADA1688F-9A38-42AA-88CD-E0493972BA68}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADA1688F-9A38-42AA-88CD-E0493972BA68}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{ADA1688F-9A38-42AA-88CD-E0493972BA68}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADA1688F-9A38-42AA-88CD-E0493972BA68}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ADA1688F-9A38-42AA-88CD-E0493972BA68}.Release|x64.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

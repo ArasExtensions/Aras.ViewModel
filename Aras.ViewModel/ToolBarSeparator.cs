@@ -33,8 +33,8 @@ namespace Aras.ViewModel
     [Attributes.ClientControl("Aras.View.ToolBarSeparator")]
     public class ToolBarSeparator : Control
     {
-        public ToolBarSeparator()
-            :base()
+        public ToolBarSeparator(Manager.Session Session)
+            :base(Session)
         {
 
         }

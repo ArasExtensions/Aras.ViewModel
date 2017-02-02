@@ -59,8 +59,8 @@ namespace Aras.ViewModel.Searches
             }
         }
 
-        public Relationship()
-            :base()
+        public Relationship(Manager.Session Session)
+            :base(Session)
         {
 
         }

@@ -42,8 +42,8 @@ namespace Aras.ViewModel
       
         }
 
-        public File()
-            :base()
+        public File(Manager.Session Session)
+            :base(Session)
         {
             
         }

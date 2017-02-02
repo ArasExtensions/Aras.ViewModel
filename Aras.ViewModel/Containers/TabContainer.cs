@@ -34,8 +34,8 @@ namespace Aras.ViewModel.Containers
     public class TabContainer : Layout, IContained
     {
 
-        public TabContainer()
-            :base()
+        public TabContainer(Manager.Session Session)
+            :base(Session)
         {
 
         }

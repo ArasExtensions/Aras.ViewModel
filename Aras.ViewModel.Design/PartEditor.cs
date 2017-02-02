@@ -83,11 +83,11 @@ namespace Aras.ViewModel.Design
             }
         }
 
-        public PartEditor()
-            :base()
+        public PartEditor(ViewModel.Manager.Session Session)
+            :base(Session)
         {
-            this.Parts = new Searches.Item();
-            this.Relationships = new RelationshipTree(new RelationshipFormatters.Part(), new ItemFormatters.Part());
+            this.Parts = new Searches.Item(this.Session);
+            this.Relationships = new RelationshipTree(this.Session, new RelationshipFormatters.Part(), new ItemFormatters.Part());
         }
     }
 }

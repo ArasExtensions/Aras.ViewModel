@@ -168,8 +168,8 @@ namespace Aras.ViewModel.Properties
             }
         }
 
-        public Float()
-            : base()
+        public Float(Manager.Session Session)
+            : base(Session)
         {
             this._minValue = DefaultMinValue;
             this._maxValue = DefaultMaxValue;

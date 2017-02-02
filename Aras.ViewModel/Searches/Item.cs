@@ -59,8 +59,8 @@ namespace Aras.ViewModel.Searches
             }
         }
 
-        public Item()
-            :base()
+        public Item(Manager.Session Session)
+            :base(Session)
         {
 
         }

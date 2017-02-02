@@ -106,8 +106,8 @@ namespace Aras.ViewModel.Properties
             return this.Value;
         }
 
-        public ListValue()
-            :base()
+        public ListValue(Manager.Session Session)
+            :base(Session)
         {
 
         }

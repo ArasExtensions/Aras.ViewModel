@@ -67,7 +67,7 @@ namespace Aras.ViewModel.Design.Properties
 
                         foreach (Model.ListValue modellistvalue in list.Values)
                         {
-                            ViewModel.Properties.ListValue listvalue = new ViewModel.Properties.ListValue();
+                            ViewModel.Properties.ListValue listvalue = new ViewModel.Properties.ListValue(this.Session);
                             listvalue.Binding = modellistvalue;
                             this.Values.Add(listvalue);
 
@@ -82,7 +82,7 @@ namespace Aras.ViewModel.Design.Properties
                     case "Quantity":
 
                         // Add True
-                        ViewModel.Properties.ListValue quantityvalue = new ViewModel.Properties.ListValue();
+                        ViewModel.Properties.ListValue quantityvalue = new ViewModel.Properties.ListValue(this.Session);
                         quantityvalue.Label = "Yes";
                         quantityvalue.Value = "1";
                         this.Values.Add(quantityvalue);
@@ -96,13 +96,13 @@ namespace Aras.ViewModel.Design.Properties
                     case "Method":
 
                         // Add False
-                        ViewModel.Properties.ListValue falsevalue = new ViewModel.Properties.ListValue();
+                        ViewModel.Properties.ListValue falsevalue = new ViewModel.Properties.ListValue(this.Session);
                         falsevalue.Label = "No";
                         falsevalue.Value = "0";
                         this.Values.Add(falsevalue);
 
                         // Add True
-                        ViewModel.Properties.ListValue truevalue = new ViewModel.Properties.ListValue();
+                        ViewModel.Properties.ListValue truevalue = new ViewModel.Properties.ListValue(this.Session);
                         truevalue.Label = "Yes";
                         truevalue.Value = "1";
                         this.Values.Add(truevalue);
@@ -127,8 +127,8 @@ namespace Aras.ViewModel.Design.Properties
             this.Value = ((Model.Design.OrderContext)this.Binding).Value;
         }
 
-        public OrderContextList()
-            : base()
+        public OrderContextList(ViewModel.Manager.Session Session)
+            : base(Session)
         {
 
         }

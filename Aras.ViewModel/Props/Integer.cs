@@ -168,8 +168,8 @@ namespace Aras.ViewModel.Properties
             }
         }
 
-        public Integer()
-            : base()
+        public Integer(Manager.Session Session)
+            : base(Session)
         {
             this._minValue = DefaultMinValue;
             this._maxValue = DefaultMaxValue;

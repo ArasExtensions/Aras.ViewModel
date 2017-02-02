@@ -33,8 +33,8 @@ namespace Aras.ViewModel
     public abstract class Plugin : Item
     {
 
-        public Plugin()
-            :base()
+        public Plugin(Manager.Session Session)
+            :base(Session)
         {
 
         }

@@ -150,8 +150,8 @@ namespace Aras.ViewModel.Properties
             }
         }
 
-        public String()
-            : base()
+        public String(Manager.Session Session)
+            : base(Session)
         {
             this._length = DefaultLength;
         }

@@ -56,8 +56,8 @@ namespace Aras.ViewModel.Design
             this.Search.AddToPropertyNames("item_number,major_rev,name");
         }
 
-        public PartRelationshipTree()
-            : base(new RelationshipFormatters.Part(), new ItemFormatters.Part())
+        public PartRelationshipTree(ViewModel.Manager.Session Session)
+            : base(Session, new RelationshipFormatters.Part(), new ItemFormatters.Part())
         {
 
         }

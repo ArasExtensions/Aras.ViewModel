@@ -32,17 +32,18 @@ namespace Aras.ViewModel
 {
     public class ControlCache<I,C> : Dictionary<I,C> where I:Model.Item where C:Control
     {
+        public Manager.Session Session { get; private set; }
         public C Get(I Item)
         {
             if (!this.ContainsKey(Item))
             {
-                this[Item] = (C)Activator.CreateInstance(typeof(C), new object[] { });
+                this[Item] = (C)Activator.CreateInstance(typeof(C), new object[1] { this.Session });
             }
 
             return this[Item];
         }
 
-        public ControlCache()
+        public ControlCache(Manager.Session Session)
             :base()
         {
         }

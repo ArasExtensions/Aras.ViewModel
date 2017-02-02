@@ -32,8 +32,8 @@ namespace Aras.ViewModel
 {
     public abstract class Layout : Container
     {
-        public Layout()
-            :base()
+        public Layout(Manager.Session Session)
+            :base(Session)
         {
 
         }

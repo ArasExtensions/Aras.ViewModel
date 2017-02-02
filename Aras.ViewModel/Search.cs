@@ -203,10 +203,10 @@ namespace Aras.ViewModel
                             switch(property.GetType().Name)
                             {
                                 case "String":
-                                    this.Grid.Rows[i].Cells[j].Value = new Properties.String();
+                                    this.Grid.Rows[i].Cells[j].Value = new Properties.String(this.Session);
                                     break;
                                 case "Integer":
-                                    this.Grid.Rows[i].Cells[j].Value = new Properties.Integer();
+                                    this.Grid.Rows[i].Cells[j].Value = new Properties.Integer(this.Session);
                                     break;
                                 default:
                                     throw new Model.Exceptions.ArgumentException("PropertyType not implmented: " + property.GetType().Name);
@@ -224,41 +224,41 @@ namespace Aras.ViewModel
             }
         }
 
-        public Search()
-            :base()
+        public Search(Manager.Session Session)
+            :base(Session)
         {
             // Create Lists
             this._propertyNames = new List<String>();
             this.Selected = new Model.ObservableList<T>();
 
             // Create Page
-            this.Page = new Properties.Integer();
+            this.Page = new Properties.Integer(this.Session);
 
             // Create PageSize
-            this.PageSize = new Properties.Integer();
+            this.PageSize = new Properties.Integer(this.Session);
             this.PageSize.MinValue = 5;
             this.PageSize.MaxValue = 100;
             this.PageSize.Tooltip = "Page Size";
 
             // Create ToolBar
-            this.ToolBar = new Containers.ToolBar();
+            this.ToolBar = new Containers.ToolBar(this.Session);
             this.ToolBar.Region = Regions.Top;
             this.Children.Add(this.ToolBar);
 
             // Create Grid
-            this.Grid = new Grid();
+            this.Grid = new Grid(this.Session);
             this.Grid.SelectedRows.ListChanged += SelectedRows_ListChanged;
             this.Children.Add(this.Grid);
 
             // Create Search Button
-            Button searchbutton = new Button();
+            Button searchbutton = new Button(this.Session);
             searchbutton.Icon = "Search";
             searchbutton.Tooltip = "Search";
             searchbutton.Binding = this.Refresh;
             this.ToolBar.Children.Add(searchbutton);
 
             // Add Seperator
-            this.ToolBar.Children.Add(new ToolBarSeparator());
+            this.ToolBar.Children.Add(new ToolBarSeparator(this.Session));
 
             // Add PageSize
             this.ToolBar.Children.Add(this.PageSize);
@@ -267,7 +267,7 @@ namespace Aras.ViewModel
             this.NextPage = new NextPageCommand(this);
 
             // Create Next Page Button
-            Button nextpage = new Button();
+            Button nextpage = new Button(this.Session);
             nextpage.Binding = this.NextPage;
             nextpage.Icon = "NextPage";
             nextpage.Tooltip = "Next Page";
@@ -277,17 +277,17 @@ namespace Aras.ViewModel
             this.PreviousPage = new PreviousPageCommand(this);
 
             // Create Previous Page Button
-            Button prevpage = new Button();
+            Button prevpage = new Button(this.Session);
             prevpage.Binding = this.PreviousPage;
             prevpage.Icon = "PreviousPage";
             prevpage.Tooltip = "Previous Page";
             this.ToolBar.Children.Add(prevpage);
 
             // Add Seperator
-            this.ToolBar.Children.Add(new ToolBarSeparator());
+            this.ToolBar.Children.Add(new ToolBarSeparator(this.Session));
 
             // Add Query String
-            this.QueryString = new Properties.String();
+            this.QueryString = new Properties.String(this.Session);
             this.QueryString.Value = null;
             this.QueryString.Tooltip = "Search String";
             this.ToolBar.Children.Add(this.QueryString);

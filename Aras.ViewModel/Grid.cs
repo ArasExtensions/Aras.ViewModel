@@ -130,8 +130,8 @@ namespace Aras.ViewModel
             this.OnPropertyChanged("SelectedRows");
         }
 
-        public Grid()
-            :base()
+        public Grid(Manager.Session Session)
+            :base(Session)
         {
             this.Select = new SelectCommand(this);
             this.Columns = new Model.ObservableList<Column>();

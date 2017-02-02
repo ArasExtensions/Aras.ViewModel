@@ -88,31 +88,13 @@ namespace Aras.ViewModel.Containers
             }
         }
 
-        protected Model.Session Session { get; private set; }
-
         protected override void AfterBindingChanged()
         {
             base.AfterBindingChanged();
-
-            if (this.Binding != null)
-            {
-                if (this.Binding is Model.Session)
-                {
-                    this.Session = (Model.Session)this.Binding;
-                }
-                else
-                {
-                    throw new Model.Exceptions.ArgumentException("Application binding must be of type Aras.Model.Session");
-                }
-            }
-            else
-            {
-                this.Session = null;
-            }
         }
 
-        public Application()
-            :base()
+        public Application(Manager.Session Session)
+            :base(Session)
         {
 
         }

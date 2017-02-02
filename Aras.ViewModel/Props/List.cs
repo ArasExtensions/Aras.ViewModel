@@ -122,7 +122,7 @@ namespace Aras.ViewModel.Properties
 
                 foreach (Model.ListValue modellistvalue in list.Values)
                 {
-                    ListValue listvalue = new ListValue();
+                    ListValue listvalue = new ListValue(this.Session);
                     listvalue.Binding = modellistvalue;
                     this.Values.Add(listvalue);
 
@@ -173,8 +173,8 @@ namespace Aras.ViewModel.Properties
             this.OnPropertyChanged("Values");
         }
 
-        public List()
-            :base()
+        public List(Manager.Session Session)
+            :base(Session)
         {
             this.Values = new Model.ObservableList<ListValue>();
             this.Values.ListChanged += Values_ListChanged;

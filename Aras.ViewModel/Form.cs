@@ -76,13 +76,13 @@ namespace Aras.ViewModel
                         switch (modelproperty.Type.GetType().Name)
                         {
                             case "Float":
-                                property = new Properties.Float();
+                                property = new Properties.Float(this.Session);
                                 break;
                             case "List":
-                                property = new Properties.List();
+                                property = new Properties.List(this.Session);
                                 break;
                             case "String":
-                                property = new Properties.String();
+                                property = new Properties.String(this.Session);
                                 break;
                             default:
                                 throw new NotImplementedException("Property Type not implemented: " + ((Model.Item)this.Binding).HasProperty(propertyname));
@@ -97,8 +97,8 @@ namespace Aras.ViewModel
             this.Fields.NotifyListChanged = true;
         }
 
-        public Form()
-            :base()
+        public Form(Manager.Session Session)
+            :base(Session)
         {
             this._propertyNames = new List<String>();
             this.Fields = new Model.ObservableList<Property>();

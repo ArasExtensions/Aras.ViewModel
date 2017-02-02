@@ -36,8 +36,8 @@ namespace Aras.ViewModel
         [Attributes.Property("Icon", Attributes.PropertyTypes.String, true)]
         public System.String Icon { get; set; }
 
-        public Button()
-            :base()
+        public Button(Manager.Session Session)
+            :base(Session)
         {
 
         }

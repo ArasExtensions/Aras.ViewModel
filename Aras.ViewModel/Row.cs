@@ -72,7 +72,7 @@ namespace Aras.ViewModel
         }
 
         internal Row(Grid Grid)
-            :base()
+            :base(Grid.Session)
         {
             this.Grid = Grid;
             this.Cells = new Model.ObservableList<Cell>();

@@ -44,7 +44,7 @@ namespace Aras.ViewModel.Design
             {
                 if (this._bOM == null)
                 {
-                    this._bOM = new Grid();
+                    this._bOM = new Grid(this.Session);
                     this.OnPropertyChanged("BOM");
                     this._bOM.AllowSelect = false;
                     this._bOM.AddColumn("number", "Number");
@@ -65,7 +65,7 @@ namespace Aras.ViewModel.Design
             {
                 if (this._configuration == null)
                 {
-                    this._configuration = new Grid();
+                    this._configuration = new Grid(this.Session);
                     this.OnPropertyChanged("Configuration");
                     this._configuration.AllowSelect = false;
                     this._configuration.AddColumn("rule", "Item");
@@ -377,19 +377,19 @@ namespace Aras.ViewModel.Design
             }
         }
 
-        public Order()
-            : base()
+        public Order(ViewModel.Manager.Session Session)
+            : base(Session)
         {
             this.BuildFlatBOM = new BuildFlatBOMCommand(this);
 
             // Create Caches
-            this.PartBOMNumberCache = new ControlCache<Model.Design.PartBOM, ViewModel.Properties.String>();
-            this.PartBOMRevisionCache = new ControlCache<Model.Design.PartBOM, ViewModel.Properties.String>();
-            this.PartBOMNameCache = new ControlCache<Model.Design.PartBOM, ViewModel.Properties.String>();
-            this.PartBOMQuantityCache = new ControlCache<Model.Design.PartBOM, ViewModel.Properties.Float>();
-            this.ConfigQuestionCache = new ControlCache<Model.Design.OrderContext, ViewModel.Properties.String>();
-            this.ConfigValueCache = new ControlCache<Model.Design.OrderContext, Properties.OrderContextList>();
-            this.ConfigQuantityCache = new ControlCache<Model.Design.OrderContext, ViewModel.Properties.Float>();
+            this.PartBOMNumberCache = new ControlCache<Model.Design.PartBOM, ViewModel.Properties.String>(this.Session);
+            this.PartBOMRevisionCache = new ControlCache<Model.Design.PartBOM, ViewModel.Properties.String>(this.Session);
+            this.PartBOMNameCache = new ControlCache<Model.Design.PartBOM, ViewModel.Properties.String>(this.Session);
+            this.PartBOMQuantityCache = new ControlCache<Model.Design.PartBOM, ViewModel.Properties.Float>(this.Session);
+            this.ConfigQuestionCache = new ControlCache<Model.Design.OrderContext, ViewModel.Properties.String>(this.Session);
+            this.ConfigValueCache = new ControlCache<Model.Design.OrderContext, Properties.OrderContextList>(this.Session);
+            this.ConfigQuantityCache = new ControlCache<Model.Design.OrderContext, ViewModel.Properties.Float>(this.Session);
         }
 
         public class BuildFlatBOMCommand : Aras.ViewModel.Command

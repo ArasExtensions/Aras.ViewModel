@@ -99,7 +99,7 @@ namespace Aras.ViewModel
         }
 
         internal Column(Grid Grid, String Name, String Label)
-            :base()
+            :base(Grid.Session)
         {
             this.Grid = Grid;
             this.Name = Name;

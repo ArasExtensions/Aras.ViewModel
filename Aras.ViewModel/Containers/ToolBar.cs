@@ -34,8 +34,8 @@ namespace Aras.ViewModel.Containers
     public class ToolBar : Container
     {
 
-        public ToolBar()
-            :base()
+        public ToolBar(Manager.Session Session)
+            :base(Session)
         {
 
         }

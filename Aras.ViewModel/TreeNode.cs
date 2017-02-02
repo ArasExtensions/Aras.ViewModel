@@ -202,7 +202,7 @@ namespace Aras.ViewModel
         }
 
         public TreeNode(Tree Tree, TreeNode Parent)
-            :base()
+            :base(Tree.Session)
         {
             this.Tree = Tree;
             this.Parent = Parent;

@@ -273,8 +273,8 @@ namespace Aras.ViewModel
             }
         }
 
-        public RelationshipTree(IRelationshipFormatter RelationshipFormatter, IItemFormatter ItemFormatter)
-            :base()
+        public RelationshipTree(Manager.Session Session, IRelationshipFormatter RelationshipFormatter, IItemFormatter ItemFormatter)
+            :base(Session)
         {
             this.NodeCache = new Dictionary<String, RelationshipTreeNode>();
             this._relationshipFormatter = RelationshipFormatter;
@@ -293,14 +293,14 @@ namespace Aras.ViewModel
             this.Indent = new IndentCommand(this);
             this.Outdent = new OutdentCommand(this);
             this.SearchClosed = new SearchClosedCommand(this);
-            this.Search = new Searches.Item();
+            this.Search = new Searches.Item(this.Session);
 
             // Watch for Selection on Search Control
             this.Search.Selected.ListChanged += Selected_ListChanged;
         }
 
-        public RelationshipTree()
-            : this(new RelationshipFormatters.Default(), new ItemFormatters.Default())
+        public RelationshipTree(Manager.Session Session)
+            : this(Session, new RelationshipFormatters.Default(), new ItemFormatters.Default())
         {
 
         }

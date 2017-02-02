@@ -93,8 +93,8 @@ namespace Aras.ViewModel
             }
         }
 
-        public Property()
-            :base()
+        public Property(Manager.Session Session)
+            :base(Session)
         {
             this.Required = false;
         }

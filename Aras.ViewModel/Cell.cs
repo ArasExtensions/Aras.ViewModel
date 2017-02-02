@@ -67,7 +67,7 @@ namespace Aras.ViewModel
         }
 
         internal Cell(Column Column, Row Row)
-            :base()
+            :base(Column.Session)
         {
             this.Column = Column;
             this.Row = Row;

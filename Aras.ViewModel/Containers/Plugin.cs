@@ -34,8 +34,8 @@ namespace Aras.ViewModel.Containers
     public abstract class Plugin : Containers.BorderContainer
     {
 
-        public Plugin()
-            :base()
+        public Plugin(Manager.Session Session)
+            :base(Session)
         {
 
         }

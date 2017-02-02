@@ -35,6 +35,8 @@ namespace Aras.ViewModel
 
     public abstract class Control : IEquatable<Control>, INotifyPropertyChanged
     {
+        public Manager.Session Session { get; private set; }
+
         public Guid ID { get; private set; }
 
         [Attributes.Property("Region", Attributes.PropertyTypes.Int32, true)]
@@ -356,8 +358,9 @@ namespace Aras.ViewModel
             return this.ID.GetHashCode();
         }
 
-        public Control()
+        public Control(Manager.Session Session)
         {
+            this.Session = Session;
             this.ID = Guid.NewGuid();
             this.Refresh = new RefreshCommand(this);
             this.Close = new CloseCommand(this);

@@ -91,7 +91,7 @@ namespace Aras.ViewModel.Manager
         public ViewModel.Control Plugin(ControlType PluginType, String Context)
         {
             // Create Control
-            ViewModel.Control plugin = (ViewModel.Control)Activator.CreateInstance(PluginType.Type, new object[] { });
+            ViewModel.Control plugin = (ViewModel.Control)Activator.CreateInstance(PluginType.Type, new object[1] { this });
 
             // Set Context
             ((Aras.ViewModel.Item)plugin).SetBinding(this.Model, Context);
@@ -124,7 +124,7 @@ namespace Aras.ViewModel.Manager
             if (!this.ApplicationCache.ContainsKey(ApplicationType))
             {
                 // Create Control
-                this.ApplicationCache[ApplicationType] = (ViewModel.Containers.Application)Activator.CreateInstance(ApplicationType.Type, new object[] { });
+                this.ApplicationCache[ApplicationType] = (ViewModel.Containers.Application)Activator.CreateInstance(ApplicationType.Type, new object[1] { this });
                 this.ApplicationCache[ApplicationType].Name = ApplicationType.Name;
                 this.ApplicationCache[ApplicationType].Label = ApplicationType.Label;
                 this.ApplicationCache[ApplicationType].Icon = ApplicationType.Icon;

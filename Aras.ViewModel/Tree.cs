@@ -78,8 +78,8 @@ namespace Aras.ViewModel
             }
         }
 
-        public Tree()
-            :base()
+        public Tree(Manager.Session Session)
+            :base(Session)
         {
             this._lazyLoad = true;
         }

@@ -307,8 +307,8 @@ namespace Aras.ViewModel
             this.SetCommandsCanExecute();
         }
 
-        public Item()
-            : base()
+        public Item(Manager.Session Session)
+            : base(Session)
         {
             this.Edit = new EditCommand(this);
             this.Save = new SaveCommand(this);

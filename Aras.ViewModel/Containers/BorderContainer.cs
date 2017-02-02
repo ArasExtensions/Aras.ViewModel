@@ -34,8 +34,8 @@ namespace Aras.ViewModel.Containers
     public class BorderContainer : Layout, IContained
     {
 
-        public BorderContainer()
-            :base()
+        public BorderContainer(Manager.Session Session)
+            :base(Session)
         {
 
         }
