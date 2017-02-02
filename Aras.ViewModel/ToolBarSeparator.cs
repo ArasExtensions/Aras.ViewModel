@@ -30,10 +30,10 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel
 {
-    [Attributes.ClientControl("Aras.View.ToolBarSeparator")]
-    public class ToolBarSeparator : Control
+    [Attributes.ClientControl("Aras.View.ToolbarSeparator")]
+    public class ToolbarSeparator : Control
     {
-        public ToolBarSeparator(Manager.Session Session)
+        public ToolbarSeparator(Manager.Session Session)
             :base(Session)
         {
 

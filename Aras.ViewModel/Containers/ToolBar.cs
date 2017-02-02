@@ -30,11 +30,11 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel.Containers
 {
-    [Attributes.ClientControl("Aras.View.Containers.ToolBar")]
-    public class ToolBar : Container
+    [Attributes.ClientControl("Aras.View.Containers.Toolbar")]
+    public class Toolbar : Container
     {
 
-        public ToolBar(Manager.Session Session)
+        public Toolbar(Manager.Session Session)
             :base(Session)
         {
 

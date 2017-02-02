@@ -72,7 +72,7 @@
     <Compile Include="Manager\Exceptions\SessionException.cs" />
     <Compile Include="Manager\Server.cs" />
     <Compile Include="Manager\Session.cs" />
-    <Compile Include="ToolBarSeparator.cs" />
+    <Compile Include="ToolbarSeparator.cs" />
     <Compile Include="Button.cs" />
     <Compile Include="Containers\Plugin.cs" />
     <Compile Include="IContained.cs" />

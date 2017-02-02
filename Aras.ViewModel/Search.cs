@@ -111,7 +111,7 @@ namespace Aras.ViewModel
 
         private Properties.String QueryString { get; set; }
 
-        private Containers.ToolBar ToolBar { get; set; }
+        private Containers.Toolbar Toolbar { get; set; }
 
         private Grid Grid { get; set; }
 
@@ -240,10 +240,10 @@ namespace Aras.ViewModel
             this.PageSize.MaxValue = 100;
             this.PageSize.Tooltip = "Page Size";
 
-            // Create ToolBar
-            this.ToolBar = new Containers.ToolBar(this.Session);
-            this.ToolBar.Region = Regions.Top;
-            this.Children.Add(this.ToolBar);
+            // Create Toolbar
+            this.Toolbar = new Containers.Toolbar(this.Session);
+            this.Toolbar.Region = Regions.Top;
+            this.Children.Add(this.Toolbar);
 
             // Create Grid
             this.Grid = new Grid(this.Session);
@@ -255,13 +255,13 @@ namespace Aras.ViewModel
             searchbutton.Icon = "Search";
             searchbutton.Tooltip = "Search";
             searchbutton.Binding = this.Refresh;
-            this.ToolBar.Children.Add(searchbutton);
+            this.Toolbar.Children.Add(searchbutton);
 
             // Add Seperator
-            this.ToolBar.Children.Add(new ToolBarSeparator(this.Session));
+            this.Toolbar.Children.Add(new ToolbarSeparator(this.Session));
 
             // Add PageSize
-            this.ToolBar.Children.Add(this.PageSize);
+            this.Toolbar.Children.Add(this.PageSize);
 
             // Create Next Page Commands
             this.NextPage = new NextPageCommand(this);
@@ -271,7 +271,7 @@ namespace Aras.ViewModel
             nextpage.Binding = this.NextPage;
             nextpage.Icon = "NextPage";
             nextpage.Tooltip = "Next Page";
-            this.ToolBar.Children.Add(nextpage);
+            this.Toolbar.Children.Add(nextpage);
 
             // Create Previous Page Command
             this.PreviousPage = new PreviousPageCommand(this);
@@ -281,16 +281,16 @@ namespace Aras.ViewModel
             prevpage.Binding = this.PreviousPage;
             prevpage.Icon = "PreviousPage";
             prevpage.Tooltip = "Previous Page";
-            this.ToolBar.Children.Add(prevpage);
+            this.Toolbar.Children.Add(prevpage);
 
             // Add Seperator
-            this.ToolBar.Children.Add(new ToolBarSeparator(this.Session));
+            this.Toolbar.Children.Add(new ToolbarSeparator(this.Session));
 
             // Add Query String
             this.QueryString = new Properties.String(this.Session);
             this.QueryString.Value = null;
             this.QueryString.Tooltip = "Search String";
-            this.ToolBar.Children.Add(this.QueryString);
+            this.Toolbar.Children.Add(this.QueryString);
         }
 
         void SelectedRows_ListChanged(object sender, EventArgs e)
