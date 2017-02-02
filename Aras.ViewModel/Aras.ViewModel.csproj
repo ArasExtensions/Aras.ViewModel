@@ -64,6 +64,8 @@
     <Compile Include="Attributes\Property.cs" />
     <Compile Include="Forms\Tables\Default.cs" />
     <Compile Include="Forms\Table.cs" />
+    <Compile Include="Grids\Search.cs" />
+    <Compile Include="Grids\Searches\ItemType.cs" />
     <Compile Include="Manager\ControlType.cs" />
     <Compile Include="Manager\ControlTypes\ApplicationType.cs" />
     <Compile Include="Manager\ControlTypes\PluginType.cs" />
@@ -107,9 +109,6 @@
     <Compile Include="Props\String.cs" />
     <Compile Include="Props\Float.cs" />
     <Compile Include="Props\List.cs" />
-    <Compile Include="Search.cs" />
-    <Compile Include="Searches\Item.cs" />
-    <Compile Include="Searches\Relationship.cs" />
     <Compile Include="Containers\ToolBar.cs" />
     <Compile Include="Tree.cs" />
     <Compile Include="TreeNode.cs" />
