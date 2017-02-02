@@ -57,10 +57,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\Form.cs" />
     <Compile Include="Attributes\Application.cs" />
     <Compile Include="Attributes\ClientControl.cs" />
     <Compile Include="Attributes\Command.cs" />
     <Compile Include="Attributes\Property.cs" />
+    <Compile Include="Forms\Tables\Default.cs" />
+    <Compile Include="Forms\Table.cs" />
     <Compile Include="Manager\ControlType.cs" />
     <Compile Include="Manager\ControlTypes\ApplicationType.cs" />
     <Compile Include="Manager\ControlTypes\PluginType.cs" />

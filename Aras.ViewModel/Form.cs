@@ -30,78 +30,234 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel
 {
-    public class Form : Item
+    public abstract class Form : Control
     {
-        [ViewModel.Attributes.Property("Properties", Aras.ViewModel.Attributes.PropertyTypes.ControlList, true)]
-        public Model.ObservableList<Property> Fields { get; private set; }
+        [ViewModel.Attributes.Command("Save")]
+        public SaveCommand Save { get; private set; }
 
-        private List<String> _propertyNames;
-        public IEnumerable<String> PropertyNames
-        {
-            get
-            {
-                return this._propertyNames;
-            }
-        }
+        [ViewModel.Attributes.Command("SaveUnLock")]
+        public SaveUnLockCommand SaveUnLock { get; private set; }
 
-        public void AddPropertyNames(String Names)
-        {
-            foreach (String name in Names.Split(','))
-            {
-                if (!this._propertyNames.Contains(name))
-                {
-                    this._propertyNames.Add(name);
-                }
-            }
-        }
+        [ViewModel.Attributes.Command("Edit")]
+        public EditCommand Edit { get; private set; }
+
+        [ViewModel.Attributes.Command("Undo")]
+        public UndoCommand Undo { get; private set; }
+
+        [ViewModel.Attributes.Property("Children", Aras.ViewModel.Attributes.PropertyTypes.ControlList, true)]
+        public Model.ObservableList<Control> Children { get; private set; }
 
         protected override void AfterBindingChanged()
         {
             base.AfterBindingChanged();
 
-            this.Fields.NotifyListChanged = false;
-            this.Fields.Clear();
+            if (this.Transaction != null)
+            {
+                // Rollback existing Transaction
+                this.Transaction.RollBack();
+                this.Transaction = null;
+            }
 
             if (this.Binding != null)
             {
-                //this.Transaction = ((Model.Item)this.Binding).Transaction;
-
-                foreach (String propertyname in this.PropertyNames)
+                if (this.Binding is Model.Item)
                 {
-                    if (((Model.Item)this.Binding).HasProperty(propertyname))
+                    // Set Item
+                    this.Item = (Model.Item)this.Binding;
+
+                    if (this.Item.Locked(true))
                     {
-                        Model.Property modelproperty = ((Model.Item)this.Binding).Property(propertyname);
-                        ViewModel.Property property = null;
-
-                        switch (modelproperty.Type.GetType().Name)
-                        {
-                            case "Float":
-                                property = new Properties.Float(this.Session);
-                                break;
-                            case "List":
-                                property = new Properties.List(this.Session);
-                                break;
-                            case "String":
-                                property = new Properties.String(this.Session);
-                                break;
-                            default:
-                                throw new NotImplementedException("Property Type not implemented: " + ((Model.Item)this.Binding).HasProperty(propertyname));
-                        }
-
-                        property.Binding = modelproperty;
-                        this.Fields.Add(property);
+                        // Create Transaction and add Item
+                        this.Transaction = this.Session.Model.BeginTransaction();
+                        this.Item.Update(this.Transaction);
+                    }
+                    else
+                    {
+                        this.Transaction = null; 
                     }
                 }
+                else
+                {
+                    throw new Model.Exceptions.ArgumentException("Binding must be of type Aras.Model.Item");
+                }
+            }
+            else
+            {
+                this.Item = null;
             }
 
-            this.Fields.NotifyListChanged = true;
+            // Update Commands
+            this.SetCommandsCanExecute();
+        }
+
+        protected Model.Item Item { get; private set; }
+
+        protected Model.Transaction Transaction { get; private set; }
+
+        private void SaveForm()
+        {
+            if (this.Transaction != null)
+            {
+                this.Transaction.Commit(false);
+                this.Transaction = this.Session.Model.BeginTransaction();
+                this.Item.Update(this.Transaction);
+                this.SetCommandsCanExecute();
+            }
+        }
+
+        private void SaveUnLockForm()
+        {
+            if (this.Transaction != null)
+            {
+                this.Transaction.Commit(true);
+                this.SetCommandsCanExecute();
+            }
+        }
+
+        private void EditForm()
+        {
+            if (this.Item != null)
+            {
+                if (this.Transaction == null)
+                {
+                    this.Transaction = this.Session.Model.BeginTransaction();
+                    this.Item.Update(this.Transaction);
+                    this.SetCommandsCanExecute();
+                }
+            }
+        }
+
+        private void UndoForm()
+        {
+            if (this.Transaction != null)
+            {
+                this.Transaction.RollBack();
+                this.Transaction = null;
+                this.SetCommandsCanExecute();
+            }
+        }
+
+        private void SetCommandsCanExecute()
+        {
+            if (this.Item != null)
+            {
+                if (this.Transaction == null)
+                {
+                    this.Edit.UpdateCanExecute(true);
+                    this.Save.UpdateCanExecute(false);
+                    this.SaveUnLock.UpdateCanExecute(false);
+                    this.Undo.UpdateCanExecute(false);
+                }
+                else
+                {
+                    this.Edit.UpdateCanExecute(false);
+                    this.Save.UpdateCanExecute(true);
+                    this.SaveUnLock.UpdateCanExecute(true);
+                    this.Undo.UpdateCanExecute(true);
+                }
+            }
+            else
+            {
+                this.Edit.UpdateCanExecute(false);
+                this.Save.UpdateCanExecute(false);
+                this.SaveUnLock.UpdateCanExecute(false);
+                this.Undo.UpdateCanExecute(false);
+            }
         }
 
         public Form(Manager.Session Session)
             :base(Session)
         {
-            this._propertyNames = new List<String>();
-            this.Fields = new Model.ObservableList<Property>();
+            this.Children = new Model.ObservableList<Control>();
+            this.Edit = new EditCommand(this);
+            this.Save = new SaveCommand(this);
+            this.SaveUnLock = new SaveUnLockCommand(this);
+            this.Undo = new UndoCommand(this);
+            this.Transaction = null;
+        }
+
+        public class SaveCommand : Aras.ViewModel.Command
+        {
+            public Form Form { get; private set; }
+
+            internal void UpdateCanExecute(Boolean CanExecute)
+            {
+                this.CanExecute = CanExecute;
+            }
+
+            protected override void Run(IEnumerable<Control> Parameters)
+            {
+                this.Form.SaveForm();
+            }
+
+            internal SaveCommand(Form Form)
+            {
+                this.Form = Form;
+                this.CanExecute = false;
+            }
+        }
+
+        public class SaveUnLockCommand : Aras.ViewModel.Command
+        {
+            public Form Form { get; private set; }
+
+            internal void UpdateCanExecute(Boolean CanExecute)
+            {
+                this.CanExecute = CanExecute;
+            }
+
+            protected override void Run(IEnumerable<Control> Parameters)
+            {
+                this.Form.SaveUnLockForm();
+            }
+
+            internal SaveUnLockCommand(Form Form)
+            {
+                this.Form = Form;
+                this.CanExecute = false;
+            }
+
+        }
+        public class EditCommand : Aras.ViewModel.Command
+        {
+            public Form Form { get; private set; }
+
+            internal void UpdateCanExecute(Boolean CanExecute)
+            {
+                this.CanExecute = CanExecute;
+            }
+
+            protected override void Run(IEnumerable<Control> Parameters)
+            {
+                this.Form.EditForm();
+            }
+
+            internal EditCommand(Form Form)
+            {
+                this.Form = Form;
+                this.CanExecute = false;
+            }
+        }
+
+        public class UndoCommand : Aras.ViewModel.Command
+        {
+            public Form Form { get; private set; }
+
+            internal void UpdateCanExecute(Boolean CanExecute)
+            {
+                this.CanExecute = CanExecute;
+            }
+
+            protected override void Run(IEnumerable<Control> Parameters)
+            {
+                this.Form.UndoForm();
+            }
+
+            internal UndoCommand(Form Form)
+            {
+                this.Form = Form;
+                this.CanExecute = false;
+            }
         }
 
     }
