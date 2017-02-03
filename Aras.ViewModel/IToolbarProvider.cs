@@ -30,19 +30,8 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel
 {
-    [Attributes.ClientControl("Aras.View.Button")]
-    public class Button : Control
+    public interface IToolbarProvider
     {
-        [Attributes.Property("Icon", Attributes.PropertyTypes.String, true)]
-        public System.String Icon { get; set; }
-
-        [ViewModel.Attributes.Command("Command")]
-        public Command Command { get; set; }
-
-        public Button(Manager.Session Session)
-            :base(Session)
-        {
-
-        }
+        Containers.Toolbar Toolbar { get; }
     }
 }

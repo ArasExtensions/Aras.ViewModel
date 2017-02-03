@@ -30,7 +30,7 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel.Grids
 {
-    public abstract class Search : Containers.BorderContainer
+    public abstract class Search : Containers.BorderContainer, IToolbarProvider
     {
         private List<String> _propertyNames;
         public IEnumerable<String> PropertyNames
@@ -66,6 +66,51 @@ namespace Aras.ViewModel.Grids
             this.RefreshControl();
         }
 
+        private Containers.Toolbar _toolbar;
+        public virtual Containers.Toolbar Toolbar
+        {
+            get
+            {
+                if (this._toolbar == null)
+                {
+                    // Create Toolbar
+                    this._toolbar = new Containers.Toolbar(this.Session);
+                    this._toolbar.Children.NotifyListChanged = false;
+
+                    // Add Search Button
+                    Button searchbutton = new Button(this.Session);
+                    searchbutton.Icon = "Search";
+                    searchbutton.Tooltip = "Search";
+                    this._toolbar.Children.Add(searchbutton);
+                    searchbutton.Command = this.Refresh;
+
+                    // Add Page Size
+                    this._toolbar.Children.Add(this.PageSize);
+
+                    // Add Next Page Button
+                    Button nextbutton = new Button(this.Session);
+                    nextbutton.Icon = "NextPage";
+                    nextbutton.Tooltip = "Next Page";
+                    this._toolbar.Children.Add(nextbutton);
+                    nextbutton.Command = this.NextPage;
+
+                    // Add Previous Page Button
+                    Button previousbutton = new Button(this.Session);
+                    previousbutton.Icon = "PreviousPage";
+                    previousbutton.Tooltip = "Previous Page";
+                    this._toolbar.Children.Add(previousbutton);
+                    previousbutton.Command = this.PreviousPage;
+
+                    // Add Query String
+                    this._toolbar.Children.Add(this.QueryString);
+
+                    this._toolbar.Children.NotifyListChanged = true;
+                }
+
+                return this._toolbar;
+            }
+        }
+
         protected ViewModel.Grid Grid { get; private set; }
 
         [ViewModel.Attributes.Command("NextPage")]
@@ -95,6 +140,14 @@ namespace Aras.ViewModel.Grids
             this.RefreshControl();
         }
 
+        private void PageSize_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Value")
+            {
+                this.RefreshControl();
+            }
+        }
+
         public Search(Manager.Session Session)
             :base(Session)
         {
@@ -109,13 +162,22 @@ namespace Aras.ViewModel.Grids
             this.NextPage = new NextPageCommand(this);
             this.PreviousPage = new PreviousPageCommand(this);
             
-            // Create Properties
+            // Create Query String
             this.QueryString = new Properties.String(this.Session);
+            this.QueryString.Enabled = true;
+            this.QueryString.Tooltip = "Search String";
+
+            // Create Page Size
             this.PageSize = new Properties.Integer(this.Session);
-            
+            this.PageSize.Tooltip = "Page Size";
+            this.PageSize.Width = 50;
+            this.PageSize.Enabled = true;
             this.PageSize.MinValue = 1;
             this.PageSize.MaxValue = 100;
             this.PageSize.Value = 25;
+            this.PageSize.PropertyChanged += PageSize_PropertyChanged;
+
+            // Default parameters
             this.Page = 1;
             this.NoPages = 0;
         }
@@ -129,6 +191,7 @@ namespace Aras.ViewModel.Grids
                 if (this.Search.Page < this.Search.NoPages)
                 {
                     this.Search.Page = this.Search.Page + 1;
+                    this.Search.RefreshControl();
                 }
             }
 
@@ -142,7 +205,6 @@ namespace Aras.ViewModel.Grids
                 {
                     this.CanExecute = false;
                 }
-
             }
 
             internal NextPageCommand(Search Search)
@@ -161,6 +223,7 @@ namespace Aras.ViewModel.Grids
                 if (this.Search.Page > 1)
                 {
                     this.Search.Page = this.Search.Page - 1;
+                    this.Search.RefreshControl();
                 }
             }
 

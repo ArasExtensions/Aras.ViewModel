@@ -37,7 +37,7 @@ namespace Aras.ViewModel.Properties
         const System.Int32 DefaultMaxValue = System.Int32.MaxValue;
 
         private System.Int32? _value;
-        [Attributes.Property("Value", Attributes.PropertyTypes.Int32, false)]
+        [Attributes.Property("Value", Attributes.PropertyTypes.NullableInt32, false)]
         public System.Int32? Value
         {
             get
@@ -50,11 +50,11 @@ namespace Aras.ViewModel.Properties
                 {
                     if (value != null)
                     {
-                        if ((System.Double)value > this.MaxValue)
+                        if ((System.Int32)value > this.MaxValue)
                         {
                             this.SetValue(this.MaxValue);
                         }
-                        else if ((System.Double)value < this.MinValue)
+                        else if ((System.Int32)value < this.MinValue)
                         {
                             this.SetValue(this.MinValue);
                         }
@@ -66,20 +66,27 @@ namespace Aras.ViewModel.Properties
                 }
                 else
                 {
-                    if ((System.Double)value > this.MaxValue)
+                    if (value != null)
                     {
-                        this.SetValue(this.MaxValue);
-                    }
-                    else if ((System.Double)value < this.MinValue)
-                    {
-                        this.SetValue(this.MinValue);
+                        if ((System.Int32)value > this.MaxValue)
+                        {
+                            this.SetValue(this.MaxValue);
+                        }
+                        else if ((System.Int32)value < this.MinValue)
+                        {
+                            this.SetValue(this.MinValue);
+                        }
+                        else
+                        {
+                            if (!this._value.Equals(value))
+                            {
+                                this.SetValue(value);
+                            }
+                        }
                     }
                     else
                     {
-                        if (!this._value.Equals(value))
-                        {
-                            this.SetValue(value);
-                        }
+                        this.SetValue(value);
                     }
                 }
             }

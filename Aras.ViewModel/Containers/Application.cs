@@ -31,8 +31,23 @@ using System.Threading.Tasks;
 namespace Aras.ViewModel.Containers
 {
     [Attributes.ClientControl("Aras.View.Containers.Application")]
-    public abstract class Application : Containers.BorderContainer
+    public abstract class Application : Containers.BorderContainer, IToolbarProvider
     {
+        private Containers.Toolbar _toolbar;
+        [Attributes.Property("Toolbar", Attributes.PropertyTypes.Control, true)]
+        public virtual Containers.Toolbar Toolbar
+        {
+            get
+            {
+                if (this._toolbar == null)
+                {
+                    // Create Toolbar
+                    this._toolbar = new Containers.Toolbar(this.Session);
+                }
+
+                return this._toolbar;
+            }
+        }
 
         private System.String _name;
         [Attributes.Property("Name", Attributes.PropertyTypes.String, true)]
@@ -93,10 +108,43 @@ namespace Aras.ViewModel.Containers
             base.AfterBindingChanged();
         }
 
-        public Application(Manager.Session Session)
-            :base(Session)
+        private List<Control> AddedToolbars;
+        private void Children_ListChanged(object sender, EventArgs e)
         {
+            // Check for Toolbar Providers
 
+            foreach(Control control in this.Children)
+            {
+                if (control is IToolbarProvider)
+                {
+                    if (!this.AddedToolbars.Contains(control))
+                    {
+                        if (this.Toolbar.Children.Count() > 0)
+                        {
+                            // Add Seperator
+                            ToolbarSeparator sep = new ToolbarSeparator(this.Session);
+                            this.Toolbar.Children.Add(sep);
+                        }
+
+                        // Add Toolbar Controls from Child
+                        foreach(Control toolbarcontrol in ((IToolbarProvider)control).Toolbar.Children)
+                        {
+                            this.Toolbar.Children.Add(toolbarcontrol);
+                        }
+
+                        this.AddedToolbars.Add(control);
+                    }
+                }
+            }
         }
+
+        public Application(Manager.Session Session)
+            : base(Session)
+        {
+            this.AddedToolbars = new List<Control>();
+            this.Children.ListChanged += Children_ListChanged;
+        }
+
+
     }
 }

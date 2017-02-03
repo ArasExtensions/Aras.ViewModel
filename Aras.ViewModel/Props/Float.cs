@@ -66,20 +66,27 @@ namespace Aras.ViewModel.Properties
                 }
                 else
                 {
-                    if ((System.Double)value > this.MaxValue)
+                    if (value != null)
                     {
-                        this.SetValue(this.MaxValue);
-                    }
-                    else if ((System.Double)value < this.MinValue)
-                    {
-                        this.SetValue(this.MinValue);
+                        if ((System.Double)value > this.MaxValue)
+                        {
+                            this.SetValue(this.MaxValue);
+                        }
+                        else if ((System.Double)value < this.MinValue)
+                        {
+                            this.SetValue(this.MinValue);
+                        }
+                        else
+                        {
+                            if (!this._value.Equals(value))
+                            {
+                                this.SetValue(value);
+                            }
+                        }
                     }
                     else
                     {
-                        if (!this._value.Equals(value))
-                        {
-                            this.SetValue(value);
-                        }
+                        this.SetValue(value);
                     }
                 }
             }

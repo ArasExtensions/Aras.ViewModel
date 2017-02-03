@@ -30,7 +30,7 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel
 {
-    public abstract class Form : Control
+    public abstract class Form : Control, IToolbarProvider
     {
         [ViewModel.Attributes.Command("Save")]
         public SaveCommand Save { get; private set; }
@@ -62,35 +62,35 @@ namespace Aras.ViewModel
                     refreshbutton.Icon = "Refresh";
                     refreshbutton.Tooltip = "Refresh";
                     this._toolbar.Children.Add(refreshbutton);
-                    refreshbutton.Binding = this.Refresh;
+                    refreshbutton.Command = this.Refresh;
 
                     // Add Edit Button
                     Button editbutton = new Button(this.Session);
                     editbutton.Icon = "Edit";
                     editbutton.Tooltip = "Edit";
                     this._toolbar.Children.Add(editbutton);
-                    editbutton.Binding = this.Edit;
+                    editbutton.Command = this.Edit;
 
                     // Add Undo Button
                     Button undobutton = new Button(this.Session);
                     undobutton.Icon = "Undo";
                     undobutton.Tooltip = "Undo";
                     this._toolbar.Children.Add(undobutton);
-                    undobutton.Binding = this.Undo;
+                    undobutton.Command = this.Undo;
 
                     // Add Save Button
                     Button savebutton = new Button(this.Session);
                     savebutton.Icon = "Save";
                     savebutton.Tooltip = "Save";
                     this._toolbar.Children.Add(savebutton);
-                    savebutton.Binding = this.Save;
+                    savebutton.Command = this.Save;
 
                     // Add SaveUnlock Button
                     Button saveunlockbutton = new Button(this.Session);
                     saveunlockbutton.Icon = "SaveUnlock";
                     saveunlockbutton.Tooltip = "Save Unlock";
                     this._toolbar.Children.Add(saveunlockbutton);
-                    saveunlockbutton.Binding = this.Save;
+                    saveunlockbutton.Command = this.Save;
                 }
 
                 return this._toolbar;

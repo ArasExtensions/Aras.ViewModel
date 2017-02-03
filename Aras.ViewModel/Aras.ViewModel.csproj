@@ -66,6 +66,7 @@
     <Compile Include="Forms\Table.cs" />
     <Compile Include="Grids\Search.cs" />
     <Compile Include="Grids\Searches\ItemType.cs" />
+    <Compile Include="IToolbarProvider.cs" />
     <Compile Include="Manager\ControlType.cs" />
     <Compile Include="Manager\ControlTypes\ApplicationType.cs" />
     <Compile Include="Manager\ControlTypes\PluginType.cs" />
