@@ -67,7 +67,7 @@ namespace Aras.ViewModel.Grids.Searches
         {
             if ((this.Binding != null) && (this.Binding is Model.ItemType))
             {
-                this.Columns.Clear();
+                this.Grid.Columns.Clear();
 
                 // Build List of PropertyTypes
                 this.PropertyTypes = new List<Model.PropertyType>();
@@ -82,13 +82,13 @@ namespace Aras.ViewModel.Grids.Searches
 
                 foreach (Model.PropertyType proptype in this.PropertyTypes)
                 {
-                    this.AddColumn(proptype.Name, proptype.Label);
+                    this.Grid.AddColumn(proptype.Name, proptype.Label);
                 }
             }
             else
             {
                 // Clear Columns
-                this.Columns.Clear();
+                this.Grid.Columns.Clear();
             }
         }
 
@@ -96,9 +96,9 @@ namespace Aras.ViewModel.Grids.Searches
         {
             if (this.Query != null)
             {
-                this.NoRows = this.Query.Count();
+                this.Grid.NoRows = this.Query.Count();
 
-                for (int i = 0; i < this.NoRows; i++)
+                for (int i = 0; i < this.Grid.NoRows; i++)
                 {
                     Model.Item item = this.Query[i];
 
@@ -107,29 +107,29 @@ namespace Aras.ViewModel.Grids.Searches
                         Model.PropertyType proptype = this.PropertyTypes[j];
                         Model.Property property = item.Property(proptype);
 
-                        if (this.Rows[i].Cells[j].Value == null)
+                        if (this.Grid.Rows[i].Cells[j].Value == null)
                         {
                             switch (property.GetType().Name)
                             {
                                 case "String":
-                                    this.Rows[i].Cells[j].Value = new Properties.String(this.Session);
+                                    this.Grid.Rows[i].Cells[j].Value = new Properties.String(this.Session);
                                     break;
                                 case "Integer":
-                                    this.Rows[i].Cells[j].Value = new Properties.Integer(this.Session);
+                                    this.Grid.Rows[i].Cells[j].Value = new Properties.Integer(this.Session);
                                     break;
                                 default:
                                     throw new Model.Exceptions.ArgumentException("PropertyType not implmented: " + property.GetType().Name);
                             }
                         }
 
-                        this.Rows[i].Cells[j].Value.Binding = property;
+                        this.Grid.Rows[i].Cells[j].Value.Binding = property;
                     }
                 }
             }
             else
             {
                 // Clear all Rows
-                this.NoRows = 0;
+                this.Grid.NoRows = 0;
             }
         }
 

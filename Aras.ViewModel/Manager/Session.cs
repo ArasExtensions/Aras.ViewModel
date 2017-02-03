@@ -135,6 +135,11 @@ namespace Aras.ViewModel.Manager
                 // Add Application to Cache
                 this.AddControlToCache(this.ApplicationCache[ApplicationType], false);
             }
+            else
+            {
+                // New client session so ensure added to queue
+                this.AddControlToQueue(this.ApplicationCache[ApplicationType], true);
+            }
 
             return this.ApplicationCache[ApplicationType];
         }
@@ -171,7 +176,7 @@ namespace Aras.ViewModel.Manager
 
                     if (Queue)
                     {
-                        this.AddControlToQueue(Control);
+                        this.AddControlToQueue(Control, false);
                     }
                 }
             }
@@ -189,7 +194,7 @@ namespace Aras.ViewModel.Manager
         {
             // Add Control to Queue so change is picked up
             ViewModel.Control control = (ViewModel.Control)sender;
-            this.AddControlToQueue(control);
+            this.AddControlToQueue(control, false);
 
             // Check if changed Property is a Control or List of Controls
             if (control.HasProperty(e.PropertyName))
@@ -213,11 +218,28 @@ namespace Aras.ViewModel.Manager
         private object ControlQueueLock = new object();
         private Queue<ViewModel.Control> ControlQueue;
 
-        private void AddControlToQueue(ViewModel.Control Control)
+        private void AddControlToQueueRecursive(ViewModel.Control Control)
+        {
+            this.ControlQueue.Enqueue(Control);
+
+            foreach(Control child in Control.Controls)
+            {
+                this.AddControlToQueueRecursive(child);
+            }
+        }
+
+        private void AddControlToQueue(ViewModel.Control Control, Boolean Recursive)
         {
             lock (this.ControlQueueLock)
             {
-                this.ControlQueue.Enqueue(Control);
+                if (Recursive)
+                {
+                    this.AddControlToQueueRecursive(Control);
+                }
+                else
+                {
+                    this.ControlQueue.Enqueue(Control);
+                }
             }
         }
 

@@ -35,10 +35,16 @@ namespace Aras.ViewModel
         [ViewModel.Attributes.Property("Children", Aras.ViewModel.Attributes.PropertyTypes.ControlList, true)]
         public Model.ObservableList<Control> Children { get; private set; }
 
+        private void Children_ListChanged(object sender, EventArgs e)
+        {
+            this.OnPropertyChanged("Children");
+        }
+
         public Container(Manager.Session Session)
             :base(Session)
         {
             this.Children = new Model.ObservableList<Control>();
+            this.Children.ListChanged += Children_ListChanged;
         }
     }
 }

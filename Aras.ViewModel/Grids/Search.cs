@@ -30,7 +30,7 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel.Grids
 {
-    public abstract class Search : Grid
+    public abstract class Search : Containers.BorderContainer
     {
         private List<String> _propertyNames;
         public IEnumerable<String> PropertyNames
@@ -66,6 +66,8 @@ namespace Aras.ViewModel.Grids
             this.RefreshControl();
         }
 
+        protected ViewModel.Grid Grid { get; private set; }
+
         [ViewModel.Attributes.Command("NextPage")]
         public NextPageCommand NextPage { get; private set; }
 
@@ -97,10 +99,20 @@ namespace Aras.ViewModel.Grids
             :base(Session)
         {
             this._propertyNames = new List<String>();
+
+            // Create Grid
+            this.Grid = new Grid(this.Session);
+            this.Grid.Width = this.Width;
+            this.Children.Add(this.Grid);
+
+            // Create Commands
             this.NextPage = new NextPageCommand(this);
             this.PreviousPage = new PreviousPageCommand(this);
+            
+            // Create Properties
             this.QueryString = new Properties.String(this.Session);
             this.PageSize = new Properties.Integer(this.Session);
+            
             this.PageSize.MinValue = 1;
             this.PageSize.MaxValue = 100;
             this.PageSize.Value = 25;

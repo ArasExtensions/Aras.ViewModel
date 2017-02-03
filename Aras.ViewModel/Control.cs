@@ -45,6 +45,12 @@ namespace Aras.ViewModel
         [Attributes.Property("Tooltip", Attributes.PropertyTypes.String, true)]
         public System.String Tooltip { get; set; }
 
+        [Attributes.Property("Height", Attributes.PropertyTypes.NullableInt32, true)]
+        public System.Int32? Height { get; set; }
+
+        [Attributes.Property("Width", Attributes.PropertyTypes.NullableInt32, true)]
+        public System.Int32? Width { get; set; }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected void OnPropertyChanged(String Name)
