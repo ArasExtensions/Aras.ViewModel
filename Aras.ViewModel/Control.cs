@@ -381,7 +381,6 @@ namespace Aras.ViewModel
 
             protected override void Run(IEnumerable<Control> Parameters)
             {
-                this.CanExecute = false;
                 this.Control.RefreshControl();
                 this.CanExecute = true;
             }

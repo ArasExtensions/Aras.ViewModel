@@ -51,14 +51,16 @@ namespace Aras.ViewModel
             return col;
         }
 
+        private Boolean _allowSelect;
         public Boolean AllowSelect
         {
             get
             {
-                return this.Select.CanExecute;
+                return this._allowSelect;
             }
             set
             {
+                this._allowSelect = value;
                 this.Select.UpdateCanExecute(value);
             }
         }
@@ -133,6 +135,7 @@ namespace Aras.ViewModel
         public Grid(Manager.Session Session)
             :base(Session)
         {
+            this._allowSelect = false;
             this.Select = new SelectCommand(this);
             this.Columns = new Model.ObservableList<Column>();
             this.Columns.ListChanged += Columns_ListChanged;
@@ -154,27 +157,31 @@ namespace Aras.ViewModel
 
             protected override void Run(IEnumerable<Control> Parameters)
             {
-                this.Grid.SelectedRows.NotifyListChanged = false;
-                this.Grid.SelectedRows.Clear();
-
-                if (Parameters != null)
+                if (this.Grid.AllowSelect)
                 {
-                    foreach (Control row in Parameters)
+                    this.Grid.SelectedRows.NotifyListChanged = false;
+                    this.Grid.SelectedRows.Clear();
+
+                    if (Parameters != null)
                     {
-                        if (row is Row && this.Grid.Rows.Contains((Row)row))
+                        foreach (Control row in Parameters)
                         {
-                            this.Grid.SelectedRows.Add((Row)row);
+                            if (row is Row && this.Grid.Rows.Contains((Row)row))
+                            {
+                                this.Grid.SelectedRows.Add((Row)row);
+                            }
                         }
                     }
-                }
 
-                this.Grid.SelectedRows.NotifyListChanged = true;
+                    this.Grid.SelectedRows.NotifyListChanged = true;
+                    this.CanExecute = true;
+                }
             }
 
             internal SelectCommand(Grid Grid)
             {
                 this.Grid = Grid;
-                this.CanExecute = true;
+                this.CanExecute = this.Grid.AllowSelect;
             }
         }
 

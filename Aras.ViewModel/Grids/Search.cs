@@ -171,6 +171,7 @@ namespace Aras.ViewModel.Grids
 
             // Create Grid
             this.Grid = new Grid(this.Session);
+            this.Grid.AllowSelect = true;
             this.Grid.Width = this.Width;
             this.Children.Add(this.Grid);
 
