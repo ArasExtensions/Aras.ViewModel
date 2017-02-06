@@ -221,10 +221,35 @@ namespace Aras.ViewModel.Grids.Searches
             this.PreviousPage.Refesh();
         }
 
+        private void SelectedRows_ListChanged(object sender, EventArgs e)
+        {
+            this.Selected.NotifyListChanged = false;
+            this.Selected.Clear();
+
+            foreach(Row row in this.Grid.SelectedRows)
+            {
+                if (row.Cells.Count() > 0)
+                {
+                    Cell cell = row.Cells.First();
+
+                    if (cell.Value != null)
+                    {
+                        if ((cell.Value.Binding != null) && (cell.Value.Binding is Model.Property))
+                        {
+                            this.Selected.Add(((Model.Property)cell.Value.Binding).Item);
+                        }
+                    }
+                }
+            }
+
+            this.Selected.NotifyListChanged = true;
+        }
+
         public ItemType(Manager.Session Session)
             :base(Session)
         {
             this.Selected = new Model.ObservableList<Model.Item>();
+            this.Grid.SelectedRows.ListChanged += SelectedRows_ListChanged;
         }
     }
 }

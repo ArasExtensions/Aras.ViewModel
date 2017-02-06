@@ -62,8 +62,9 @@
     <Compile Include="Attributes\ClientControl.cs" />
     <Compile Include="Attributes\Command.cs" />
     <Compile Include="Attributes\Property.cs" />
-    <Compile Include="Forms\Tables\Default.cs" />
-    <Compile Include="Forms\Table.cs" />
+    <Compile Include="Containers\Forms\Default.cs" />
+    <Compile Include="Panes\ContentPane.cs" />
+    <Compile Include="Panes\TitlePane.cs" />
     <Compile Include="Grids\Search.cs" />
     <Compile Include="Grids\Searches\ItemType.cs" />
     <Compile Include="IToolbarProvider.cs" />
@@ -75,6 +76,7 @@
     <Compile Include="Manager\Exceptions\SessionException.cs" />
     <Compile Include="Manager\Server.cs" />
     <Compile Include="Manager\Session.cs" />
+    <Compile Include="Containers\Table.cs" />
     <Compile Include="ToolbarSeparator.cs" />
     <Compile Include="Button.cs" />
     <Compile Include="Containers\Plugin.cs" />
@@ -82,7 +84,7 @@
     <Compile Include="Container.cs" />
     <Compile Include="ControlCache.cs" />
     <Compile Include="Cell.cs" />
-    <Compile Include="Form.cs" />
+    <Compile Include="Containers\Form.cs" />
     <Compile Include="File.cs" />
     <Compile Include="IRelationshipFormatter.cs" />
     <Compile Include="IItemFormatter.cs" />

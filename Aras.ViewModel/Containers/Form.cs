@@ -28,24 +28,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Aras.ViewModel
+namespace Aras.ViewModel.Containers
 {
-    public abstract class Form : Control, IToolbarProvider
+    public abstract class Form : BorderContainer, IToolbarProvider
     {
         [ViewModel.Attributes.Command("Save")]
         public SaveCommand Save { get; private set; }
-
-        [ViewModel.Attributes.Command("SaveUnLock")]
-        public SaveUnLockCommand SaveUnLock { get; private set; }
 
         [ViewModel.Attributes.Command("Edit")]
         public EditCommand Edit { get; private set; }
 
         [ViewModel.Attributes.Command("Undo")]
         public UndoCommand Undo { get; private set; }
-
-        [ViewModel.Attributes.Property("Children", Aras.ViewModel.Attributes.PropertyTypes.ControlList, true)]
-        public Model.ObservableList<Control> Children { get; private set; }
 
         private Containers.Toolbar _toolbar;
         public virtual Containers.Toolbar Toolbar
@@ -84,13 +78,6 @@ namespace Aras.ViewModel
                     savebutton.Tooltip = "Save";
                     this._toolbar.Children.Add(savebutton);
                     savebutton.Command = this.Save;
-
-                    // Add SaveUnlock Button
-                    Button saveunlockbutton = new Button(this.Session);
-                    saveunlockbutton.Icon = "SaveUnlock";
-                    saveunlockbutton.Tooltip = "Save Unlock";
-                    this._toolbar.Children.Add(saveunlockbutton);
-                    saveunlockbutton.Command = this.Save;
                 }
 
                 return this._toolbar;
@@ -148,18 +135,8 @@ namespace Aras.ViewModel
         {
             if (this.Transaction != null)
             {
-                this.Transaction.Commit(false);
-                this.Transaction = this.Session.Model.BeginTransaction();
-                this.Item.Update(this.Transaction);
-                this.SetCommandsCanExecute();
-            }
-        }
-
-        private void SaveUnLockForm()
-        {
-            if (this.Transaction != null)
-            {
                 this.Transaction.Commit(true);
+                this.Transaction = null;
                 this.SetCommandsCanExecute();
             }
         }
@@ -195,14 +172,12 @@ namespace Aras.ViewModel
                 {
                     this.Edit.UpdateCanExecute(true);
                     this.Save.UpdateCanExecute(false);
-                    this.SaveUnLock.UpdateCanExecute(false);
                     this.Undo.UpdateCanExecute(false);
                 }
                 else
                 {
                     this.Edit.UpdateCanExecute(false);
                     this.Save.UpdateCanExecute(true);
-                    this.SaveUnLock.UpdateCanExecute(true);
                     this.Undo.UpdateCanExecute(true);
                 }
             }
@@ -210,7 +185,6 @@ namespace Aras.ViewModel
             {
                 this.Edit.UpdateCanExecute(false);
                 this.Save.UpdateCanExecute(false);
-                this.SaveUnLock.UpdateCanExecute(false);
                 this.Undo.UpdateCanExecute(false);
             }
         }
@@ -218,10 +192,8 @@ namespace Aras.ViewModel
         public Form(Manager.Session Session)
             :base(Session)
         {
-            this.Children = new Model.ObservableList<Control>();
             this.Edit = new EditCommand(this);
             this.Save = new SaveCommand(this);
-            this.SaveUnLock = new SaveUnLockCommand(this);
             this.Undo = new UndoCommand(this);
             this.Transaction = null;
         }
@@ -247,27 +219,6 @@ namespace Aras.ViewModel
             }
         }
 
-        public class SaveUnLockCommand : Aras.ViewModel.Command
-        {
-            public Form Form { get; private set; }
-
-            internal void UpdateCanExecute(Boolean CanExecute)
-            {
-                this.CanExecute = CanExecute;
-            }
-
-            protected override void Run(IEnumerable<Control> Parameters)
-            {
-                this.Form.SaveUnLockForm();
-            }
-
-            internal SaveUnLockCommand(Form Form)
-            {
-                this.Form = Form;
-                this.CanExecute = false;
-            }
-
-        }
         public class EditCommand : Aras.ViewModel.Command
         {
             public Form Form { get; private set; }

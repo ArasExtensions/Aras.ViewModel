@@ -28,7 +28,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Aras.ViewModel.Forms.Tables
+namespace Aras.ViewModel.Containers.Forms
 {
     public class Default : Form
     {

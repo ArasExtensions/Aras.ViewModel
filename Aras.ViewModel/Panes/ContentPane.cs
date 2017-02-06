@@ -1,7 +1,7 @@
 ﻿/*  
   Aras.ViewModel provides a .NET library for building Aras Innovator Applications
 
-  Copyright (C) 2017 Processwall Limited.
+  Copyright (C) 2015 Processwall Limited.
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as published
@@ -28,30 +28,33 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Aras.ViewModel.Forms
+namespace Aras.ViewModel.Panes
 {
-    [Attributes.ClientControl("Aras.View.Forms.Table")]
-    public abstract class Table : Form
+    [Attributes.ClientControl("Aras.View.Panes.ContentPane")]
+    public class ContentPane : Control
     {
-        private System.Int32 _columns;
-        [Attributes.Property("Columns", Attributes.PropertyTypes.Int32, true)]
-        public System.Int32 Columns
+        private Control _content;
+        [Attributes.Property("Content", Attributes.PropertyTypes.Control, true)]
+        public Control Content
         {
             get
             {
-                return this._columns;
+                return this._content;
             }
             set
             {
-                this._columns = value;
-                this.OnPropertyChanged("Columns");
+                if (this._content != value)
+                {
+                    this._content = value;
+                    this.OnPropertyChanged("Content");
+                }
             }
         }
 
-        public Table(Manager.Session Session)
+        public ContentPane(Manager.Session Session)
             :base(Session)
         {
-            this._columns = 1;
+            this._content = null;
         }
     }
 }
