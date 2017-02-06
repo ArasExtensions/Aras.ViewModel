@@ -76,7 +76,6 @@ namespace Aras.ViewModel
             {
                 this.CanExecute = false;
                 this.Run(Parameters);
-                this.CanExecute = true;
             }
         }
 

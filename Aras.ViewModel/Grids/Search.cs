@@ -123,9 +123,9 @@ namespace Aras.ViewModel.Grids
 
         public Properties.Integer PageSize { get; private set; }
 
-        public System.Int32 Page { get; protected set; }
+        public Properties.Integer Page { get; protected set; }
 
-        public System.Int32 NoPages { get; protected set; }
+        public Properties.Integer NoPages { get; protected set; }
 
         protected abstract void LoadColumns();
 
@@ -148,10 +148,26 @@ namespace Aras.ViewModel.Grids
             }
         }
 
+        private void QueryString_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Value")
+            {
+                this.RefreshControl();
+            }
+        }
+
         public Search(Manager.Session Session)
-            :base(Session)
+            : base(Session)
         {
             this._propertyNames = new List<String>();
+
+            // Create Page
+            this.Page = new Properties.Integer(this.Session);
+            this.Page.Value = 1;
+
+            // Create No Pages
+            this.NoPages = new Properties.Integer(this.Session);
+            this.NoPages.Value = 0;
 
             // Create Grid
             this.Grid = new Grid(this.Session);
@@ -161,26 +177,24 @@ namespace Aras.ViewModel.Grids
             // Create Commands
             this.NextPage = new NextPageCommand(this);
             this.PreviousPage = new PreviousPageCommand(this);
-            
+
             // Create Query String
             this.QueryString = new Properties.String(this.Session);
             this.QueryString.Enabled = true;
             this.QueryString.Tooltip = "Search String";
+            this.QueryString.PropertyChanged += QueryString_PropertyChanged;
 
             // Create Page Size
             this.PageSize = new Properties.Integer(this.Session);
             this.PageSize.Tooltip = "Page Size";
-            this.PageSize.Width = 50;
+            this.PageSize.Width = 40;
             this.PageSize.Enabled = true;
-            this.PageSize.MinValue = 1;
+            this.PageSize.MinValue = 5;
             this.PageSize.MaxValue = 100;
             this.PageSize.Value = 25;
             this.PageSize.PropertyChanged += PageSize_PropertyChanged;
-
-            // Default parameters
-            this.Page = 1;
-            this.NoPages = 0;
         }
+
 
         public class NextPageCommand : Aras.ViewModel.Command
         {
@@ -188,16 +202,16 @@ namespace Aras.ViewModel.Grids
 
             protected override void Run(IEnumerable<Control> Parameters)
             {
-                if (this.Search.Page < this.Search.NoPages)
+                if (this.Search.Page.Value < this.Search.NoPages.Value)
                 {
-                    this.Search.Page = this.Search.Page + 1;
+                    this.Search.Page.Value = this.Search.Page.Value + 1;
                     this.Search.RefreshControl();
                 }
             }
 
             internal void Refesh()
             {
-                if (this.Search.Page < this.Search.NoPages)
+                if (this.Search.Page.Value < this.Search.NoPages.Value)
                 {
                     this.CanExecute = true;
                 }
@@ -220,16 +234,16 @@ namespace Aras.ViewModel.Grids
 
             protected override void Run(IEnumerable<Control> Parameters)
             {
-                if (this.Search.Page > 1)
+                if (this.Search.Page.Value > 1)
                 {
-                    this.Search.Page = this.Search.Page - 1;
+                    this.Search.Page.Value = this.Search.Page.Value - 1;
                     this.Search.RefreshControl();
                 }
             }
 
             internal void Refesh()
             {
-                if (this.Search.Page > 1)
+                if (this.Search.Page.Value > 1)
                 {
                     this.CanExecute = true;
                 }

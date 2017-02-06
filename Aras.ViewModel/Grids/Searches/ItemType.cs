@@ -133,6 +133,28 @@ namespace Aras.ViewModel.Grids.Searches
             }
         }
 
+        private Model.Condition Condition(Model.PropertyType PropertyType)
+        {
+            switch (PropertyType.GetType().Name)
+            {
+                case "String":
+                    return Aras.Conditions.Like(PropertyType.Name, "%" + this.QueryString.Value + "%");
+                case "Integer":
+                    System.Int32 int32value = 0;
+
+                    if (System.Int32.TryParse(this.QueryString.Value, out int32value))
+                    {
+                        return Aras.Conditions.Eq(PropertyType.Name, int32value);
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                default:
+                    throw new NotImplementedException("Property Type not implemented: " + PropertyType.GetType().Name);
+            }
+        }
+
         protected override void RefreshControl()
         {
             base.RefreshControl();
@@ -146,19 +168,31 @@ namespace Aras.ViewModel.Grids.Searches
                 }
                 else
                 {
-                    if (this.PropertyTypes.Count() == 1)
+                    List<Model.Condition> conditions = new List<Model.Condition>();
+
+                    foreach(Model.PropertyType proptype in this.PropertyTypes)
                     {
-                        this.Query.Condition = Aras.Conditions.Like(this.PropertyTypes[0].Name, this.QueryString);
+                        Model.Condition condition = this.Condition(proptype);
+
+                        if (condition != null)
+                        {
+                            conditions.Add(condition);
+                        }
+                    }
+
+                    if (conditions.Count() == 1)
+                    {
+                        this.Query.Condition = conditions[0];
                     }
                     else
                     {
-                        this.Query.Condition = Aras.Conditions.Or(Aras.Conditions.Like(this.PropertyTypes[0].Name, this.QueryString), Aras.Conditions.Like(this.PropertyTypes[1].Name, this.QueryString));
+                        this.Query.Condition = Aras.Conditions.Or(conditions[0], conditions[1]);
 
-                        if (this.PropertyTypes.Count() > 2)
+                        if (conditions.Count() > 2)
                         {
-                            for (int i = 2; i < this.PropertyTypes.Count(); i++)
+                            for (int i = 2; i < conditions.Count(); i++)
                             {
-                                ((Model.Conditions.Or)this.Query.Condition).Add(Aras.Conditions.Like(this.PropertyTypes[i].Name, this.QueryString));
+                                ((Model.Conditions.Or)this.Query.Condition).Add(conditions[i]);
                             }
                         }
                     }
@@ -166,17 +200,17 @@ namespace Aras.ViewModel.Grids.Searches
 
                 // Set PageSize and required Page
                 this.Query.PageSize = (System.Int32)this.PageSize.Value;
-                this.Query.Page = this.Page;
+                this.Query.Page = (System.Int32)this.Page.Value;
 
                 // Refresh Query
                 this.Query.Refresh();
 
                 // Update NoPages
-                this.NoPages = this.Query.NoPages;
+                this.NoPages.Value = this.Query.NoPages;
             }
             else
             {
-                this.NoPages = 0;
+                this.NoPages.Value = 0;
             }
 
             // Load Grid
