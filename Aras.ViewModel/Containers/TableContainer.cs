@@ -30,8 +30,8 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel.Containers
 {
-    [Attributes.ClientControl("Aras.View.Containers.Table")]
-    public class Table : Control
+    [Attributes.ClientControl("Aras.View.Containers.TableContainer")]
+    public class TableContainer : Container
     {
         private System.Int32 _columns;
         [Attributes.Property("Columns", Attributes.PropertyTypes.Int32, true)]
@@ -48,7 +48,7 @@ namespace Aras.ViewModel.Containers
             }
         }
 
-        public Table(Manager.Session Session)
+        public TableContainer(Manager.Session Session)
             : base(Session)
         {
             this._columns = 1;

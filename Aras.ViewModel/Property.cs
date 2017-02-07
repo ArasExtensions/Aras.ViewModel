@@ -50,6 +50,24 @@ namespace Aras.ViewModel
             }
         }
 
+        private System.String _label;
+        [Attributes.Property("Label", Attributes.PropertyTypes.String, true)]
+        public System.String Label
+        {
+            get
+            {
+                return this._label;
+            }
+            set
+            {
+                if (this._label != value)
+                {
+                    this._label = value;
+                    this.OnPropertyChanged("Label");
+                }
+            }
+        }
+
         protected override void CheckBinding(object Binding)
         {
             base.CheckBinding(Binding);
@@ -66,7 +84,10 @@ namespace Aras.ViewModel
 
             if (this.Binding != null)
             {
+                // Watch for Property Changes on Binding
                 ((Model.Property)this.Binding).PropertyChanged += Property_PropertyChanged;
+
+                // Set Enabled
                 this.Enabled = !((Model.Property)this.Binding).ReadOnly;
             }
         }
