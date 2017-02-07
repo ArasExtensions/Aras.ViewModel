@@ -112,7 +112,6 @@ namespace Aras.ViewModel.Containers
         private void Children_ListChanged(object sender, EventArgs e)
         {
             // Check for Toolbar Providers
-
             foreach(Control control in this.Children)
             {
                 if (control is IToolbarProvider)
@@ -144,7 +143,5 @@ namespace Aras.ViewModel.Containers
             this.AddedToolbars = new List<Control>();
             this.Children.ListChanged += Children_ListChanged;
         }
-
-
     }
 }

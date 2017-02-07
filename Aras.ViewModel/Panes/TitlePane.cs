@@ -30,6 +30,7 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel.Panes
 {
+    [Attributes.ClientControl("Aras.View.Panes.TitlePane")]
     public class TitlePane : ContentPane
     {
         private System.String _title;
@@ -72,7 +73,7 @@ namespace Aras.ViewModel.Panes
             : base(Session)
         {
             this._title = null;
-            this._open = false;
+            this._open = true;
         }
     }
 }
