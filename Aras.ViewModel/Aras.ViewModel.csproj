@@ -77,6 +77,7 @@
     <Compile Include="Manager\Server.cs" />
     <Compile Include="Manager\Session.cs" />
     <Compile Include="Containers\Table.cs" />
+    <Compile Include="Props\Integers\Spinner.cs" />
     <Compile Include="ToolbarSeparator.cs" />
     <Compile Include="Button.cs" />
     <Compile Include="Containers\Plugin.cs" />
