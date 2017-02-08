@@ -33,7 +33,7 @@ namespace Aras.ViewModel
 {
     public enum Regions { Top=1, Bottom=2, Right=3, Left=4, Center=5, Leading=6, Trailing=7 };
 
-    public abstract class Control : IEquatable<Control>, IComparable<Control>, INotifyPropertyChanged
+    public abstract class Control : IEquatable<Control>, INotifyPropertyChanged
     {
         public Manager.Session Session { get; private set; }
 
@@ -285,7 +285,7 @@ namespace Aras.ViewModel
         {
             get
             {
-                List<Control> controls = new List<Control>();
+                List<Control> ret = new List<Control>();
 
                 foreach (String property in this.Properties)
                 {
@@ -295,26 +295,24 @@ namespace Aras.ViewModel
                     {
                         Control thiscontrol = (Control)propertyvalue;
 
-                        if (!controls.Contains(thiscontrol))
+                        if (!ret.Contains(thiscontrol))
                         {
-                            controls.Add(thiscontrol);
+                            ret.Add(thiscontrol);
                         }
                     }
                     else if (propertyvalue is IEnumerable<Control>)
                     {
-                        IEnumerable<Control> thiscontrols = (IEnumerable<Control>)propertyvalue;
-
-                        foreach (Control thiscontrol in thiscontrols)
+                        foreach (Control thiscontrol in (IEnumerable<Control>)propertyvalue)
                         {
-                            if (!controls.Contains(thiscontrol))
+                            if (!ret.Contains(thiscontrol))
                             {
-                                controls.Add(thiscontrol);
+                                ret.Add(thiscontrol);
                             }
                         }
                     }
                 }
 
-                return controls;
+                return ret;
             }
         }
 
@@ -364,23 +362,9 @@ namespace Aras.ViewModel
             return this.ID.GetHashCode();
         }
 
-        public int CompareTo(Control other)
+        public override string ToString()
         {
-            if (other != null)
-            {
-                if (this.Controls.Contains(other))
-                {
-                    return 1;
-                }
-                else
-                {
-                    return 0;
-                }
-            }
-            else
-            {
-                return 1;
-            }
+            return this.ID + " : " + this.GetType().FullName;
         }
 
         public Control(Manager.Session Session)
@@ -393,6 +377,8 @@ namespace Aras.ViewModel
             this.InError = false;
             this.Region = Regions.Center;
         }
+
+
 
         public class RefreshCommand : Aras.ViewModel.Command
         {

@@ -99,8 +99,8 @@ namespace Aras.ViewModel.Manager
             // Refresh Plugin
             plugin.Refresh.Execute();
 
-            // Add Plugin to Cache
-            this.AddControlToCache(plugin, false);
+            // Add Plugin to Queue
+            this.AddControlToQueue(plugin, true);
 
             return plugin;
         }
@@ -131,15 +131,10 @@ namespace Aras.ViewModel.Manager
 
                 // Set Binding to Session
                 this.ApplicationCache[ApplicationType].Binding = this.Model;
+            }
 
-                // Add Application to Cache
-                this.AddControlToCache(this.ApplicationCache[ApplicationType], false);
-            }
-            else
-            {
-                // New client session so ensure added to queue
-                this.AddControlToQueue(this.ApplicationCache[ApplicationType], true);
-            }
+            // Add Application to Queue
+            this.AddControlToQueue(this.ApplicationCache[ApplicationType], true);
 
             return this.ApplicationCache[ApplicationType];
         }
@@ -147,7 +142,7 @@ namespace Aras.ViewModel.Manager
         private object ControlCacheLock = new object();
         private Dictionary<Guid, ViewModel.Control> ControlCache;
 
-        private void AddControlToCache(ViewModel.Control Control, Boolean Queue)
+        private Boolean AddControlToCache(ViewModel.Control Control)
         {
             lock (this.ControlCacheLock)
             {
@@ -161,23 +156,16 @@ namespace Aras.ViewModel.Manager
                         // Link to PropertyChanged Event
                         Control.PropertyChanged += Control_PropertyChanged;
 
-                        // Add Commands to Cache
-                        foreach (String name in Control.Commands)
-                        {
-                            this.AddCommandToCache(name, Control.GetCommand(name));
-                        }
+                        return true;
                     }
-
-                    // Add Child Controls to Cache
-                    foreach (Control thiscontrol in Control.Controls)
+                    else
                     {
-                        this.AddControlToCache(thiscontrol, true);
+                        return false;
                     }
-
-                    if (Queue)
-                    {
-                        this.AddControlToQueue(Control, false);
-                    }
+                }
+                else
+                {
+                    return false;
                 }
             }
         }
@@ -195,57 +183,40 @@ namespace Aras.ViewModel.Manager
             // Add Control to Queue so change is picked up
             ViewModel.Control control = (ViewModel.Control)sender;
             this.AddControlToQueue(control, false);
-
-            // Check if changed Property is a Control or List of Controls
-            if (control.HasProperty(e.PropertyName))
-            {
-                object property = control.GetPropertyValue(e.PropertyName);
-
-                if (property is Control)
-                {
-                    this.AddControlToCache((Control)property, true);
-                }
-                else if (property is IEnumerable<Control>)
-                {
-                    foreach (Control childcontrol in ((IEnumerable<Control>)property))
-                    {
-                        this.AddControlToCache(childcontrol, true);
-                    }
-                }
-            }
         }
 
         private object ControlQueueLock = new object();
         private List<ViewModel.Control> ControlQueue;
 
-        private void AddControlToQueueRecursive(ViewModel.Control Control)
+        private void AddControlToQueueRecursive(ViewModel.Control Control, Boolean Force)
         {
-            if (!this.ControlQueue.Contains(Control))
+            // Check in Control is in Cache, if added to Cache or Force Queue
+            if (!this.AddControlToCache(Control) || Force)
             {
-                this.ControlQueue.Add(Control);
+                if (!this.ControlQueue.Contains(Control))
+                {
+                    this.ControlQueue.Add(Control);
+
+                    // Queue Commands
+                    foreach(String name in Control.Commands)
+                    {
+                        this.AddCommandToQueue(name, Control.GetCommand(name), Force);
+                    }
+                }
             }
 
+            // Process Children
             foreach(Control child in Control.Controls)
             {
-                this.AddControlToQueueRecursive(child);
+                this.AddControlToQueueRecursive(child, Force);
             }
         }
 
-        private void AddControlToQueue(ViewModel.Control Control, Boolean Recursive)
+        private void AddControlToQueue(ViewModel.Control Control, Boolean Force)
         {
             lock (this.ControlQueueLock)
             {
-                if (Recursive)
-                {
-                    this.AddControlToQueueRecursive(Control);
-                }
-                else
-                {
-                    if (!this.ControlQueue.Contains(Control))
-                    {
-                        this.ControlQueue.Add(Control);
-                    }
-                }
+                this.AddControlToQueueRecursive(Control, Force);
             }
         }
 
@@ -255,49 +226,63 @@ namespace Aras.ViewModel.Manager
             {
                 List<ViewModel.Control> ret = this.ControlQueue;
                 this.ControlQueue = new List<ViewModel.Control>();
-
-                // Sort
-                //ret.Sort();
-
                 return ret;
             }
         }
 
+        private object CommandCacheLock = new object();
         private Dictionary<Guid, ViewModel.Command> CommandCache;
-
         private Dictionary<Guid, String> CommandNameCache;
 
-        private void AddCommandToCache(String Name, ViewModel.Command Command)
+        private Boolean AddCommandToCache(String Name, ViewModel.Command Command)
         {
-            if (!this.CommandCache.ContainsKey(Command.ID))
+            lock (this.CommandCacheLock)
             {
-                // Store Command Name
-                this.CommandNameCache[Command.ID] = Name;
+                if (!this.CommandCache.ContainsKey(Command.ID))
+                {
+                    // Store Command in Cache
+                    this.CommandCache[Command.ID] = Command;
+                    this.CommandNameCache[Command.ID] = Name;
 
-                // Store Command in Cache
-                this.CommandCache[Command.ID] = Command;
+                    // Link to Event for when CanExecute Changes
+                    Command.CanExecuteChanged += Command_CanExecuteChanged;
 
-                // Link to Event for when CanExecute Changes
-                Command.CanExecuteChanged += Command_CanExecuteChanged;
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
+        public String CommandName(Command Command)
+        {
+            lock (this.CommandCacheLock)
+            {
+                return this.CommandNameCache[Command.ID];
             }
         }
 
         void Command_CanExecuteChanged(object sender, EventArgs e)
         {
             ViewModel.Command command = (ViewModel.Command)sender;
-            this.AddCommandToQueue(command);
+            this.AddCommandToQueue(this.CommandName(command), command, true);
         }
 
         private object CommandQueueLock = new object();
         private List<ViewModel.Command> CommandQueue;
 
-        private void AddCommandToQueue(ViewModel.Command Command)
+        private void AddCommandToQueue(String Name, ViewModel.Command Command, Boolean Force)
         {
             lock (this.CommandQueueLock)
             {
-                if (!this.CommandQueue.Contains(Command))
+                if (!this.AddCommandToCache(Name, Command) || Force)
                 {
-                    this.CommandQueue.Add(Command);
+                    if (!this.CommandQueue.Contains(Command))
+                    {
+                        this.CommandQueue.Add(Command);
+                    }
                 }
             }
         }
@@ -317,11 +302,6 @@ namespace Aras.ViewModel.Manager
             return this.CommandCache[ID];
         }
 
-        public String CommandName(Guid ID)
-        {
-            return this.CommandNameCache[ID];
-        }
-
         public override string ToString()
         {
             return this.Model.ToString();
@@ -335,8 +315,8 @@ namespace Aras.ViewModel.Manager
             this.ControlCache = new Dictionary<Guid, ViewModel.Control>();
             this.ControlQueue = new List<ViewModel.Control>();
             this.CommandCache = new Dictionary<Guid, ViewModel.Command>();
-            this.CommandNameCache = new Dictionary<Guid, String>();
             this.CommandQueue = new List<ViewModel.Command>();
+            this.CommandNameCache = new Dictionary<Guid, String>();
         }
     }
 }

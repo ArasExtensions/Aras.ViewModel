@@ -65,7 +65,7 @@ namespace Aras.ViewModel.WebService.Controllers
             // Add Command Queue
             foreach(ViewModel.Command command in this.Session.GetCommandsFromQueue())
             {
-                Response.CommandQueue.Add(new Models.Command(this.Session.CommandName(command.ID), command));
+                Response.CommandQueue.Add(new Models.Command(this.Session.CommandName(command), command));
             }
         }
 
