@@ -28,7 +28,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Aras.ViewModel.Props.Integers
+namespace Aras.ViewModel.Properties.Integers
 {
     [Attributes.ClientControl("Aras.View.Properties.Integers.Spinner")]
     public class Spinner : Properties.Integer

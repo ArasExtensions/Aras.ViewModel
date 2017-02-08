@@ -121,7 +121,7 @@ namespace Aras.ViewModel.Grids
 
         public Properties.String QueryString { get; private set; }
 
-        public Properties.Integer PageSize { get; private set; }
+        public Properties.Integers.Spinner PageSize { get; private set; }
 
         public Properties.Integer Page { get; protected set; }
 
@@ -186,7 +186,7 @@ namespace Aras.ViewModel.Grids
             this.QueryString.PropertyChanged += QueryString_PropertyChanged;
 
             // Create Page Size
-            this.PageSize = new Properties.Integer(this.Session);
+            this.PageSize = new Properties.Integers.Spinner(this.Session);
             this.PageSize.Tooltip = "Page Size";
             this.PageSize.Width = 40;
             this.PageSize.Enabled = true;
