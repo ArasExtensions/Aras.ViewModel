@@ -30,7 +30,7 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel
 {
-    public abstract class Command
+    public abstract class Command : IEquatable<Command>
     {
         public Guid ID { get; private set; }
 
@@ -82,6 +82,43 @@ namespace Aras.ViewModel
         public void Execute()
         {
             this.Execute(null);
+        }
+
+
+        public bool Equals(Command other)
+        {
+            if (other == null)
+            {
+                return false;
+            }
+            else
+            {
+                return this.ID.Equals(other.ID);
+            }
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+            else
+            {
+                if (obj is Command)
+                {
+                    return this.ID.Equals(((Command)obj).ID);
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
+        public override int GetHashCode()
+        {
+            return this.ID.GetHashCode();
         }
 
         public Command()

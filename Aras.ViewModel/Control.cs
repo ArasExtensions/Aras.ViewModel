@@ -33,7 +33,7 @@ namespace Aras.ViewModel
 {
     public enum Regions { Top=1, Bottom=2, Right=3, Left=4, Center=5, Leading=6, Trailing=7 };
 
-    public abstract class Control : IEquatable<Control>, INotifyPropertyChanged
+    public abstract class Control : IEquatable<Control>, IComparable<Control>, INotifyPropertyChanged
     {
         public Manager.Session Session { get; private set; }
 
@@ -362,6 +362,25 @@ namespace Aras.ViewModel
         public override int GetHashCode()
         {
             return this.ID.GetHashCode();
+        }
+
+        public int CompareTo(Control other)
+        {
+            if (other != null)
+            {
+                if (this.Controls.Contains(other))
+                {
+                    return 1;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+            else
+            {
+                return 1;
+            }
         }
 
         public Control(Manager.Session Session)

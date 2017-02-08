@@ -216,11 +216,14 @@ namespace Aras.ViewModel.Manager
         }
 
         private object ControlQueueLock = new object();
-        private Queue<ViewModel.Control> ControlQueue;
+        private List<ViewModel.Control> ControlQueue;
 
         private void AddControlToQueueRecursive(ViewModel.Control Control)
         {
-            this.ControlQueue.Enqueue(Control);
+            if (!this.ControlQueue.Contains(Control))
+            {
+                this.ControlQueue.Add(Control);
+            }
 
             foreach(Control child in Control.Controls)
             {
@@ -238,7 +241,10 @@ namespace Aras.ViewModel.Manager
                 }
                 else
                 {
-                    this.ControlQueue.Enqueue(Control);
+                    if (!this.ControlQueue.Contains(Control))
+                    {
+                        this.ControlQueue.Add(Control);
+                    }
                 }
             }
         }
@@ -247,17 +253,11 @@ namespace Aras.ViewModel.Manager
         {
             lock (this.ControlQueueLock)
             {
-                List<ViewModel.Control> ret = new List<ViewModel.Control>();
+                List<ViewModel.Control> ret = this.ControlQueue;
+                this.ControlQueue = new List<ViewModel.Control>();
 
-                while (this.ControlQueue.Count > 0)
-                {
-                    ViewModel.Control control = this.ControlQueue.Dequeue();
-
-                    if (!ret.Contains(control))
-                    {
-                        ret.Add(control);
-                    }
-                }
+                // Sort
+                //ret.Sort();
 
                 return ret;
             }
@@ -289,13 +289,16 @@ namespace Aras.ViewModel.Manager
         }
 
         private object CommandQueueLock = new object();
-        private Queue<ViewModel.Command> CommandQueue;
+        private List<ViewModel.Command> CommandQueue;
 
         private void AddCommandToQueue(ViewModel.Command Command)
         {
             lock (this.CommandQueueLock)
             {
-                this.CommandQueue.Enqueue(Command);
+                if (!this.CommandQueue.Contains(Command))
+                {
+                    this.CommandQueue.Add(Command);
+                }
             }
         }
 
@@ -303,18 +306,8 @@ namespace Aras.ViewModel.Manager
         {
             lock (this.CommandQueueLock)
             {
-                List<ViewModel.Command> ret = new List<ViewModel.Command>();
-
-                while (this.CommandQueue.Count > 0)
-                {
-                    ViewModel.Command command = this.CommandQueue.Dequeue();
-
-                    if (!ret.Contains(command))
-                    {
-                        ret.Add(command);
-                    }
-                }
-
+                List<ViewModel.Command> ret = this.CommandQueue;
+                this.CommandQueue = new List<ViewModel.Command>();
                 return ret;
             }
         }
@@ -340,10 +333,10 @@ namespace Aras.ViewModel.Manager
             this.Model = Model;
             this.ApplicationCache = new Dictionary<ControlTypes.ApplicationType, Containers.Application>();
             this.ControlCache = new Dictionary<Guid, ViewModel.Control>();
-            this.ControlQueue = new Queue<ViewModel.Control>();
+            this.ControlQueue = new List<ViewModel.Control>();
             this.CommandCache = new Dictionary<Guid, ViewModel.Command>();
             this.CommandNameCache = new Dictionary<Guid, String>();
-            this.CommandQueue = new Queue<ViewModel.Command>();
+            this.CommandQueue = new List<ViewModel.Command>();
         }
     }
 }
