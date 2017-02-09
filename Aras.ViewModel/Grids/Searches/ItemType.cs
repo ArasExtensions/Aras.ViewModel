@@ -38,15 +38,15 @@ namespace Aras.ViewModel.Grids.Searches
 
             if (this.Binding != null)
             {
-                if (this.Binding is Model.ItemType)
+                if (this.Binding is Model.Stores.Item)
                 {
-                    this.Query = this.Session.Model.Store((Model.ItemType)this.Binding).Query();
+                    this.Query = ((Model.Stores.Item)this.Binding).Query();
                     this.Query.PageSize = (System.Int32)this.PageSize.Value;
                     this.Query.Paging = true;
                 }
                 else
                 {
-                    throw new Model.Exceptions.ArgumentException("Binding must be of type Aras.Model.ItemType");
+                    throw new Model.Exceptions.ArgumentException("Binding must be of type Aras.Model.Stores.Item");
                 }
             }
             else
@@ -65,7 +65,7 @@ namespace Aras.ViewModel.Grids.Searches
 
         protected override void LoadColumns()
         {
-            if ((this.Binding != null) && (this.Binding is Model.ItemType))
+            if (this.Binding != null)
             {
                 this.Grid.Columns.Clear();
 
@@ -74,9 +74,9 @@ namespace Aras.ViewModel.Grids.Searches
 
                 foreach (String propertyname in this.PropertyNames)
                 {
-                    if (((Model.ItemType)this.Binding).HasPropertyType(propertyname))
+                    if (((Model.Stores.Item)this.Binding).ItemType.HasPropertyType(propertyname))
                     {
-                        this.PropertyTypes.Add(((Model.ItemType)this.Binding).PropertyType(propertyname));
+                        this.PropertyTypes.Add(((Model.Stores.Item)this.Binding).ItemType.PropertyType(propertyname));
                     }
                 }
 
