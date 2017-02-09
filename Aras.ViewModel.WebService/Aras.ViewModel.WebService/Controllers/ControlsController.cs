@@ -117,6 +117,18 @@ namespace Aras.ViewModel.WebService.Controllers
                                 ((ViewModel.ObservableControlList<ViewModel.Control>)control.GetPropertyValue(property.Name)).Replace(values);
 
                                 break;
+                            case ViewModel.Attributes.PropertyTypes.Date:
+
+                                if (property.Values[0] == null)
+                                {
+                                    control.SetPropertyValue(property.Name, null);
+                                }
+                                else
+                                {
+                                    control.SetPropertyValue(property.Name, Convert.ToDateTime(property.Values[0]));
+                                }
+
+                                break;
                             default:
                                 throw new NotImplementedException("PropertyType not implemented: " + property.Type);
                         }

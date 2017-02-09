@@ -30,7 +30,7 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel.Attributes
 {
-    public enum PropertyTypes { Boolean = 0, Int32 = 1, String = 2, Control = 3, ControlList = 4, NullableInt32 = 5, Float = 6, StringList = 7 };
+    public enum PropertyTypes { Boolean = 0, Int32 = 1, String = 2, Control = 3, ControlList = 4, NullableInt32 = 5, Float = 6, StringList = 7, Date = 8 };
 
     [AttributeUsage(AttributeTargets.Property)]
     public class Property : Attribute

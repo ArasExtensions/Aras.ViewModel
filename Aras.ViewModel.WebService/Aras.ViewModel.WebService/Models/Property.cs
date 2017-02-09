@@ -126,7 +126,18 @@ namespace Aras.ViewModel.WebService.Models
                     }
 
                     break;
+                case ViewModel.Attributes.PropertyTypes.Date:
 
+                    if (property != null)
+                    {
+                        this.Values.Add(((System.DateTime)property).ToString("yyyy-MM-ddTHH:mm:ssZ"));
+                    }
+                    else
+                    {
+                        this.Values.Add(null);
+                    }
+
+                    break;
                 default:
                     throw new NotImplementedException("PropertyType not implemented: " + this.Type.ToString());
             }        
