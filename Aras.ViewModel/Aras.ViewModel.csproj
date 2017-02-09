@@ -78,6 +78,8 @@
     <Compile Include="Manager\Session.cs" />
     <Compile Include="Containers\TableContainer.cs" />
     <Compile Include="Props\Integers\Spinner.cs" />
+    <Compile Include="Props\Item.cs" />
+    <Compile Include="Props\Sequence.cs" />
     <Compile Include="ToolbarSeparator.cs" />
     <Compile Include="Button.cs" />
     <Compile Include="Containers\Plugin.cs" />

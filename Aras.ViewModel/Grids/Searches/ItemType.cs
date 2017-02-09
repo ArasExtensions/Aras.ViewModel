@@ -57,7 +57,37 @@ namespace Aras.ViewModel.Grids.Searches
             this.RefreshControl();
         }
 
+        public IEnumerable<Model.Item> Displayed
+        {
+            get
+            {
+                if (this.Query != null)
+                {
+                    return this.Query.CurrentItems();
+                }
+                else
+                {
+                    return new List<Model.Item>();
+                }
+            }
+        }
+
         public Model.ObservableList<Model.Item> Selected { get; private set; }
+
+        public void Select(Model.Item Item)
+        {
+            if (Item != null)
+            {
+                List<Model.Item> displayed = this.Displayed.ToList();
+                int index = displayed.IndexOf(Item);
+
+                if (index >= 0)
+                {
+                    this.Grid.SelectedRows.Clear();
+                    this.Grid.SelectedRows.Add(this.Grid.Rows[index]);
+                }
+            }
+        }
 
         private Model.Queries.Item Query;
 
@@ -117,6 +147,9 @@ namespace Aras.ViewModel.Grids.Searches
                                 case "Integer":
                                     this.Grid.Rows[i].Cells[j].Value = new Properties.Integer(this.Session);
                                     break;
+                                case "Sequence":
+                                    this.Grid.Rows[i].Cells[j].Value = new Properties.Sequence(this.Session);
+                                    break;
                                 default:
                                     throw new Model.Exceptions.ArgumentException("PropertyType not implmented: " + property.GetType().Name);
                             }
@@ -138,6 +171,7 @@ namespace Aras.ViewModel.Grids.Searches
             switch (PropertyType.GetType().Name)
             {
                 case "String":
+                case "Sequence":
                     return Aras.Conditions.Like(PropertyType.Name, "%" + this.QueryString.Value + "%");
                 case "Integer":
                     System.Int32 int32value = 0;
