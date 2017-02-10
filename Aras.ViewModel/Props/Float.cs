@@ -137,9 +137,12 @@ namespace Aras.ViewModel.Properties
         {
             base.CheckBinding(Binding);
 
-            if (!(Binding is Model.Properties.Float))
+            if (Binding != null)
             {
-                throw new Model.Exceptions.ArgumentException("Binding must be of type Aras.Model.Properties.Float");
+                if (!(Binding is Model.Properties.Float))
+                {
+                    throw new Model.Exceptions.ArgumentException("Binding must be of type Aras.Model.Properties.Float");
+                }
             }
         }
 
@@ -150,6 +153,11 @@ namespace Aras.ViewModel.Properties
             if (this.Binding != null)
             {
                 this.Value = (System.Double?)((Model.Properties.Float)this.Binding).Value;
+            }
+            else
+            {
+                this.Value = null;
+                this.Enabled = false;
             }
         }
 

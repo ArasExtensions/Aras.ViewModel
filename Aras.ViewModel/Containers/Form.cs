@@ -213,6 +213,12 @@ namespace Aras.ViewModel.Containers
             {
                 this.Transaction.RollBack();
                 this.Transaction = null;
+
+                if (this.Item.Action == Model.Item.Actions.Create)
+                {
+                    this.Binding = null;
+                }
+
                 this.SetCommandsCanExecute();
             }
         }

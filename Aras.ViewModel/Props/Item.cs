@@ -56,9 +56,12 @@ namespace Aras.ViewModel.Properties
         {
             base.CheckBinding(Binding);
 
-            if (!(Binding is Model.Properties.Item))
+            if (Binding != null)
             {
-                throw new Model.Exceptions.ArgumentException("Binding must be of type Aras.Model.Properties.Item");
+                if (!(Binding is Model.Properties.Item))
+                {
+                    throw new Model.Exceptions.ArgumentException("Binding must be of type Aras.Model.Properties.Item");
+                }
             }
         }
 
@@ -69,6 +72,11 @@ namespace Aras.ViewModel.Properties
             if (this.Binding != null)
             {
                 this.SetValue();
+            }
+            else
+            {
+                this.Value = null;
+                this.Enabled = false;
             }
         }
 

@@ -96,9 +96,12 @@ namespace Aras.ViewModel.Properties
         {
             base.CheckBinding(Binding);
 
-            if (!(Binding is Model.Properties.List))
+            if (Binding != null)
             {
-                throw new Model.Exceptions.ArgumentException("Binding must be of type Aras.Model.Properties.List");
+                if (!(Binding is Model.Properties.List))
+                {
+                    throw new Model.Exceptions.ArgumentException("Binding must be of type Aras.Model.Properties.List");
+                }
             }
         }
 
@@ -135,6 +138,11 @@ namespace Aras.ViewModel.Properties
                 }
 
                 this.Values.NotifyListChanged = true;
+            }
+            else
+            {
+                this.Value = null;
+                this.Enabled = false;
             }
         }
 

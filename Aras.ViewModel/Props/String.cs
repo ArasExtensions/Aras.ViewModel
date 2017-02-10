@@ -111,9 +111,12 @@ namespace Aras.ViewModel.Properties
         {
             base.CheckBinding(Binding);
 
-            if (!(Binding is Model.Properties.String))
+            if (Binding != null)
             {
-                throw new Model.Exceptions.ArgumentException("Binding must be of type Aras.Model.Properties.String");
+                if (!(Binding is Model.Properties.String))
+                {
+                    throw new Model.Exceptions.ArgumentException("Binding must be of type Aras.Model.Properties.String");
+                }
             }
         }
 
@@ -125,6 +128,11 @@ namespace Aras.ViewModel.Properties
             {     
                 this.Length = ((Model.Properties.String)this.Binding).Length;
                 this.Value = (System.String)((Model.Properties.String)this.Binding).Value;
+            }
+            else
+            {
+                this.Value = null;
+                this.Enabled = false;
             }
         }
 

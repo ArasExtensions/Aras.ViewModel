@@ -73,9 +73,12 @@ namespace Aras.ViewModel.Properties
         {
             base.CheckBinding(Binding);
 
-            if (!(Binding is Model.ListValue))
+            if (Binding != null)
             {
-                throw new Model.Exceptions.ArgumentException("Binding must be of type Aras.Model.ListValue");
+                if (!(Binding is Model.ListValue))
+                {
+                    throw new Model.Exceptions.ArgumentException("Binding must be of type Aras.Model.ListValue");
+                }
             }
         }
 
@@ -87,6 +90,12 @@ namespace Aras.ViewModel.Properties
             {
                 this.Value = ((Model.ListValue)this.Binding).Value;
                 this.Label = ((Model.ListValue)this.Binding).Label;
+            }
+            else
+            {
+                this.Value = null;
+                this.Label = null;
+                this.Enabled = false;
             }
         }
 

@@ -66,9 +66,12 @@ namespace Aras.ViewModel.Properties
         {
             base.CheckBinding(Binding);
 
-            if (!(Binding is Model.Properties.Date))
+            if (Binding != null)
             {
-                throw new Model.Exceptions.ArgumentException("Binding must be of type Aras.Model.Properties.Date");
+                if (!(Binding is Model.Properties.Date))
+                {
+                    throw new Model.Exceptions.ArgumentException("Binding must be of type Aras.Model.Properties.Date");
+                }
             }
         }
 
@@ -79,6 +82,11 @@ namespace Aras.ViewModel.Properties
             if (this.Binding != null)
             {
                 this.Value = (System.DateTime?)((Model.Properties.Date)this.Binding).Value;
+            }
+            else
+            {
+                this.Value = null;
+                this.Enabled = false;
             }
         }
 

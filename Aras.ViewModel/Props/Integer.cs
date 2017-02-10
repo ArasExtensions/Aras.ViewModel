@@ -137,9 +137,12 @@ namespace Aras.ViewModel.Properties
         {
             base.CheckBinding(Binding);
 
-            if (!(Binding is Model.Properties.Integer))
+            if (Binding != null)
             {
-                throw new Model.Exceptions.ArgumentException("Binding must be of type Aras.Model.Properties.Integer");
+                if (!(Binding is Model.Properties.Integer))
+                {
+                    throw new Model.Exceptions.ArgumentException("Binding must be of type Aras.Model.Properties.Integer");
+                }
             }
         }
 
@@ -150,6 +153,11 @@ namespace Aras.ViewModel.Properties
             if (this.Binding != null)
             {
                 this.Value = (System.Int32?)((Model.Properties.Integer)this.Binding).Value;
+            }
+            else
+            {
+                this.Value = null;
+                this.Enabled = false;
             }
         }
 

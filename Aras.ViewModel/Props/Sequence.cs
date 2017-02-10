@@ -56,9 +56,12 @@ namespace Aras.ViewModel.Properties
         {
             base.CheckBinding(Binding);
 
-            if (!(Binding is Model.Properties.Sequence))
+            if (Binding != null)
             {
-                throw new Model.Exceptions.ArgumentException("Binding must be of type Aras.Model.Properties.Sequence");
+                if (!(Binding is Model.Properties.Sequence))
+                {
+                    throw new Model.Exceptions.ArgumentException("Binding must be of type Aras.Model.Properties.Sequence");
+                }
             }
         }
 
@@ -69,6 +72,11 @@ namespace Aras.ViewModel.Properties
             if (this.Binding != null)
             {
                 this.Value = (System.String)((Model.Properties.Sequence)this.Binding).Value;
+            }
+            else
+            {
+                this.Value = null;
+                this.Enabled = false;
             }
         }
 
