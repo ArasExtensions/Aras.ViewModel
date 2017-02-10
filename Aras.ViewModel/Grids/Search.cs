@@ -199,7 +199,13 @@ namespace Aras.ViewModel.Grids
 
         public class NextPageCommand : Aras.ViewModel.Command
         {
-            public Search Search { get; private set; }
+            public Search Search
+            {
+                get
+                {
+                    return ((Search)this.Control);
+                }
+            }
 
             protected override void Run(IEnumerable<Control> Parameters)
             {
@@ -223,15 +229,21 @@ namespace Aras.ViewModel.Grids
             }
 
             internal NextPageCommand(Search Search)
+                :base(Search)
             {
-                this.Search = Search;
                 this.Refesh();
             }
         }
 
         public class PreviousPageCommand : Aras.ViewModel.Command
         {
-            public Search Search { get; private set; }
+            public Search Search
+            {
+                get
+                {
+                    return ((Search)this.Control);
+                }
+            }
 
             protected override void Run(IEnumerable<Control> Parameters)
             {
@@ -255,8 +267,8 @@ namespace Aras.ViewModel.Grids
             }
 
             internal PreviousPageCommand(Search Search)
+                :base(Search)
             {
-                this.Search = Search;
                 this.Refesh();
             }
         }

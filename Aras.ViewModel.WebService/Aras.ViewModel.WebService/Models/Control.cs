@@ -57,7 +57,7 @@ namespace Aras.ViewModel.WebService.Models
 
             foreach(String name in Control.Properties)
             {
-                this.Properties.Add(new Property(Control, name));
+                this.Properties.Add(new Property(name, Control));
             }
 
             // Add Commands

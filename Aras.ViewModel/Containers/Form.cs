@@ -258,8 +258,6 @@ namespace Aras.ViewModel.Containers
 
         public class CreateCommand : Aras.ViewModel.Command
         {
-            public Form Form { get; private set; }
-
             internal void UpdateCanExecute(Boolean CanExecute)
             {
                 this.CanExecute = CanExecute;
@@ -267,20 +265,18 @@ namespace Aras.ViewModel.Containers
 
             protected override void Run(IEnumerable<Aras.ViewModel.Control> Parameters)
             {
-                this.Form.CreateForm();
+                ((Form)this.Control).CreateForm();
             }
 
             internal CreateCommand(Form Form)
+                :base(Form)
             {
-                this.Form = Form;
                 this.CanExecute = true;
             }
         }
 
         public class SaveCommand : Aras.ViewModel.Command
         {
-            public Form Form { get; private set; }
-
             internal void UpdateCanExecute(Boolean CanExecute)
             {
                 this.CanExecute = CanExecute;
@@ -288,20 +284,17 @@ namespace Aras.ViewModel.Containers
 
             protected override void Run(IEnumerable<Control> Parameters)
             {
-                this.Form.SaveForm();
+                ((Form)this.Control).SaveForm();
             }
 
             internal SaveCommand(Form Form)
+                :base(Form)
             {
-                this.Form = Form;
-                this.CanExecute = false;
             }
         }
 
         public class EditCommand : Aras.ViewModel.Command
         {
-            public Form Form { get; private set; }
-
             internal void UpdateCanExecute(Boolean CanExecute)
             {
                 this.CanExecute = CanExecute;
@@ -309,19 +302,17 @@ namespace Aras.ViewModel.Containers
 
             protected override void Run(IEnumerable<Control> Parameters)
             {
-                this.Form.EditForm();
+                ((Form)this.Control).EditForm();
             }
 
             internal EditCommand(Form Form)
+                :base(Form)
             {
-                this.Form = Form;
-                this.CanExecute = false;
             }
         }
 
         public class UndoCommand : Aras.ViewModel.Command
         {
-            public Form Form { get; private set; }
 
             internal void UpdateCanExecute(Boolean CanExecute)
             {
@@ -330,13 +321,12 @@ namespace Aras.ViewModel.Containers
 
             protected override void Run(IEnumerable<Control> Parameters)
             {
-                this.Form.UndoForm();
+                ((Form)this.Control).UndoForm();
             }
 
             internal UndoCommand(Form Form)
+                :base(Form)
             {
-                this.Form = Form;
-                this.CanExecute = false;
             }
         }
 

@@ -44,7 +44,7 @@ namespace Aras.ViewModel.WebService.Models
 
         }
 
-        public Property(ViewModel.Control Control, String Name)
+        public Property(String Name, ViewModel.Control Control)
         {
             this.Name = Name;
             this.ReadOnly = Control.GetPropertyReadOnly(Name);

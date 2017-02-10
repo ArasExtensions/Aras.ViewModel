@@ -394,8 +394,6 @@ namespace Aras.ViewModel.Design
 
         public class BuildFlatBOMCommand : Aras.ViewModel.Command
         {
-            public Order Order { get; private set; }
-
             internal void UpdateCanExecute(Boolean CanExecute)
             {
                 this.CanExecute = CanExecute;
@@ -403,13 +401,12 @@ namespace Aras.ViewModel.Design
 
             protected override void Run(IEnumerable<Control> Parameters)
             {
-                this.Order.ProcessFlatBOM();
+                ((Order)this.Control).ProcessFlatBOM();
             }
 
             internal BuildFlatBOMCommand(Order Order)
+                :base(Order)
             {
-                this.Order = Order;
-                this.CanExecute = false;
             }
         }
     }

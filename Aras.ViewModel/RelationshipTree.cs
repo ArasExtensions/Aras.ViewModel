@@ -307,7 +307,13 @@ namespace Aras.ViewModel
 
         public class SelectCommand : Aras.ViewModel.Command
         {
-            public RelationshipTree RelationshipTree { get; private set; }
+            public RelationshipTree RelationshipTree
+            {
+                get
+                {
+                    return ((RelationshipTree)this.Control);
+                }
+            }
 
             protected override void Run(IEnumerable<Control> Parameters)
             {
@@ -326,15 +332,21 @@ namespace Aras.ViewModel
             }
 
             internal SelectCommand(RelationshipTree RelationshipTree)
+                : base(RelationshipTree)
             {
-                this.RelationshipTree = RelationshipTree;
                 this.CanExecute = true;
             }
         }
 
         public class AddCommand : Aras.ViewModel.Command
         {
-            public RelationshipTree RelationshipTree { get; private set; }
+            public RelationshipTree RelationshipTree
+            {
+                get
+                {
+                    return ((RelationshipTree)this.RelationshipTree);
+                }
+            }
 
             internal void UpdateCanExecute()
             {
@@ -368,15 +380,20 @@ namespace Aras.ViewModel
             }
 
             internal AddCommand(RelationshipTree RelationshipTree)
+                : base(RelationshipTree)
             {
-                this.RelationshipTree = RelationshipTree;
-                this.CanExecute = false;
             }
         }
 
         public class CutCommand : Aras.ViewModel.Command
         {
-            public RelationshipTree RelationshipTree { get; private set; }
+            public RelationshipTree RelationshipTree
+            {
+                get
+                {
+                    return ((RelationshipTree)this.Control);
+                }
+            }
 
             internal void UpdateCanExecute()
             {
@@ -425,9 +442,8 @@ namespace Aras.ViewModel
             }
 
             internal CutCommand(RelationshipTree RelationshipTree)
+                : base(RelationshipTree)
             {
-                this.RelationshipTree = RelationshipTree;
-                this.CanExecute = false;
             }
         }
 
@@ -456,7 +472,13 @@ namespace Aras.ViewModel
 
         public class CopyCommand : Aras.ViewModel.Command
         {
-            public RelationshipTree RelationshipTree { get; private set; }
+            public RelationshipTree RelationshipTree
+            {
+                get
+                {
+                    return ((RelationshipTree)this.Control);
+                }
+            }
 
             internal void UpdateCanExecute()
             {
@@ -483,15 +505,20 @@ namespace Aras.ViewModel
             }
 
             internal CopyCommand(RelationshipTree RelationshipTree)
+                : base(RelationshipTree)
             {
-                this.RelationshipTree = RelationshipTree;
-                this.CanExecute = false;
             }
         }
 
         public class PasteCommand : Aras.ViewModel.Command
         {
-            public RelationshipTree RelationshipTree { get; private set; }
+            public RelationshipTree RelationshipTree
+            {
+                get
+                {
+                    return ((RelationshipTree)this.Control);
+                }
+            }
 
             internal void UpdateCanExecute()
             {
@@ -531,15 +558,20 @@ namespace Aras.ViewModel
             }
 
             internal PasteCommand(RelationshipTree RelationshipTree)
+                : base(RelationshipTree)
             {
-                this.RelationshipTree = RelationshipTree;
-                this.CanExecute = false;
             }
         }
 
         public class DeleteCommand : Aras.ViewModel.Command
         {
-            public RelationshipTree RelationshipTree { get; private set; }
+            public RelationshipTree RelationshipTree
+            {
+                get
+                {
+                    return ((RelationshipTree)this.Control);
+                }
+            }
 
             internal void UpdateCanExecute()
             {
@@ -588,15 +620,20 @@ namespace Aras.ViewModel
             }
 
             internal DeleteCommand(RelationshipTree RelationshipTree)
+                : base(RelationshipTree)
             {
-                this.RelationshipTree = RelationshipTree;
-                this.CanExecute = false;
             }
         }
 
         public class SaveCommand : Aras.ViewModel.Command
         {
-            public RelationshipTree RelationshipTree { get; private set; }
+            public RelationshipTree RelationshipTree
+            {
+                get
+                {
+                    return ((RelationshipTree)this.Control);
+                }
+            }
 
             internal void UpdateCanExecute()
             {
@@ -623,15 +660,20 @@ namespace Aras.ViewModel
             }
 
             internal SaveCommand(RelationshipTree RelationshipTree)
+                : base(RelationshipTree)
             {
-                this.RelationshipTree = RelationshipTree;
-                this.CanExecute = false;
             }
         }
 
         public class UndoCommand : Aras.ViewModel.Command
         {
-            public RelationshipTree RelationshipTree { get; private set; }
+            public RelationshipTree RelationshipTree
+            {
+                get
+                {
+                    return ((RelationshipTree)this.Control);
+                }
+            }
 
             internal void UpdateCanExecute()
             {
@@ -661,15 +703,20 @@ namespace Aras.ViewModel
             }
 
             internal UndoCommand(RelationshipTree RelationshipTree)
+                : base(RelationshipTree)
             {
-                this.RelationshipTree = RelationshipTree;
-                this.CanExecute = false;
             }
         }
 
         public class OutdentCommand : Aras.ViewModel.Command
         {
-            public RelationshipTree RelationshipTree { get; private set; }
+            public RelationshipTree RelationshipTree
+            {
+                get
+                {
+                    return ((RelationshipTree)this.Control);
+                }
+            }
 
             internal void UpdateCanExecute()
             {
@@ -733,15 +780,20 @@ namespace Aras.ViewModel
             }
 
             internal OutdentCommand(RelationshipTree RelationshipTree)
+                : base(RelationshipTree)
             {
-                this.RelationshipTree = RelationshipTree;
-                this.CanExecute = false;
             }
         }
 
         public class IndentCommand : Aras.ViewModel.Command
         {
-            public RelationshipTree RelationshipTree { get; private set; }
+            public RelationshipTree RelationshipTree
+            {
+                get
+                {
+                    return ((RelationshipTree)this.Control);
+                }
+            }
 
             internal void UpdateCanExecute()
             {
@@ -840,24 +892,21 @@ namespace Aras.ViewModel
             }
 
             internal IndentCommand(RelationshipTree RelationshipTree)
+                : base(RelationshipTree)
             {
-                this.RelationshipTree = RelationshipTree;
-                this.CanExecute = false;
             }
         }
 
         public class SearchClosedCommand : Aras.ViewModel.Command
         {
-            public RelationshipTree RelationshipTree { get; private set; }
-
             protected override void Run(IEnumerable<Control> Parameters)
             {
-                this.RelationshipTree.ShowSearch = false;
+                ((RelationshipTree)this.Control).ShowSearch = false;
             }
 
             internal SearchClosedCommand(RelationshipTree RelationshipTree)
+                :base(RelationshipTree)
             {
-                this.RelationshipTree = RelationshipTree;
                 this.CanExecute = true;
             }
         }

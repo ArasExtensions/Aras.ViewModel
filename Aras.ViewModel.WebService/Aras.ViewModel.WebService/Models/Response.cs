@@ -33,12 +33,9 @@ namespace Aras.ViewModel.WebService.Models
     {
         public List<Control> ControlQueue { get; set; }
 
-        public List<Command> CommandQueue { get; set; }
-
         public Response()
         {
             this.ControlQueue = new List<Control>();
-            this.CommandQueue = new List<Command>();
         }
     }
 }

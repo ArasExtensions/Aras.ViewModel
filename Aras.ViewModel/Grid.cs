@@ -148,8 +148,6 @@ namespace Aras.ViewModel
 
         public class SelectCommand : Aras.ViewModel.Command
         {
-            public Grid Grid { get; private set; }
-
             internal void UpdateCanExecute(Boolean CanExecute)
             {
                 this.CanExecute = CanExecute;
@@ -157,31 +155,31 @@ namespace Aras.ViewModel
 
             protected override void Run(IEnumerable<Control> Parameters)
             {
-                if (this.Grid.AllowSelect)
+                if (((Grid)this.Control).AllowSelect)
                 {
-                    this.Grid.SelectedRows.NotifyListChanged = false;
-                    this.Grid.SelectedRows.Clear();
+                    ((Grid)this.Control).SelectedRows.NotifyListChanged = false;
+                    ((Grid)this.Control).SelectedRows.Clear();
 
                     if (Parameters != null)
                     {
                         foreach (Control row in Parameters)
                         {
-                            if (row is Row && this.Grid.Rows.Contains((Row)row))
+                            if (row is Row && ((Grid)this.Control).Rows.Contains((Row)row))
                             {
-                                this.Grid.SelectedRows.Add((Row)row);
+                                ((Grid)this.Control).SelectedRows.Add((Row)row);
                             }
                         }
                     }
 
-                    this.Grid.SelectedRows.NotifyListChanged = true;
+                    ((Grid)this.Control).SelectedRows.NotifyListChanged = true;
                     this.CanExecute = true;
                 }
             }
 
             internal SelectCommand(Grid Grid)
+                :base(Grid)
             {
-                this.Grid = Grid;
-                this.CanExecute = this.Grid.AllowSelect;
+                this.CanExecute = ((Grid)this.Control).AllowSelect;
             }
         }
 

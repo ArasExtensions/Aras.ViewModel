@@ -318,8 +318,6 @@ namespace Aras.ViewModel
 
         public class SaveCommand : Aras.ViewModel.Command
         {
-            public Item Item { get; private set; }
-
             internal void UpdateCanExecute(Boolean CanExecute)
             {
                 this.CanExecute = CanExecute;
@@ -327,20 +325,17 @@ namespace Aras.ViewModel
 
             protected override void Run(IEnumerable<Control> Parameters)
             {
-                this.Item.SaveItem();
+                ((Item)this.Control).SaveItem();
             }
 
             internal SaveCommand(Item Item)
+                :base(Item)
             {
-                this.Item = Item;
-                this.CanExecute = false;
             }
         }
 
         public class SaveUnLockCommand : Aras.ViewModel.Command
         {
-            public Item Item { get; private set; }
-
             internal void UpdateCanExecute(Boolean CanExecute)
             {
                 this.CanExecute = CanExecute;
@@ -348,20 +343,17 @@ namespace Aras.ViewModel
 
             protected override void Run(IEnumerable<Control> Parameters)
             {
-                this.Item.SaveUnLockItem();
+                ((Item)this.Control).SaveUnLockItem();
             }
 
             internal SaveUnLockCommand(Item Item)
+                :base(Item)
             {
-                this.Item = Item;
-                this.CanExecute = false;
             }
 
         }
         public class EditCommand : Aras.ViewModel.Command
         {
-            public Item Item { get; private set; }
-
             internal void UpdateCanExecute(Boolean CanExecute)
             {
                 this.CanExecute = CanExecute;
@@ -369,20 +361,17 @@ namespace Aras.ViewModel
 
             protected override void Run(IEnumerable<Control> Parameters)
             {
-                this.Item.EditItem();
+                ((Item)this.Control).EditItem();
             }
 
             internal EditCommand(Item Item)
+                :base(Item)
             {
-                this.Item = Item;
-                this.CanExecute = false;
             }
         }
 
         public class UndoCommand : Aras.ViewModel.Command
         {
-            public Item Item { get; private set; }
-
             internal void UpdateCanExecute(Boolean CanExecute)
             {
                 this.CanExecute = CanExecute;
@@ -390,13 +379,12 @@ namespace Aras.ViewModel
 
             protected override void Run(IEnumerable<Control> Parameters)
             {
-                this.Item.UndoItem();
+                ((Item)this.Control).UndoItem();
             }
 
             internal UndoCommand(Item Item)
+                :base(Item)
             {
-                this.Item = Item;
-                this.CanExecute = false;
             }
         }
     }

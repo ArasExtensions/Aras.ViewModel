@@ -212,7 +212,13 @@ namespace Aras.ViewModel
 
         public class LoadCommand : Aras.ViewModel.Command
         {
-            public TreeNode TreeNode { get; private set; }
+            public TreeNode TreeNode
+            {
+                get
+                {
+                    return ((TreeNode)this.Control);
+                }
+            }
 
             protected override void Run(IEnumerable<Control> Parameters)
             {
@@ -225,8 +231,8 @@ namespace Aras.ViewModel
             }
 
             internal LoadCommand(TreeNode TreeNode)
+                :base(TreeNode)
             {
-                this.TreeNode = TreeNode;
                 this.CanExecute = true;
             }
         }

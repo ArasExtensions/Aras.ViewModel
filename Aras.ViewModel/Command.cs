@@ -32,6 +32,8 @@ namespace Aras.ViewModel
 {
     public abstract class Command : IEquatable<Command>
     {
+        public Control Control { get; private set; }
+
         public Guid ID { get; private set; }
 
         public event EventHandler CanExecuteChanged;
@@ -45,7 +47,7 @@ namespace Aras.ViewModel
         }
 
         private object _canExecuteLock = new object();
-        private Boolean _canExecute;
+        private volatile Boolean _canExecute;
         public Boolean CanExecute
         {
             get
@@ -84,7 +86,6 @@ namespace Aras.ViewModel
             this.Execute(null);
         }
 
-
         public bool Equals(Command other)
         {
             if (other == null)
@@ -121,9 +122,14 @@ namespace Aras.ViewModel
             return this.ID.GetHashCode();
         }
 
-        public Command()
+        public Command(Control Control)
         {
+            this.Control = Control;
             this.ID = Guid.NewGuid();
+            this.CanExecute = false;
+
+            // Add Command to Cache
+            this.Control.Session.CacheCommand(this);
         }
     }
 }
