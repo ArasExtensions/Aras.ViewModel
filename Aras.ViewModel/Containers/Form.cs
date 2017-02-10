@@ -32,6 +32,11 @@ namespace Aras.ViewModel.Containers
 {
     public abstract class Form : BorderContainer, IToolbarProvider
     {
+        public Model.Stores.Item Store { get; private set; }
+
+        [ViewModel.Attributes.Command("Create")]
+        public CreateCommand Create { get; private set; }
+
         [ViewModel.Attributes.Command("Save")]
         public SaveCommand Save { get; private set; }
 
@@ -57,6 +62,13 @@ namespace Aras.ViewModel.Containers
                     refreshbutton.Tooltip = "Refresh";
                     this._toolbar.Children.Add(refreshbutton);
                     refreshbutton.Command = this.Refresh;
+
+                    // Add Create Button
+                    Button createbutton = new Button(this.Session);
+                    createbutton.Icon = "New";
+                    createbutton.Tooltip = "Create";
+                    this._toolbar.Children.Add(createbutton);
+                    createbutton.Command = this.Create;
 
                     // Add Edit Button
                     Button editbutton = new Button(this.Session);
@@ -88,13 +100,6 @@ namespace Aras.ViewModel.Containers
         {
             base.AfterBindingChanged();
 
-            if (this.Transaction != null)
-            {
-                // Rollback existing Transaction
-                this.Transaction.RollBack();
-                this.Transaction = null;
-            }
-
             if (this.Binding != null)
             {
                 if (this.Binding is Model.Item)
@@ -102,15 +107,25 @@ namespace Aras.ViewModel.Containers
                     // Set Item
                     this.Item = (Model.Item)this.Binding;
 
-                    if (this.Item.Locked(true))
+                    if (this.Item.DatabaseState != Model.Item.DatabaseStates.New)
                     {
-                        // Create Transaction and add Item
-                        this.Transaction = this.Session.Model.BeginTransaction();
-                        this.Item.Update(this.Transaction);
-                    }
-                    else
-                    {
-                        this.Transaction = null; 
+                        if (this.Transaction != null)
+                        {
+                            // Rollback existing Transaction
+                            this.Transaction.RollBack();
+                            this.Transaction = null;
+                        }
+
+                        if (this.Item.Locked(true))
+                        {
+                            // Create Transaction and add Item
+                            this.Transaction = this.Session.Model.BeginTransaction();
+                            this.Item.Update(this.Transaction);
+                        }
+                        else
+                        {
+                            this.Transaction = null;
+                        }
                     }
                 }
                 else
@@ -120,6 +135,13 @@ namespace Aras.ViewModel.Containers
             }
             else
             {
+                if (this.Transaction != null)
+                {
+                    // Rollback existing Transaction
+                    this.Transaction.RollBack();
+                    this.Transaction = null;
+                }
+
                 this.Item = null;
             }
 
@@ -131,18 +153,47 @@ namespace Aras.ViewModel.Containers
 
         protected Model.Transaction Transaction { get; private set; }
 
+        private void CreateForm()
+        {
+            this.ResetError();
+
+            // Undo Changes
+            this.UndoForm();
+
+            this.Transaction = this.Session.Model.BeginTransaction();
+            this.Binding = this.Store.Create(this.Transaction);
+            this.SetCommandsCanExecute();
+        }
+
         private void SaveForm()
         {
+            this.ResetError();
+
             if (this.Transaction != null)
             {
-                this.Transaction.Commit(true);
-                this.Transaction = null;
+                try
+                {
+                    this.Transaction.Commit(true);
+                    this.Transaction = null;
+                }
+                catch (Model.Exceptions.ServerException e)
+                {
+                    // Raise Error Message
+                    this.OnError(e.Message);
+
+                    // Add Item to a new Transaction
+                    this.Transaction = this.Session.Model.BeginTransaction();
+                    this.Item.Update(this.Transaction);
+                }
+
                 this.SetCommandsCanExecute();
             }
         }
 
         private void EditForm()
         {
+            this.ResetError();
+
             if (this.Item != null)
             {
                 if (this.Transaction == null)
@@ -156,6 +207,8 @@ namespace Aras.ViewModel.Containers
 
         private void UndoForm()
         {
+            this.ResetError();
+
             if (this.Transaction != null)
             {
                 this.Transaction.RollBack();
@@ -187,15 +240,41 @@ namespace Aras.ViewModel.Containers
                 this.Save.UpdateCanExecute(false);
                 this.Undo.UpdateCanExecute(false);
             }
+
+            this.Create.UpdateCanExecute(true);
         }
 
-        public Form(Manager.Session Session)
+        public Form(Manager.Session Session, Model.Stores.Item Store)
             :base(Session)
         {
+            this.Store = Store;
+            this.Create = new CreateCommand(this);
             this.Edit = new EditCommand(this);
             this.Save = new SaveCommand(this);
             this.Undo = new UndoCommand(this);
             this.Transaction = null;
+        }
+
+
+        public class CreateCommand : Aras.ViewModel.Command
+        {
+            public Form Form { get; private set; }
+
+            internal void UpdateCanExecute(Boolean CanExecute)
+            {
+                this.CanExecute = CanExecute;
+            }
+
+            protected override void Run(IEnumerable<Aras.ViewModel.Control> Parameters)
+            {
+                this.Form.CreateForm();
+            }
+
+            internal CreateCommand(Form Form)
+            {
+                this.Form = Form;
+                this.CanExecute = true;
+            }
         }
 
         public class SaveCommand : Aras.ViewModel.Command

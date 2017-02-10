@@ -68,8 +68,8 @@ namespace Aras.ViewModel.Containers.Forms
             this.Children.NotifyListChanged = true;
         }
 
-        public Default(Manager.Session Session)
-            :base(Session)
+        public Default(Manager.Session Session, Model.Stores.Item Store)
+            :base(Session, Store)
         {
 
         }
