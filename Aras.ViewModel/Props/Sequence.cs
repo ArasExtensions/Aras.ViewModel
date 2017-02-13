@@ -76,7 +76,6 @@ namespace Aras.ViewModel.Properties
             else
             {
                 this.Value = null;
-                this.Enabled = false;
             }
         }
 
@@ -106,6 +105,12 @@ namespace Aras.ViewModel.Properties
             : base(Session)
         {
       
+        }
+
+        public Sequence(Manager.Session Session, Model.PropertyTypes.Sequence PropertyType)
+            : base(Session, PropertyType)
+        {
+
         }
     }
 }

@@ -132,7 +132,6 @@ namespace Aras.ViewModel.Properties
             else
             {
                 this.Value = null;
-                this.Enabled = false;
             }
         }
 
@@ -160,6 +159,12 @@ namespace Aras.ViewModel.Properties
 
         public String(Manager.Session Session)
             : base(Session)
+        {
+            this._length = DefaultLength;
+        }
+
+        public String(Manager.Session Session, Model.PropertyTypes.String PropertyType)
+            : base(Session, PropertyType)
         {
             this._length = DefaultLength;
         }

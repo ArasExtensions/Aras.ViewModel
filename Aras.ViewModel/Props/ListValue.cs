@@ -95,7 +95,6 @@ namespace Aras.ViewModel.Properties
             {
                 this.Value = null;
                 this.Label = null;
-                this.Enabled = false;
             }
         }
 

@@ -93,6 +93,10 @@ namespace Aras.ViewModel
                 // Set Enabled
                 this.Enabled = !((Model.Property)this.Binding).ReadOnly;
             }
+            else
+            {
+                this.Enabled = false;
+            }
         }
 
         protected override void BeforeBindingChanged()
@@ -121,6 +125,13 @@ namespace Aras.ViewModel
             :base(Session)
         {
             this.Required = false;
+            this.Width = 180;
+        }
+
+        public Property(Manager.Session Session, Model.PropertyType PropertyType)
+            : this(Session)
+        {
+            this.Label = PropertyType.Label;
         }
     }
 }

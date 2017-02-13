@@ -157,7 +157,6 @@ namespace Aras.ViewModel.Properties
             else
             {
                 this.Value = null;
-                this.Enabled = false;
             }
         }
 
@@ -185,6 +184,13 @@ namespace Aras.ViewModel.Properties
 
         public Float(Manager.Session Session)
             : base(Session)
+        {
+            this._minValue = DefaultMinValue;
+            this._maxValue = DefaultMaxValue;
+        }
+
+        public Float(Manager.Session Session, Model.PropertyTypes.Float PropertyType)
+            : base(Session, PropertyType)
         {
             this._minValue = DefaultMinValue;
             this._maxValue = DefaultMaxValue;

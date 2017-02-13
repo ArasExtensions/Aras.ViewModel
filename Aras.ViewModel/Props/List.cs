@@ -111,38 +111,22 @@ namespace Aras.ViewModel.Properties
 
             if (this.Binding != null)
             {
-                Model.List list = null;
-                Int32 selected = -1;
+                Model.ListValue modelvalue = (Model.ListValue)((Model.Properties.List)this.Binding).Value;
 
-                list = ((Model.Properties.List)this.Binding).Values;
-                selected = ((Model.Properties.List)this.Binding).Selected;
+                // Set Value
 
-                this.Values.Clear();
-
-                int cnt = 0;
-
-                this.Values.NotifyListChanged = false;
-
-                foreach (Model.ListValue modellistvalue in list.Values)
+                if (modelvalue != null)
                 {
-                    ListValue listvalue = new ListValue(this.Session);
-                    listvalue.Binding = modellistvalue;
-                    this.Values.Add(listvalue);
-
-                    if (selected == cnt)
-                    {
-                        this.Value = listvalue.Value;
-                    }
-
-                    cnt++;
+                    this.Value = modelvalue.Value;
                 }
-
-                this.Values.NotifyListChanged = true;
+                else
+                {
+                    this.Value = null;
+                }
             }
             else
             {
                 this.Value = null;
-                this.Enabled = false;
             }
         }
 
@@ -170,10 +154,6 @@ namespace Aras.ViewModel.Properties
         {
             base.BeforeBindingChanged();
 
-            if (this.Binding != null)
-            {
-                this.Values.Clear();
-            }
         }
 
         void Values_ListChanged(object sender, EventArgs e)
@@ -189,6 +169,25 @@ namespace Aras.ViewModel.Properties
             this.Value = null;
         }
 
+        public List(Manager.Session Session, Model.PropertyTypes.List PropertyType)
+            : base(Session, PropertyType)
+        {
+            this.Values = new Model.ObservableList<ListValue>();
+            this.Value = null;
 
+            if (PropertyType != null)
+            {
+                // Add Values
+                foreach (Model.ListValue modellistvalue in PropertyType.Values.Values)
+                {
+                    ListValue listvalue = new ListValue(this.Session);
+                    listvalue.Binding = modellistvalue;
+                    this.Values.Add(listvalue);
+                }
+            }
+
+            // Watch for changes in Values
+            this.Values.ListChanged += Values_ListChanged;
+        }
     }
 }
