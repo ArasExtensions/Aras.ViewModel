@@ -177,6 +177,15 @@ namespace Aras.ViewModel.Properties
 
             if (PropertyType != null)
             {
+                if (!PropertyType.Required)
+                {
+                    // Add Blank Value if Property is not required
+                    ListValue blank = new ListValue(this.Session);
+                    blank.Value = null;
+                    blank.Label = " ";
+                    this.Values.Add(blank);
+                }
+
                 // Add Values
                 foreach (Model.ListValue modellistvalue in PropertyType.Values.Values)
                 {
