@@ -28,9 +28,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Aras.ViewModel.Containers
+namespace Aras.ViewModel.Panes.ContentPanes
 {
-    public abstract class Form : BorderContainer, IToolbarProvider
+    public abstract class Form : ContentPane, IToolbarProvider
     {
         public Model.Stores.Item Store { get; private set; }
 
