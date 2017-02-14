@@ -138,6 +138,18 @@ namespace Aras.ViewModel.WebService.Models
                     }
 
                     break;
+                case ViewModel.Attributes.PropertyTypes.Decimal:
+
+                    if (property != null)
+                    {
+                        this.Values.Add(((System.Decimal)property).ToString());
+                    }
+                    else
+                    {
+                        this.Values.Add(null);
+                    }
+
+                    break;
                 default:
                     throw new NotImplementedException("PropertyType not implemented: " + this.Type.ToString());
             }        

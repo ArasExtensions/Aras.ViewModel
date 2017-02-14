@@ -63,6 +63,7 @@
     <Compile Include="Attributes\Command.cs" />
     <Compile Include="Attributes\Property.cs" />
     <Compile Include="Containers\Forms\Default.cs" />
+    <Compile Include="Containers\TableContainers\Item.cs" />
     <Compile Include="Panes\ContentPane.cs" />
     <Compile Include="Panes\TitlePane.cs" />
     <Compile Include="Grids\Search.cs" />
@@ -78,6 +79,7 @@
     <Compile Include="Manager\Session.cs" />
     <Compile Include="Containers\TableContainer.cs" />
     <Compile Include="Props\Date.cs" />
+    <Compile Include="Props\Decimal.cs" />
     <Compile Include="Props\Integers\Spinner.cs" />
     <Compile Include="Props\Item.cs" />
     <Compile Include="Props\Sequence.cs" />
