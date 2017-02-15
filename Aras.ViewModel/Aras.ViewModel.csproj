@@ -89,7 +89,7 @@
     <Compile Include="Container.cs" />
     <Compile Include="ControlCache.cs" />
     <Compile Include="Cell.cs" />
-    <Compile Include="Panes\ContentPanes\Form.cs" />
+    <Compile Include="Containers\Form.cs" />
     <Compile Include="File.cs" />
     <Compile Include="IRelationshipFormatter.cs" />
     <Compile Include="IItemFormatter.cs" />
@@ -135,6 +135,9 @@
       <Project>{e5b4196a-00d0-4de7-8104-487a7bc60784}</Project>
       <Name>Aras.Model</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Panes\ContentPanes\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
