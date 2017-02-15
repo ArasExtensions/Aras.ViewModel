@@ -247,6 +247,48 @@ namespace Aras.ViewModel.Manager
             return this.CommandCache[ID];
         }
 
+        public ViewModel.Property CreateProperty(Model.Property Property)
+        {
+            ViewModel.Property viewmodelproperty = null;
+
+            switch (Property.GetType().Name)
+            {
+                case "String":
+                    viewmodelproperty = new Properties.String(this);
+                    break;
+                case "Integer":
+                    viewmodelproperty = new Properties.Integer(this);
+                    break;
+                case "Sequence":
+                    viewmodelproperty = new Properties.Sequence(this);
+                    break;
+                case "Item":
+                    viewmodelproperty = new Properties.Item(this);
+                    break;
+                case "Decimal":
+                    viewmodelproperty = new Properties.Decimal(this);
+                    break;
+                case "Date":
+                    viewmodelproperty = new Properties.Date(this);
+                    break;
+                case "Text":
+                    viewmodelproperty = new Properties.Text(this);
+                    break;
+                case "Boolean":
+                    viewmodelproperty = new Properties.Boolean(this);
+                    break;
+                case "List":
+                    viewmodelproperty = new Properties.List(this);
+                    break;
+                default:
+                    throw new Model.Exceptions.ArgumentException("PropertyType not implmented: " + Property.GetType().Name);
+            }
+
+            viewmodelproperty.Binding = Property;
+
+            return viewmodelproperty;
+        }
+
         public override string ToString()
         {
             return this.Model.ToString();

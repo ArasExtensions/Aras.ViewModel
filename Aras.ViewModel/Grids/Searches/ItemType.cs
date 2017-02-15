@@ -132,32 +132,13 @@ namespace Aras.ViewModel.Grids.Searches
 
                         if (this.Grid.Rows[i].Cells[j].Value == null)
                         {
-                            switch (property.GetType().Name)
-                            {
-                                case "String":
-                                    this.Grid.Rows[i].Cells[j].Value = new Properties.String(this.Session);
-                                    break;
-                                case "Integer":
-                                    this.Grid.Rows[i].Cells[j].Value = new Properties.Integer(this.Session);
-                                    break;
-                                case "Sequence":
-                                    this.Grid.Rows[i].Cells[j].Value = new Properties.Sequence(this.Session);
-                                    break;
-                                case "Item":
-                                    this.Grid.Rows[i].Cells[j].Value = new Properties.Item(this.Session);
-                                    break;
-                                case "Decimal":
-                                    this.Grid.Rows[i].Cells[j].Value = new Properties.Decimal(this.Session);
-                                    break;
-                                case "Date":
-                                    this.Grid.Rows[i].Cells[j].Value = new Properties.Date(this.Session);
-                                    break;
-                                default:
-                                    throw new Model.Exceptions.ArgumentException("PropertyType not implmented: " + property.GetType().Name);
-                            }
+                            this.Grid.Rows[i].Cells[j].Value = this.Session.CreateProperty(property);
+                        }
+                        else
+                        {
+                            this.Grid.Rows[i].Cells[j].Value.Binding = property;
                         }
 
-                        this.Grid.Rows[i].Cells[j].Value.Binding = property;
                         j++;
                     }
                 }
