@@ -32,40 +32,6 @@ namespace Aras.ViewModel.Grids
 {
     public abstract class Search : Containers.BorderContainer, IToolbarProvider
     {
-        private List<String> _propertyNames;
-        public IEnumerable<String> PropertyNames
-        {
-            get
-            {
-                return this._propertyNames;
-            }
-        }
-
-        public void SetPropertyNames(String Names)
-        {
-            this._propertyNames.Clear();
-            this.AddToPropertyNames(Names);
-        }
-
-        public void AddToPropertyNames(String Names)
-        {
-            String[] parts = Names.Split(',');
-
-            foreach (String name in parts)
-            {
-                if (!this._propertyNames.Contains(name))
-                {
-                    this._propertyNames.Add(name);
-                }
-            }
-
-            // Load Columns
-            this.LoadColumns();
-
-            // Refresh Control
-            this.RefreshControl();
-        }
-
         private Containers.Toolbar _toolbar;
         public virtual Containers.Toolbar Toolbar
         {
@@ -159,8 +125,6 @@ namespace Aras.ViewModel.Grids
         public Search(Manager.Session Session)
             : base(Session)
         {
-            this._propertyNames = new List<String>();
-
             // Create Page
             this.Page = new Properties.Integer(this.Session);
             this.Page.Value = 1;

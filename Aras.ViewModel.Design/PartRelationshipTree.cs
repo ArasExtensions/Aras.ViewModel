@@ -53,7 +53,7 @@ namespace Aras.ViewModel.Design
             base.AfterBindingChanged();
 
             // Set Columns to show in Search
-            this.Search.AddToPropertyNames("item_number,major_rev,name");
+            //this.Search.AddToPropertyNames("item_number,major_rev,name");
         }
 
         public PartRelationshipTree(ViewModel.Manager.Session Session)

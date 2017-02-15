@@ -44,9 +44,9 @@ namespace Aras.ViewModel
 
         public Model.ObservableList<Row> SelectedRows { get; private set; }
 
-        public Column AddColumn(String Name, String Label)
+        public Column AddColumn(String Name, String Label, Int32 Width)
         {
-            Column col = new Column(this, Name, Label);
+            Column col = new Column(this, Name, Label, Width);
             this.Columns.Add(col);
             return col;
         }

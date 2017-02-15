@@ -47,10 +47,10 @@ namespace Aras.ViewModel.Design
                     this._bOM = new Grid(this.Session);
                     this.OnPropertyChanged("BOM");
                     this._bOM.AllowSelect = false;
-                    this._bOM.AddColumn("number", "Number");
-                    this._bOM.AddColumn("revision", "Revision");
-                    this._bOM.AddColumn("name", "Name");
-                    this._bOM.AddColumn("quantity", "Qty");
+                    this._bOM.AddColumn("number", "Number", 80);
+                    this._bOM.AddColumn("revision", "Revision", 80);
+                    this._bOM.AddColumn("name", "Name", 80);
+                    this._bOM.AddColumn("quantity", "Qty", 80);
                 }
 
                 return this._bOM;
@@ -68,9 +68,9 @@ namespace Aras.ViewModel.Design
                     this._configuration = new Grid(this.Session);
                     this.OnPropertyChanged("Configuration");
                     this._configuration.AllowSelect = false;
-                    this._configuration.AddColumn("rule", "Item");
-                    this._configuration.AddColumn("value", "Required");
-                    this._configuration.AddColumn("quantity", "Qty");
+                    this._configuration.AddColumn("rule", "Item", 80);
+                    this._configuration.AddColumn("value", "Required", 80);
+                    this._configuration.AddColumn("quantity", "Qty", 80);
                 }
 
                 return this._configuration;

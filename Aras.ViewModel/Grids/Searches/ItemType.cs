@@ -36,25 +36,14 @@ namespace Aras.ViewModel.Grids.Searches
         {
             base.AfterBindingChanged();
 
+            // Reset Query
+            this._query = null;
+
             if (this.Binding != null)
             {
-                if (this.Binding is Model.Stores.Item)
-                {
-                    this.Query = ((Model.Stores.Item)this.Binding).Query();
-                    this.Query.PageSize = (System.Int32)this.PageSize.Value;
-                    this.Query.Paging = true;
-                }
-                else
-                {
-                    throw new Model.Exceptions.ArgumentException("Binding must be of type Aras.Model.Stores.Item");
-                }
+                // Add Search PropertTypes to Select
+                ((Model.Stores.Item)this.Binding).ItemType.AddSearchPropertyTypesToSelect();
             }
-            else
-            {
-                this.Query = null;
-            }
-
-            this.RefreshControl();
         }
 
         public IEnumerable<Model.Item> Displayed
@@ -89,9 +78,24 @@ namespace Aras.ViewModel.Grids.Searches
             }
         }
 
-        private Model.Queries.Item Query;
+        private Model.Queries.Item _query;
+        private Model.Queries.Item Query
+        {
+            get
+            {
+                if (this._query == null)
+                {
+                    if (this.Binding != null)
+                    {
+                        this._query = ((Model.Stores.Item)this.Binding).Query();
+                        this._query.PageSize = (System.Int32)this.PageSize.Value;
+                        this._query.Paging = true;
+                    }
+                }
 
-        private List<Model.PropertyType> PropertyTypes;
+                return this._query;
+            }
+        }
 
         protected override void LoadColumns()
         {
@@ -99,20 +103,9 @@ namespace Aras.ViewModel.Grids.Searches
             {
                 this.Grid.Columns.Clear();
 
-                // Build List of PropertyTypes
-                this.PropertyTypes = new List<Model.PropertyType>();
-
-                foreach (String propertyname in this.PropertyNames)
+                foreach (Model.PropertyType proptype in this.Query.Store.ItemType.SearchPropertyTypes)
                 {
-                    if (((Model.Stores.Item)this.Binding).ItemType.HasPropertyType(propertyname))
-                    {
-                        this.PropertyTypes.Add(((Model.Stores.Item)this.Binding).ItemType.PropertyType(propertyname));
-                    }
-                }
-
-                foreach (Model.PropertyType proptype in this.PropertyTypes)
-                {
-                    this.Grid.AddColumn(proptype.Name, proptype.Label);
+                    this.Grid.AddColumn(proptype.Name, proptype.Label, proptype.ColumnWidth);
                 }
             }
             else
@@ -131,10 +124,10 @@ namespace Aras.ViewModel.Grids.Searches
                 for (int i = 0; i < this.Grid.NoRows; i++)
                 {
                     Model.Item item = this.Query[i];
+                    int j = 0;
 
-                    for (int j = 0; j < this.PropertyTypes.Count(); j++)
+                    foreach (Model.PropertyType proptype in this.Query.Store.ItemType.SearchPropertyTypes)
                     {
-                        Model.PropertyType proptype = this.PropertyTypes[j];
                         Model.Property property = item.Property(proptype);
 
                         if (this.Grid.Rows[i].Cells[j].Value == null)
@@ -150,12 +143,22 @@ namespace Aras.ViewModel.Grids.Searches
                                 case "Sequence":
                                     this.Grid.Rows[i].Cells[j].Value = new Properties.Sequence(this.Session);
                                     break;
+                                case "Item":
+                                    this.Grid.Rows[i].Cells[j].Value = new Properties.Item(this.Session);
+                                    break;
+                                case "Decimal":
+                                    this.Grid.Rows[i].Cells[j].Value = new Properties.Decimal(this.Session);
+                                    break;
+                                case "Date":
+                                    this.Grid.Rows[i].Cells[j].Value = new Properties.Date(this.Session);
+                                    break;
                                 default:
                                     throw new Model.Exceptions.ArgumentException("PropertyType not implmented: " + property.GetType().Name);
                             }
                         }
 
                         this.Grid.Rows[i].Cells[j].Value.Binding = property;
+                        j++;
                     }
                 }
             }
@@ -185,7 +188,7 @@ namespace Aras.ViewModel.Grids.Searches
                         return null;
                     }
                 default:
-                    throw new NotImplementedException("Property Type not implemented: " + PropertyType.GetType().Name);
+                    return null;
             }
         }
 
@@ -204,7 +207,7 @@ namespace Aras.ViewModel.Grids.Searches
                 {
                     List<Model.Condition> conditions = new List<Model.Condition>();
 
-                    foreach(Model.PropertyType proptype in this.PropertyTypes)
+                    foreach(Model.PropertyType proptype in this.Query.Store.ItemType.SearchPropertyTypes)
                     {
                         Model.Condition condition = this.Condition(proptype);
 

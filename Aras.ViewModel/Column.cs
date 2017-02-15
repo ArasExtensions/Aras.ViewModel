@@ -98,12 +98,13 @@ namespace Aras.ViewModel
             return this.Label;
         }
 
-        internal Column(Grid Grid, String Name, String Label)
+        internal Column(Grid Grid, String Name, String Label, Int32 Width)
             :base(Grid.Session)
         {
             this.Grid = Grid;
             this.Name = Name;
             this.Label = Label;
+            this.Width = Width;
         }
 
     }

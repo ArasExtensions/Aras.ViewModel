@@ -51,7 +51,7 @@ namespace Aras.ViewModel.Design
                 //partstore.ItemType.AddToSelect("item_number,major_rev,name,keyed_name");
                 
                 // Set Properties to display in Parts Search
-                this.Parts.SetPropertyNames("item_number,major_rev,name");
+                //this.Parts.SetPropertyNames("item_number,major_rev,name");
 
                 // Set Binding for Parts
                 //this.Parts.Binding = partstore;
@@ -60,7 +60,7 @@ namespace Aras.ViewModel.Design
                 this.Parts.Selected.ListChanged += Selected_ListChanged;
 
                 // Add Search Columns to RelationshipTree
-                this.Relationships.Search.AddToPropertyNames("item_number,major_rev,name");
+                //this.Relationships.Search.AddToPropertyNames("item_number,major_rev,name");
 
                 // Add RelationshipType to RelationshipTree
                 this.Relationships.RelationshipType = (((Model.Session)this.Binding).ItemType("Part").RelationshipType("Part BOM"));
