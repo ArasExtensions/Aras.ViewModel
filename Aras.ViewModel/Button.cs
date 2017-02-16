@@ -36,7 +36,7 @@ namespace Aras.ViewModel
         [Attributes.Property("Icon", Attributes.PropertyTypes.String, true)]
         public System.String Icon { get; set; }
 
-        [ViewModel.Attributes.Command("Command")]
+        [Attributes.Property("Command", Attributes.PropertyTypes.Command, true)]
         public Command Command { get; set; }
 
         public Button(Manager.Session Session)

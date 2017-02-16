@@ -33,18 +33,15 @@ namespace Aras.ViewModel.WebService.Models
     {
         public String ID { get; set; }
 
-        public String Name { get; set; }
-
         public Boolean CanExecute { get; set; }
 
         public Command()
         {
         }
 
-        public Command(String Name, ViewModel.Command Command)
+        public Command(ViewModel.Command Command)
         {
             this.ID = ViewModel.Utilities.GuidToString(Command.ID);
-            this.Name = Name;
             this.CanExecute = Command.CanExecute;
         }
     }

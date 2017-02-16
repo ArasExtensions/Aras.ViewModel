@@ -141,6 +141,18 @@ namespace Aras.ViewModel.WebService.Controllers
                                 }
 
                                 break;
+                            case ViewModel.Attributes.PropertyTypes.Command:
+
+                                if (property.Values[0] == null)
+                                {
+                                    control.SetPropertyValue(property.Name, null);
+                                }
+                                else
+                                {
+                                    control.SetPropertyValue(property.Name, this.Session.Command(ViewModel.Utilities.StringToGuid(property.Values[0])));
+                                }
+
+                                break;
                             default:
                                 throw new NotImplementedException("PropertyType not implemented: " + property.Type);
                         }

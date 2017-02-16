@@ -33,6 +33,7 @@ namespace Aras.ViewModel
     [Attributes.ClientControl("Aras.View.Grid")]
     public class Grid : Control
     {
+        [ViewModel.Attributes.Property("Select", Aras.ViewModel.Attributes.PropertyTypes.Command, true)]
         [ViewModel.Attributes.Command("Select")]
         public SelectCommand Select { get; private set; }
 

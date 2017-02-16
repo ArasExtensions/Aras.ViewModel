@@ -61,6 +61,12 @@ namespace Aras.ViewModel.WebService.Controllers
             {
                 Response.ControlQueue.Add(new Models.Control(control, this.Session.Database.Server.ControlType(control)));
             }
+
+            // Add Command Queue
+            foreach (ViewModel.Command command in this.Session.GetCommandsFromQueue())
+            {
+                Response.CommandQueue.Add(new Models.Command(command));
+            }
         }
 
         protected Exception ProcessException(Exception e)

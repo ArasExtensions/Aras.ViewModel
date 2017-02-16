@@ -150,6 +150,18 @@ namespace Aras.ViewModel.WebService.Models
                     }
 
                     break;
+                case ViewModel.Attributes.PropertyTypes.Command:
+
+                    if (property != null)
+                    {
+                        this.Values.Add(ViewModel.Utilities.GuidToString(((ViewModel.Command)property).ID));
+                    }
+                    else
+                    {
+                        this.Values.Add(null);
+                    }
+
+                    break;
                 default:
                     throw new NotImplementedException("PropertyType not implemented: " + this.Type.ToString());
             }        

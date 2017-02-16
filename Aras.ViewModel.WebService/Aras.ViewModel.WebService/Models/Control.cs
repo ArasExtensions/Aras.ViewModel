@@ -37,8 +37,6 @@ namespace Aras.ViewModel.WebService.Models
 
         public List<Property> Properties { get; set; }
 
-        public List<Command> Commands { get; set; }
-
         public Control()
         {
 
@@ -58,14 +56,6 @@ namespace Aras.ViewModel.WebService.Models
             foreach(String name in Control.Properties)
             {
                 this.Properties.Add(new Property(name, Control));
-            }
-
-            // Add Commands
-            this.Commands = new List<Command>();
-
-            foreach (String name in Control.Commands)
-            {
-                this.Commands.Add(new Command(name, Control.GetCommand(name)));
             }
         }
     }

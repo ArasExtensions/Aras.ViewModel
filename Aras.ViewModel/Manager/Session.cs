@@ -140,8 +140,16 @@ namespace Aras.ViewModel.Manager
 
         private void QueueControlRecursive(Control Control)
         {
+            // Queue Control
             this.QueueControl(Control);
 
+            // Queue Commands
+            foreach (String name in Control.Commands)
+            {
+                this.QueueCommand(Control.GetCommand(name));
+            }
+
+            // Queue Children
             foreach(Control child in Control.Controls)
             {
                 this.QueueControlRecursive(child);
@@ -149,7 +157,7 @@ namespace Aras.ViewModel.Manager
         }
 
         private object ControlCacheLock = new object();
-        private Dictionary<Guid, ViewModel.Control> ControlCache;
+        private volatile Dictionary<Guid, ViewModel.Control> ControlCache;
 
         internal void CacheControl(ViewModel.Control Control)
         {
@@ -188,7 +196,7 @@ namespace Aras.ViewModel.Manager
         }
 
         private object ControlQueueLock = new object();
-        private List<ViewModel.Control> ControlQueue;
+        private volatile List<ViewModel.Control> ControlQueue;
 
         private void QueueControl(ViewModel.Control Control)
         {
@@ -216,7 +224,7 @@ namespace Aras.ViewModel.Manager
         }
 
         private object CommandCacheLock = new object();
-        private Dictionary<Guid, ViewModel.Command> CommandCache;
+        private volatile Dictionary<Guid, ViewModel.Command> CommandCache;
 
         internal void CacheCommand(ViewModel.Command Command)
         {
@@ -227,11 +235,11 @@ namespace Aras.ViewModel.Manager
                     // Store Command in Cache
                     this.CommandCache[Command.ID] = Command;
 
+                    // Queue Command
+                    this.QueueCommand(Command);
+
                     // Link to Event for when CanExecute Changes
                     Command.CanExecuteChanged += Command_CanExecuteChanged;
-
-                    // Queue Control
-                    this.QueueControl(Command.Control);
                 }
             }
         }
@@ -239,12 +247,37 @@ namespace Aras.ViewModel.Manager
         private void Command_CanExecuteChanged(object sender, EventArgs e)
         {
             ViewModel.Command command = (ViewModel.Command)sender;
-            this.QueueControl(command.Control);
+            this.QueueCommand(command);
         }
 
         public ViewModel.Command Command(Guid ID)
         {
             return this.CommandCache[ID];
+        }
+
+        private object CommandQueueLock = new object();
+        private volatile List<ViewModel.Command> CommandQueue;
+
+        private void QueueCommand(ViewModel.Command Command)
+        {
+            if (!this.CommandQueue.Contains(Command))
+            {
+                this.CommandQueue.Add(Command);
+            }
+        }
+
+        public IEnumerable<ViewModel.Command> GetCommandsFromQueue()
+        {
+            lock (this.CommandQueueLock)
+            {
+                // Copy Queue
+                List<ViewModel.Command> ret = this.CommandQueue;
+
+                // Reset Queue
+                this.CommandQueue = new List<ViewModel.Command>();
+
+                return ret;
+            }
         }
 
         public ViewModel.Property CreateProperty(Model.Property Property)
@@ -307,6 +340,7 @@ namespace Aras.ViewModel.Manager
             this.ControlCache = new Dictionary<Guid, ViewModel.Control>();
             this.ControlQueue = new List<ViewModel.Control>();
             this.CommandCache = new Dictionary<Guid, ViewModel.Command>();
+            this.CommandQueue = new List<Command>();
         }
     }
 }
