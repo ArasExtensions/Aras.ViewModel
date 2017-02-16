@@ -121,13 +121,13 @@ namespace Aras.ViewModel.Properties
         public Boolean(Manager.Session Session)
             : base(Session)
         {
-
+            this.Width = null;
         }
 
         public Boolean(Manager.Session Session, Model.PropertyTypes.Boolean PropertyType)
             : base(Session, PropertyType)
         {
-        
+            this.Width = null;
         }
     }
 }

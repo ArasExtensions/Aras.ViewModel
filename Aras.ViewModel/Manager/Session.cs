@@ -249,42 +249,47 @@ namespace Aras.ViewModel.Manager
 
         public ViewModel.Property CreateProperty(Model.Property Property)
         {
+            ViewModel.Property viewmodelproperty = this.CreateProperty(Property.Type);
+            viewmodelproperty.Binding = Property;
+            return viewmodelproperty;
+        }
+
+        public ViewModel.Property CreateProperty(Model.PropertyType PropertyType)
+        {
             ViewModel.Property viewmodelproperty = null;
 
-            switch (Property.GetType().Name)
+            switch (PropertyType.GetType().Name)
             {
                 case "String":
-                    viewmodelproperty = new Properties.String(this);
+                    viewmodelproperty = new Properties.String(this, (Model.PropertyTypes.String)PropertyType);
                     break;
                 case "Integer":
-                    viewmodelproperty = new Properties.Integer(this);
+                    viewmodelproperty = new Properties.Integer(this, (Model.PropertyTypes.Integer)PropertyType);
                     break;
                 case "Sequence":
-                    viewmodelproperty = new Properties.Sequence(this);
+                    viewmodelproperty = new Properties.Sequence(this, (Model.PropertyTypes.Sequence)PropertyType);
                     break;
                 case "Item":
-                    viewmodelproperty = new Properties.Item(this);
+                    viewmodelproperty = new Properties.Item(this, (Model.PropertyTypes.Item)PropertyType);
                     break;
                 case "Decimal":
-                    viewmodelproperty = new Properties.Decimal(this);
+                    viewmodelproperty = new Properties.Decimal(this, (Model.PropertyTypes.Decimal)PropertyType);
                     break;
                 case "Date":
-                    viewmodelproperty = new Properties.Date(this);
+                    viewmodelproperty = new Properties.Date(this, (Model.PropertyTypes.Date)PropertyType);
                     break;
                 case "Text":
-                    viewmodelproperty = new Properties.Text(this);
+                    viewmodelproperty = new Properties.Text(this, (Model.PropertyTypes.Text)PropertyType);
                     break;
                 case "Boolean":
-                    viewmodelproperty = new Properties.Boolean(this);
+                    viewmodelproperty = new Properties.Boolean(this, (Model.PropertyTypes.Boolean)PropertyType);
                     break;
                 case "List":
-                    viewmodelproperty = new Properties.List(this);
+                    viewmodelproperty = new Properties.List(this, (Model.PropertyTypes.List)PropertyType);
                     break;
                 default:
-                    throw new Model.Exceptions.ArgumentException("PropertyType not implmented: " + Property.GetType().Name);
+                    throw new Model.Exceptions.ArgumentException("PropertyType not implmented: " + PropertyType.GetType().Name);
             }
-
-            viewmodelproperty.Binding = Property;
 
             return viewmodelproperty;
         }

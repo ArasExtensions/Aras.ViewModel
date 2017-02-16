@@ -49,36 +49,7 @@ namespace Aras.ViewModel.Containers.TableContainers
                 {
                     Model.PropertyType proptype = this.ItemType.PropertyType(prop);
 
-                    switch(proptype.GetType().Name)
-                    {
-                        case "Date":
-                            this.PropertyCache[proptype] = new Properties.Date(this.Session, (Model.PropertyTypes.Date)proptype);
-                            break;
-                        case "Float":
-                            this.PropertyCache[proptype] = new Properties.Float(this.Session, (Model.PropertyTypes.Float)proptype);
-                            break;
-                        case "Integer":
-                            this.PropertyCache[proptype] = new Properties.Integer(this.Session, (Model.PropertyTypes.Integer)proptype);
-                            break;
-                        case "Item":
-                            this.PropertyCache[proptype] = new Properties.Item(this.Session, (Model.PropertyTypes.Item)proptype);
-                            break;
-                        case "List":
-                            this.PropertyCache[proptype] = new Properties.List(this.Session, (Model.PropertyTypes.List)proptype);
-                            break;
-                        case "Sequence":
-                            this.PropertyCache[proptype] = new Properties.Sequence(this.Session, (Model.PropertyTypes.Sequence)proptype);
-                            break;
-                        case "String":
-                            this.PropertyCache[proptype] = new Properties.String(this.Session, (Model.PropertyTypes.String)proptype);
-                            break;
-                        case "Decimal":
-                            this.PropertyCache[proptype] = new Properties.Decimal(this.Session, (Model.PropertyTypes.Decimal)proptype);
-                            break;
-                        default:
-                            throw new NotImplementedException("Property Type not implemented: " + proptype.GetType().Name);
-                    }
-
+                    this.PropertyCache[proptype] = this.Session.CreateProperty(proptype);
                     this.Children.Add(this.PropertyCache[proptype]);
                 }
                 else
