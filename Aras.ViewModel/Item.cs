@@ -32,6 +32,9 @@ namespace Aras.ViewModel
 {
     public class Item : Control
     {
+        [ViewModel.Attributes.Command("Refresh")]
+        public RefreshCommand Refresh { get; private set; }
+
         [ViewModel.Attributes.Command("Save")]
         public SaveCommand Save { get; private set; }
 
@@ -63,10 +66,8 @@ namespace Aras.ViewModel
             }
         }
 
-        protected override void RefreshControl()
+        protected virtual void RefreshControl()
         {
-            base.RefreshControl();
-
             if (this.ModelItem != null)
             {
                 this.ModelItem.Refresh();
@@ -310,10 +311,26 @@ namespace Aras.ViewModel
         public Item(Manager.Session Session)
             : base(Session)
         {
+            this.Refresh = new RefreshCommand(this);
             this.Edit = new EditCommand(this);
             this.Save = new SaveCommand(this);
             this.SaveUnLock = new SaveUnLockCommand(this);
             this.Undo = new UndoCommand(this);
+        }
+
+        public class RefreshCommand : Aras.ViewModel.Command
+        {
+            protected override void Run(IEnumerable<Control> Parameters)
+            {
+                ((Item)this.Control).RefreshControl();
+                this.CanExecute = true;
+            }
+
+            internal RefreshCommand(Control Control)
+                : base(Control)
+            {
+                this.CanExecute = true;
+            }
         }
 
         public class SaveCommand : Aras.ViewModel.Command

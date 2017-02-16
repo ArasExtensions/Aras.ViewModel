@@ -79,6 +79,9 @@ namespace Aras.ViewModel.Grids
 
         protected ViewModel.Grid Grid { get; private set; }
 
+        [ViewModel.Attributes.Command("Refresh")]
+        public RefreshCommand Refresh { get; private set; }
+
         [ViewModel.Attributes.Command("NextPage")]
         public NextPageCommand NextPage { get; private set; }
 
@@ -122,6 +125,11 @@ namespace Aras.ViewModel.Grids
             }
         }
 
+        protected virtual void RefreshControl()
+        {
+
+        }
+
         public Search(Manager.Session Session)
             : base(Session)
         {
@@ -140,6 +148,7 @@ namespace Aras.ViewModel.Grids
             this.Children.Add(this.Grid);
 
             // Create Commands
+            this.Refresh = new RefreshCommand(this);
             this.NextPage = new NextPageCommand(this);
             this.PreviousPage = new PreviousPageCommand(this);
 
@@ -160,6 +169,20 @@ namespace Aras.ViewModel.Grids
             this.PageSize.PropertyChanged += PageSize_PropertyChanged;
         }
 
+        public class RefreshCommand : Aras.ViewModel.Command
+        {
+            protected override void Run(IEnumerable<Control> Parameters)
+            {
+                ((Search)this.Control).RefreshControl();
+                this.CanExecute = true;
+            }
+
+            internal RefreshCommand(Control Control)
+                : base(Control)
+            {
+                this.CanExecute = true;
+            }
+        }
 
         public class NextPageCommand : Aras.ViewModel.Command
         {

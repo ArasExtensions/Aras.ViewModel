@@ -34,6 +34,9 @@ namespace Aras.ViewModel.Containers
     {
         public Model.Stores.Item Store { get; private set; }
 
+        [ViewModel.Attributes.Command("Refresh")]
+        public RefreshCommand Refresh { get; private set; }
+
         [ViewModel.Attributes.Command("Create")]
         public CreateCommand Create { get; private set; }
 
@@ -250,10 +253,16 @@ namespace Aras.ViewModel.Containers
             this.Create.UpdateCanExecute(true);
         }
 
+        protected virtual void RefreshControl()
+        {
+
+        }
+
         public Form(Manager.Session Session, Model.Stores.Item Store)
             :base(Session)
         {
             this.Store = Store;
+            this.Refresh = new RefreshCommand(this);
             this.Create = new CreateCommand(this);
             this.Edit = new EditCommand(this);
             this.Save = new SaveCommand(this);
@@ -261,6 +270,20 @@ namespace Aras.ViewModel.Containers
             this.Transaction = null;
         }
 
+        public class RefreshCommand : Aras.ViewModel.Command
+        {
+            protected override void Run(IEnumerable<Control> Parameters)
+            {
+                ((Form)this.Control).RefreshControl();
+                this.CanExecute = true;
+            }
+
+            internal RefreshCommand(Control Control)
+                : base(Control)
+            {
+                this.CanExecute = true;
+            }
+        }
 
         public class CreateCommand : Aras.ViewModel.Command
         {

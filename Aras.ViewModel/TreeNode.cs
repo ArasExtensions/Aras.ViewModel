@@ -167,6 +167,9 @@ namespace Aras.ViewModel
             }
         }
 
+        [ViewModel.Attributes.Command("Refresh")]
+        public RefreshCommand Refresh { get; private set; }
+
         [ViewModel.Attributes.Command("Load")]
         public LoadCommand Load { get; private set; }
 
@@ -187,10 +190,8 @@ namespace Aras.ViewModel
             this.ChildrenLoaded = false;
         }
 
-        protected override void RefreshControl()
+        protected virtual void RefreshControl()
         {
-            base.RefreshControl();
-
             // Load Children
             this.LoadChildren();
 
@@ -207,7 +208,23 @@ namespace Aras.ViewModel
             this.Tree = Tree;
             this.Parent = Parent;
             this.ChildrenLoaded = false;
+            this.Refresh = new RefreshCommand(this);
             this.Load = new LoadCommand(this);
+        }
+
+        public class RefreshCommand : Aras.ViewModel.Command
+        {
+            protected override void Run(IEnumerable<Control> Parameters)
+            {
+                ((TreeNode)this.Control).RefreshControl();
+                this.CanExecute = true;
+            }
+
+            internal RefreshCommand(Control Control)
+                : base(Control)
+            {
+                this.CanExecute = true;
+            }
         }
 
         public class LoadCommand : Aras.ViewModel.Command

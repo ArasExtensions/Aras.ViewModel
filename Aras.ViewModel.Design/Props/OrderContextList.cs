@@ -119,10 +119,8 @@ namespace Aras.ViewModel.Design.Properties
             }
         }
 
-        protected override void RefreshControl()
+        public void Refresh()
         {
-            base.RefreshControl();
-
             // Set Value
             this.Value = ((Model.Design.OrderContext)this.Binding).Value;
         }

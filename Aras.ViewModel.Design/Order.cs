@@ -319,7 +319,7 @@ namespace Aras.ViewModel.Design
                         valuecontrol.Enabled = false;
                     }
 
-                    valuecontrol.Refresh.Execute();
+                    valuecontrol.Refresh();
 
                     // Add Quantity
                     ViewModel.Properties.Float quantitycontrol = this.ConfigQuantityCache.Get(ordercontext);

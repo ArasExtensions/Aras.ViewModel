@@ -84,6 +84,9 @@ namespace Aras.ViewModel
             }
         }
 
+        [ViewModel.Attributes.Command("Refresh")]
+        public RefreshCommand Refresh { get; private set; }
+
         [ViewModel.Attributes.Command("Select")]
         public SelectCommand Select { get; private set; }
 
@@ -263,10 +266,8 @@ namespace Aras.ViewModel
             }
         }
 
-        protected override void RefreshControl()
+        protected virtual void RefreshControl()
         {
-            base.RefreshControl();
-
             if (this.Node != null)
             {
                 this.Node.Refresh.Execute();
@@ -282,6 +283,7 @@ namespace Aras.ViewModel
             this.Node = null;
             this._transaction = null;
             this.CopyPasteBuffer = null;
+            this.Refresh = new RefreshCommand(this);
             this.Add = new AddCommand(this);
             this.Cut = new CutCommand(this);
             this.Copy = new CopyCommand(this);
@@ -303,6 +305,21 @@ namespace Aras.ViewModel
             : this(Session, new RelationshipFormatters.Default(), new ItemFormatters.Default())
         {
 
+        }
+
+        public class RefreshCommand : Aras.ViewModel.Command
+        {
+            protected override void Run(IEnumerable<Control> Parameters)
+            {
+                ((RelationshipTree)this.Control).RefreshControl();
+                this.CanExecute = true;
+            }
+
+            internal RefreshCommand(Control Control)
+                : base(Control)
+            {
+                this.CanExecute = true;
+            }
         }
 
         public class SelectCommand : Aras.ViewModel.Command

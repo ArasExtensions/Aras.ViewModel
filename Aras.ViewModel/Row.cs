@@ -66,11 +66,6 @@ namespace Aras.ViewModel
             this.UpdateCells();
         }
 
-        protected override void RefreshControl()
-        {
-           
-        }
-
         internal Row(Grid Grid)
             :base(Grid.Session)
         {

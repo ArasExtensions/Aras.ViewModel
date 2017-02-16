@@ -62,9 +62,6 @@ namespace Aras.ViewModel
             }
         }
 
-        [ViewModel.Attributes.Command("Refresh")]
-        public RefreshCommand Refresh { get; private set; }
-
         private Boolean _enabled;
         [Attributes.Property("Enabled", Attributes.PropertyTypes.Boolean, true)]
         public Boolean Enabled
@@ -293,11 +290,6 @@ namespace Aras.ViewModel
             }
         }
 
-        protected virtual void RefreshControl()
-        {
-
-        }
-
         public bool Equals(Control other)
         {
             if (other == null)
@@ -343,7 +335,6 @@ namespace Aras.ViewModel
         {
             this.Session = Session;
             this.ID = Guid.NewGuid();
-            this.Refresh = new RefreshCommand(this);
             this.ErrorMessage = null;
             this.Region = Regions.Center;
 
@@ -351,19 +342,5 @@ namespace Aras.ViewModel
             this.Session.CacheControl(this);
         }
 
-        public class RefreshCommand : Aras.ViewModel.Command
-        {
-            protected override void Run(IEnumerable<Control> Parameters)
-            {
-                this.Control.RefreshControl();
-                this.CanExecute = true;
-            }
-
-            internal RefreshCommand(Control Control)
-                :base(Control)
-            {
-                this.CanExecute = true;
-            }
-        }
     }
 }

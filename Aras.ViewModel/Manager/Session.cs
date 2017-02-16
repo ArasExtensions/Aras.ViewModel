@@ -97,7 +97,7 @@ namespace Aras.ViewModel.Manager
             ((Aras.ViewModel.Item)plugin).SetBinding(this.Model, Context);
 
             // Refresh Plugin
-            plugin.Refresh.Execute();
+            ((Aras.ViewModel.Item)plugin).Refresh.Execute();
 
             return plugin;
         }
