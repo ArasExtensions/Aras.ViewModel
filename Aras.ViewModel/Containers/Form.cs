@@ -154,7 +154,7 @@ namespace Aras.ViewModel.Containers
 
         protected Model.Item Item { get; private set; }
 
-        protected Model.Transaction Transaction { get; private set; }
+        internal Model.Transaction Transaction { get; private set; }
 
         private void CreateForm()
         {
@@ -193,7 +193,7 @@ namespace Aras.ViewModel.Containers
             }
         }
 
-        private void EditForm()
+        protected virtual void EditForm()
         {
             this.ResetError();
 

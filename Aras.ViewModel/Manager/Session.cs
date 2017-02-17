@@ -192,7 +192,11 @@ namespace Aras.ViewModel.Manager
         {
             // Add Control to Queue when Property Changes
             ViewModel.Control control = (ViewModel.Control)sender;
-            this.QueueControl(control);
+
+            if (control.HasProperty(e.PropertyName))
+            {
+                this.QueueControl(control);
+            }
         }
 
         private object ControlQueueLock = new object();

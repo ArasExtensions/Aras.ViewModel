@@ -72,11 +72,11 @@ namespace Aras.ViewModel
         {
             if (this.RowCache.Count() > this.Rows.Count())
             {
-                // Use Row from Cache and clear values
+                // Use Row from Cache
                 Row row = this.RowCache[this.Rows.Count()];
                 this.Rows.Add(row);
                 
-                // Queue Row
+                // Queue Cached Row
                 this.Session.QueueControl(row);
 
                 return row;
@@ -162,8 +162,7 @@ namespace Aras.ViewModel
             {
                 if (((Grid)this.Control).AllowSelect)
                 {
-                    ((Grid)this.Control).SelectedRows.NotifyListChanged = false;
-                    ((Grid)this.Control).SelectedRows.Clear();
+                    List<Row> newselection = new List<Row>();
 
                     if (Parameters != null)
                     {
@@ -171,12 +170,15 @@ namespace Aras.ViewModel
                         {
                             if (row is Row && ((Grid)this.Control).Rows.Contains((Row)row))
                             {
-                                ((Grid)this.Control).SelectedRows.Add((Row)row);
+                                newselection.Add((Row)row);
                             }
                         }
                     }
 
-                    ((Grid)this.Control).SelectedRows.NotifyListChanged = true;
+                    // Replace current selection
+                    ((Grid)this.Control).SelectedRows.Replace(newselection);
+
+                    // Set to Execute
                     this.CanExecute = true;
                 }
             }

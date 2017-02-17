@@ -186,6 +186,20 @@ namespace Aras.ViewModel.Grids
             }
         }
 
+        public void EditRelationship()
+        {
+            if (this.Form.Transaction != null)
+            {
+                if (this.Binding != null)
+                {
+                    foreach(Model.Relationship currentitem in ((Model.Item)this.Binding).Store(this.RelationshipType).CurrentItems())
+                    {
+                        currentitem.Update(this.Form.Transaction);
+                    }
+                }
+            }
+        }
+
         public Relationship(Containers.Form Form, Model.RelationshipType RelationshipType)
             :base(Form.Session)
         {
