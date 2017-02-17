@@ -39,13 +39,10 @@ namespace Aras.ViewModel.WebService.Controllers
         {
             try
             {
-                Models.Responses.Control ret = new Models.Responses.Control();
                 Guid viewmodelid = ViewModel.Utilities.StringToGuid(ID);
                 ViewModel.Control control = this.Session.Control(viewmodelid);
-                Manager.ControlType controltype = this.Session.Database.Server.ControlType(control);
-                ret.Value = new Models.Control(control, controltype);
-                this.UpdateResponse(ret);
-                return ret;
+                return new Models.Responses.Control(this.Session, control);
+
             }
             catch (Exception e)
             {
@@ -159,9 +156,7 @@ namespace Aras.ViewModel.WebService.Controllers
                     }
                 }
 
-                Models.Response ret = new Models.Response();
-                this.UpdateResponse(ret);
-                return ret;
+                return new Models.Responses.Empty(this.Session);
             }
             catch (Exception e)
             {

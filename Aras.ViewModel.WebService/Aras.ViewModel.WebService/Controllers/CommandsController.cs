@@ -58,9 +58,7 @@ namespace Aras.ViewModel.WebService.Controllers
                 this.Session.Command(viewmodelid).Execute(viewmodelparameters);
 
                 // Return Response
-                Models.Response response = new Models.Response();
-                this.UpdateResponse(response);
-                return response;
+                return new Models.Responses.Empty(this.Session);
             }
             catch (Exception e)
             {

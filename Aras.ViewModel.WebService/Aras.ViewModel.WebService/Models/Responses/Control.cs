@@ -33,10 +33,13 @@ namespace Aras.ViewModel.WebService.Models.Responses
     {
         public Models.Control Value { get; set; }
 
-        public Control()
-            :base()
+        public Control(ViewModel.Manager.Session Session, ViewModel.Control Control)
+            :base(Session)
         {
-
+            List<ViewModel.Control> viewmodelcontrols = new List<ViewModel.Control>();
+            viewmodelcontrols.Add(Control);
+            List<Models.Control> controls = this.QueueControls(Session, viewmodelcontrols);
+            this.Value = controls.First();
         }
     }
 }

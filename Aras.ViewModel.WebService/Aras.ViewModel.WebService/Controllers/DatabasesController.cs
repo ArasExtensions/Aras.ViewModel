@@ -87,8 +87,7 @@ namespace Aras.ViewModel.WebService.Controllers
                 HttpCookie cookie = new HttpCookie(tokencookie, session.Token);
                 HttpContext.Current.Response.Cookies.Add(cookie);
 
-                Models.Response response = new Models.Response();
-                return response;
+                return new Models.Responses.Empty(this.Session);
             }
             catch (Exception e)
             {

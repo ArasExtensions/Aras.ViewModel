@@ -128,14 +128,13 @@ namespace Aras.ViewModel.WebService.Controllers
         {
             try
             {
-                Models.Responses.Control ret = new Models.Responses.Control();
-
+                // Get Application Type
                 Manager.ControlTypes.ApplicationType apptype = this.Session.ApplicationType(ApplicationType.Name);
+                
+                // Get Application Control
                 ViewModel.Containers.Application applicationcontrol = this.Session.Application(apptype);
-                ret.Value = new Models.Control(applicationcontrol, apptype);
-                this.UpdateResponse(ret);
 
-                return ret;
+                return new Models.Responses.Control(this.Session, applicationcontrol);
             }
             catch(Exception e)
             {

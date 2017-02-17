@@ -29,7 +29,7 @@ using System.Web;
 
 namespace Aras.ViewModel.WebService.Models
 {
-    public class Control
+    public class Control : IEquatable<Control>
     {
         public String ID { get; set; }
 
@@ -37,26 +37,50 @@ namespace Aras.ViewModel.WebService.Models
 
         public List<Property> Properties { get; set; }
 
+        public bool Equals(Control other)
+        {
+            if (other != null)
+            {
+                return this.ID.Equals(other.ID);
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is Control)
+            {
+                return this.Equals((Control)obj);
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public override int GetHashCode()
+        {
+            return this.ID.GetHashCode();
+        }
+
         public Control()
         {
 
         }
 
-        public Control(ViewModel.Control Control, Manager.ControlType ControlType)
+        public Control(String ID, String Type)
         {
             // Set ID
-            this.ID = ViewModel.Utilities.GuidToString(Control.ID);
+            this.ID = ID;
             
             // Set Type
-            this.Type = ControlType.ClientType;
+            this.Type = Type;
 
-            // Add Properties
+            // Create Properties List
             this.Properties = new List<Property>();
-
-            foreach(String name in Control.Properties)
-            {
-                this.Properties.Add(new Property(name, Control));
-            }
         }
     }
 }

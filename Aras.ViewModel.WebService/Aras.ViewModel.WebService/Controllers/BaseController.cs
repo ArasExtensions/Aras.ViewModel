@@ -54,21 +54,6 @@ namespace Aras.ViewModel.WebService.Controllers
             }
         }
 
-        protected void UpdateResponse(Models.Response Response)
-        {
-            // Add Control Queue
-            foreach (ViewModel.Control control in this.Session.GetControlsFromQueue())
-            {
-                Response.ControlQueue.Add(new Models.Control(control, this.Session.Database.Server.ControlType(control)));
-            }
-
-            // Add Command Queue
-            foreach (ViewModel.Command command in this.Session.GetCommandsFromQueue())
-            {
-                Response.CommandQueue.Add(new Models.Command(command));
-            }
-        }
-
         protected Exception ProcessException(Exception e)
         {
             if (e is ViewModel.Manager.Exceptions.SessionException)

@@ -1,7 +1,7 @@
 ﻿/*  
   Aras.ViewModel provides a .NET library for building Aras Innovator Applications
 
-  Copyright (C) 2015 Processwall Limited.
+  Copyright (C) 2017 Processwall Limited.
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as published
@@ -29,14 +29,13 @@ using System.Web;
 
 namespace Aras.ViewModel.WebService.Models.Responses
 {
-    public class Controls : Response
+    public class Empty : Response
     {
-        public List<Models.Control> Values { get; set; }
-
-        public Controls(ViewModel.Manager.Session Session, IEnumerable<ViewModel.Control> Controls)
+        public Empty(ViewModel.Manager.Session Session)
             :base(Session)
         {
-            this.Values = this.QueueControls(Session, Controls);
+            List<ViewModel.Control> viewmodelcontrols = new List<ViewModel.Control>();
+            this.QueueControls(Session, viewmodelcontrols);
         }
     }
 }

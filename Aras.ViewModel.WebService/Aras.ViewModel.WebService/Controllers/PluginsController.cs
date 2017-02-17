@@ -40,13 +40,13 @@ namespace Aras.ViewModel.WebService.Controllers
         {
             try
             {
-                Models.Responses.Control ret = new Models.Responses.Control();
+                // Get Plugin Type
                 Manager.ControlType plugintype = this.Session.Database.Server.ControlType(Plugin.Name);
-                ViewModel.Control plugincontrol = this.Session.Plugin(plugintype, Plugin.Context);
-                ret.Value = new Models.Control(plugincontrol, plugintype);
-                this.UpdateResponse(ret);
 
-                return ret;
+                // Get Plugin Control
+                ViewModel.Control plugincontrol = this.Session.Plugin(plugintype, Plugin.Context);
+
+                return new Models.Responses.Control(this.Session, plugincontrol);
             }
             catch (Exception e)
             {
