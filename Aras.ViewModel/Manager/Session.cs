@@ -198,7 +198,7 @@ namespace Aras.ViewModel.Manager
         private object ControlQueueLock = new object();
         private volatile List<ViewModel.Control> ControlQueue;
 
-        private void QueueControl(ViewModel.Control Control)
+        internal void QueueControl(ViewModel.Control Control)
         {
             if (!this.ControlQueue.Contains(Control))
             {

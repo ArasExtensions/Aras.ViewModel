@@ -75,6 +75,10 @@ namespace Aras.ViewModel
                 // Use Row from Cache and clear values
                 Row row = this.RowCache[this.Rows.Count()];
                 this.Rows.Add(row);
+                
+                // Queue Row
+                this.Session.QueueControl(row);
+
                 return row;
             }
             else
