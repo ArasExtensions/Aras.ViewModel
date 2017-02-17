@@ -69,19 +69,35 @@ namespace Aras.ViewModel.Properties
         {
             base.AfterBindingChanged();
 
-            if (this.Binding != null)
-            {
-                this.Value = (System.String)((Model.Properties.Sequence)this.Binding).Value;
-            }
-            else
-            {
-                this.Value = null;
-            }
+            // Always Disabled
+            this.Enabled = false;
+
+            // Set Value
+            this.SetValue();
         }
 
         protected override void BeforeBindingChanged()
         {
             base.BeforeBindingChanged();
+        }
+
+        private void SetValue()
+        {
+            if (this.Binding != null)
+            {
+                if ((System.String)((Model.Properties.Sequence)this.Binding).Value == null)
+                {
+                    this.Value = "<Assigned by Server>";
+                }
+                else
+                {
+                    this.Value = (System.String)((Model.Properties.Sequence)this.Binding).Value;
+                }
+            }
+            else
+            {
+                this.Value = null;
+            }
         }
 
         protected override void Property_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -93,7 +109,15 @@ namespace Aras.ViewModel.Properties
                 switch (e.PropertyName)
                 {
                     case "Value":
-                        this.Value = (System.String)((Model.Properties.Sequence)this.Binding).Value;
+
+                        this.SetValue();
+                        
+break;
+                    case "ReadOnly":
+
+                        // Always Disabled
+                        this.Enabled = false;
+
                         break;
                     default:
                         break;
