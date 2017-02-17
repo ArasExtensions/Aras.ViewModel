@@ -35,7 +35,7 @@ namespace Aras.ViewModel.Properties
     {
 
         private System.String _value;
-        [Attributes.Property("Value", Attributes.PropertyTypes.String, true)]
+        [Attributes.Property("Value", Attributes.PropertyTypes.String, false)]
         public System.String Value
         {
             get
@@ -48,6 +48,24 @@ namespace Aras.ViewModel.Properties
                 {
                     this._value = value;
                     this.OnPropertyChanged("Value");
+                }
+            }
+        }
+
+        private Dialogs.Searches.ItemType _dialog;
+        [Attributes.Property("Dialog", Attributes.PropertyTypes.String, false)]
+        public Dialogs.Searches.ItemType Dialog
+        {
+            get
+            {
+                return this._dialog;
+            }
+            private set
+            {
+                if (this._dialog != value)
+                {
+                    this._dialog = value;
+                    this.OnPropertyChanged("Dialog");
                 }
             }
         }
@@ -118,13 +136,13 @@ namespace Aras.ViewModel.Properties
         public Item(Manager.Session Session)
             : base(Session)
         {
-
+            this._dialog = null;
         }
 
         public Item(Manager.Session Session, Model.PropertyTypes.Item PropertyType)
             : base(Session, PropertyType)
         {
-
+            this._dialog = null;
         }
     }
 }
