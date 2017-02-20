@@ -113,6 +113,9 @@ namespace Aras.ViewModel.Grids
         {
             if (e.PropertyName == "Value")
             {
+                // Set Page to 1
+                this.Page.Value = 1;
+
                 this.RefreshControl();
             }
         }
@@ -121,13 +124,16 @@ namespace Aras.ViewModel.Grids
         {
             if (e.PropertyName == "Value")
             {
+                // Set Page to 1
+                this.Page.Value = 1;
+
                 this.RefreshControl();
             }
         }
 
         protected virtual void RefreshControl()
         {
-
+            
         }
 
         public Search(Manager.Session Session)
@@ -155,6 +161,7 @@ namespace Aras.ViewModel.Grids
             // Create Query String
             this.QueryString = new Properties.String(this.Session);
             this.QueryString.Enabled = true;
+            this.QueryString.IntermediateChanges = true;
             this.QueryString.Tooltip = "Search String";
             this.QueryString.PropertyChanged += QueryString_PropertyChanged;
 

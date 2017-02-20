@@ -68,6 +68,24 @@ namespace Aras.ViewModel
             }
         }
 
+        private System.Boolean _intermediateChanges;
+        [Attributes.Property("IntermediateChanges", Attributes.PropertyTypes.Boolean, true)]
+        public System.Boolean IntermediateChanges
+        {
+            get
+            {
+                return this._intermediateChanges;
+            }
+            set
+            {
+                if (this._intermediateChanges != value)
+                {
+                    this._intermediateChanges = value;
+                    this.OnPropertyChanged("IntermediateChanges");
+                }
+            }
+        }
+
         protected override void CheckBinding(object Binding)
         {
             base.CheckBinding(Binding);
@@ -124,6 +142,7 @@ namespace Aras.ViewModel
         public Property(Manager.Session Session)
             :base(Session)
         {
+            this.IntermediateChanges = false;
             this.Required = false;
             this.Width = 180;
         }
@@ -131,6 +150,7 @@ namespace Aras.ViewModel
         public Property(Manager.Session Session, Model.PropertyType PropertyType)
             : this(Session)
         {
+            this.IntermediateChanges = false;
             this.Label = PropertyType.Label;
         }
     }
