@@ -34,6 +34,8 @@ namespace Aras.ViewModel.Properties
     public class Item : Property
     {
 
+        protected Model.PropertyTypes.Item PropertyType { get; private set; }
+
         private System.String _value;
         [Attributes.Property("Value", Attributes.PropertyTypes.String, false)]
         public System.String Value
@@ -53,7 +55,7 @@ namespace Aras.ViewModel.Properties
         }
 
         private Dialogs.Searches.ItemType _dialog;
-        [Attributes.Property("Dialog", Attributes.PropertyTypes.String, false)]
+        [Attributes.Property("Dialog", Attributes.PropertyTypes.Control, true)]
         public Dialogs.Searches.ItemType Dialog
         {
             get
@@ -69,6 +71,10 @@ namespace Aras.ViewModel.Properties
                 }
             }
         }
+
+        [Attributes.Property("Select", Attributes.PropertyTypes.Command, true)]
+        [ViewModel.Attributes.Command("Select")]
+        public SelectCommand Select { get; private set; }
 
         protected override void CheckBinding(object Binding)
         {
@@ -90,6 +96,9 @@ namespace Aras.ViewModel.Properties
             if (this.Binding != null)
             {
                 this.SetValue();
+
+                // Watch for changes in Binding
+                ((Model.Properties.Item)this.Binding).PropertyChanged += Item_PropertyChanged;
             }
             else
             {
@@ -97,9 +106,27 @@ namespace Aras.ViewModel.Properties
             }
         }
 
+        private void Item_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            switch(e.PropertyName)
+            {
+                case "ReadOnly":
+                    this.Select.SetCanExecute(!((Model.Properties.Item)this.Binding).ReadOnly);
+                    break;
+                default:
+                    break;
+            }
+        }
+
         protected override void BeforeBindingChanged()
         {
             base.BeforeBindingChanged();
+
+            if (this.Binding != null)
+            {
+                // Stop watching for changes in current Binding
+                ((Model.Properties.Item)this.Binding).PropertyChanged -= Item_PropertyChanged;
+            }
         }
 
         private void SetValue()
@@ -133,16 +160,77 @@ namespace Aras.ViewModel.Properties
             }
         }
 
+        private void SelectValue()
+        {
+            if (this.Binding != null)
+            {
+                if (this.Dialog == null)
+                {
+                    // Create Search Dialog
+                    this.Dialog = new Dialogs.Searches.ItemType(this.Session);
+                    this.Dialog.Binding = this.Session.Model.Store(this.PropertyType.ValueType);
+
+                    // Watch for changes in selection
+                    this.Dialog.Search.Selected.ListChanged += Selected_ListChanged;
+                }
+
+                // Open Search Dialog
+                this.Dialog.Open = true;
+            }
+        }
+
+        void Selected_ListChanged(object sender, EventArgs e)
+        {
+            if (this.Binding != null)
+            {
+                if (this.Dialog.Search.Selected.Count() > 0)
+                {
+                    ((Model.Properties.Item)this.Binding).Value = this.Dialog.Search.Selected.First();
+                }
+                else
+                {
+                    ((Model.Properties.Item)this.Binding).Value = null;
+                }
+            }
+
+            // Close Dialog
+            this.Dialog.Open = false;
+        }
+
         public Item(Manager.Session Session)
             : base(Session)
         {
+            this.PropertyType = null;
             this._dialog = null;
+            this.Select = new SelectCommand(this);
         }
 
         public Item(Manager.Session Session, Model.PropertyTypes.Item PropertyType)
             : base(Session, PropertyType)
         {
+            this.PropertyType = PropertyType;
             this._dialog = null;
+            this.Select = new SelectCommand(this);
+        }
+
+        public class SelectCommand : Aras.ViewModel.Command
+        {
+            internal void SetCanExecute(System.Boolean Value)
+            {
+                this.CanExecute = Value;
+            }
+
+            protected override void Run(IEnumerable<Control> Parameters)
+            {
+                ((Item)this.Control).SelectValue();
+                this.CanExecute = true;
+            }
+
+            internal SelectCommand(Control Control)
+                : base(Control)
+            {
+                this.CanExecute = false;
+            }
         }
     }
 }

@@ -70,6 +70,12 @@ namespace Aras.ViewModel.Dialogs.Searches
         public ItemType(Manager.Session Session)
             :base(Session)
         {
+            // Set Default Width
+            this.Width = 600;
+
+            // Set Default Height
+            this.Height = 800;
+
             // Create Border Container
             Containers.BorderContainer bordercontainer = new Containers.BorderContainer(this.Session);
             this.Content = bordercontainer;
