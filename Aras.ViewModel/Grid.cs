@@ -79,6 +79,11 @@ namespace Aras.ViewModel
                 // Queue Cached Row
                 this.Session.QueueControl(row);
 
+                foreach(Cell cell in row.Cells)
+                {
+                    this.Session.QueueControl(cell);
+                }
+
                 return row;
             }
             else
