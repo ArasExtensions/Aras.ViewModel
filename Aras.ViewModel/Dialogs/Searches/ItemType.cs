@@ -83,12 +83,14 @@ namespace Aras.ViewModel.Dialogs.Searches
             // Create Search
             this.Search = new Grids.Searches.ItemType(this.Session);
             this.Search.Region = Regions.Center;
-            bordercontainer.Children.Add(this.Search);
-
+           
             // Set Toolbar
             this.Toolbar = ((IToolbarProvider)this.Search).Toolbar;
             this.Toolbar.Region = Regions.Top;
+
+            // Add Children
             bordercontainer.Children.Add(this.Toolbar);
+            bordercontainer.Children.Add(this.Search);
         }
     }
 }
