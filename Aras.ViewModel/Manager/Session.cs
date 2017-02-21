@@ -138,7 +138,7 @@ namespace Aras.ViewModel.Manager
             return this.ApplicationCache[ApplicationType];
         }
 
-        private void QueueControlRecursive(Control Control)
+        internal void QueueControlRecursive(Control Control)
         {
             // Queue Control
             this.QueueControl(Control);

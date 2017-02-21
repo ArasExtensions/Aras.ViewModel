@@ -77,12 +77,7 @@ namespace Aras.ViewModel
                 this.Rows.Add(row);
                 
                 // Queue Cached Row
-                this.Session.QueueControl(row);
-
-                foreach(Cell cell in row.Cells)
-                {
-                    this.Session.QueueControl(cell);
-                }
+                this.Session.QueueControlRecursive(row);
 
                 return row;
             }
