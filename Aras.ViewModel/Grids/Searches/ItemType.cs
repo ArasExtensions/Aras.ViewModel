@@ -244,20 +244,11 @@ namespace Aras.ViewModel.Grids.Searches
             this.Selected.NotifyListChanged = false;
             this.Selected.Clear();
 
-            foreach(Row row in this.Grid.SelectedRows)
-            {
-                if (row.Cells.Count() > 0)
-                {
-                    Cell cell = row.Cells.First();
+            List<Model.Item> items = this.Displayed.ToList();
 
-                    if (cell.Value != null)
-                    {
-                        if ((cell.Value.Binding != null) && (cell.Value.Binding is Model.Property))
-                        {
-                            this.Selected.Add(((Model.Property)cell.Value.Binding).Item);
-                        }
-                    }
-                }
+            foreach (Row row in this.Grid.SelectedRows)
+            {
+                this.Selected.Add(items[row.Index]);
             }
 
             this.Selected.NotifyListChanged = true;

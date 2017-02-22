@@ -134,9 +134,16 @@ namespace Aras.ViewModel.Grids
         {
             if (this.Binding != null)
             {
+                // Get Current Items
                 List<Model.Relationship> currentitems = ((Model.Item)this.Binding).Store(this.RelationshipType).CurrentItems().ToList();
+                
+                // Set Number of Rows in Grid
                 this.Grid.NoRows = currentitems.Count();
 
+                // Clear current Grid Selection
+                this.Grid.SelectedRows.Clear();
+
+                // Load Current Items into Grid
                 for(int i=0; i < currentitems.Count(); i++)
                 {
                     Model.Relationship relationship = currentitems[i];
@@ -200,9 +207,58 @@ namespace Aras.ViewModel.Grids
             }
         }
 
+        public IEnumerable<Model.Relationship> Displayed
+        {
+            get
+            {
+                if (this.Binding != null)
+                {
+                    return ((Model.Item)this.Binding).Store(this.RelationshipType).CurrentItems();
+                }
+                else
+                {
+                    return new List<Model.Relationship>();
+                }
+            }
+        }
+
+        public Model.ObservableList<Model.Item> Selected { get; private set; }
+
+        public void Select(Model.Relationship Relationship)
+        {
+            if (Relationship != null)
+            {
+                List<Model.Relationship> displayed = this.Displayed.ToList();
+                int index = displayed.IndexOf(Relationship);
+
+                if (index >= 0)
+                {
+                    this.Grid.SelectedRows.Clear();
+                    this.Grid.SelectedRows.Add(this.Grid.Rows[index]);
+                }
+            }
+        }
+
+        private void SelectedRows_ListChanged(object sender, EventArgs e)
+        {
+            this.Selected.NotifyListChanged = false;
+            this.Selected.Clear();
+
+            List<Model.Relationship> relationships = this.Displayed.ToList();
+
+            foreach (Row row in this.Grid.SelectedRows)
+            {
+                this.Selected.Add(relationships[row.Index]);
+            }
+
+            this.Selected.NotifyListChanged = true;
+        }
+
         public Relationship(Containers.Form Form, Model.RelationshipType RelationshipType)
             :base(Form.Session)
         {
+            this.Selected = new Model.ObservableList<Model.Item>();
+
             // Store Form
             this.Form = Form;
 
@@ -211,6 +267,7 @@ namespace Aras.ViewModel.Grids
 
             // Create Grid
             this.Grid = new Grid(this.Session);
+            this.Grid.SelectedRows.ListChanged += SelectedRows_ListChanged;
             this.Grid.AllowSelect = true;
             this.Grid.Width = this.Width;
             this.Children.Add(this.Grid);

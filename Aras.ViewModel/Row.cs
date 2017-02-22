@@ -35,6 +35,8 @@ namespace Aras.ViewModel
     {
         public Grid Grid { get; private set; }
 
+        public Int32 Index { get; private set; }
+
         [ViewModel.Attributes.Property("Cells", Aras.ViewModel.Attributes.PropertyTypes.ControlList, true)]
         public Model.ObservableList<Cell> Cells { get; private set; }
 
@@ -66,10 +68,11 @@ namespace Aras.ViewModel
             this.UpdateCells();
         }
 
-        internal Row(Grid Grid)
+        internal Row(Grid Grid, Int32 Index)
             :base(Grid.Session)
         {
             this.Grid = Grid;
+            this.Index = Index;
             this.Cells = new Model.ObservableList<Cell>();
             this.UpdateCells();
             this.Grid.Columns.ListChanged += Columns_ListChanged;

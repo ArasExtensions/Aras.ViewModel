@@ -84,7 +84,7 @@ namespace Aras.ViewModel
             else
             {
                 // Create new Row
-                Row row = new Row(this);
+                Row row = new Row(this, this.RowCache.Count());
                 this.Rows.Add(row);
                 this.RowCache.Add(row);
                 return row;
