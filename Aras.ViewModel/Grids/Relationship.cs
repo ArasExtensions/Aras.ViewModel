@@ -30,9 +30,65 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel.Grids
 {
-    public class Relationship : Containers.BorderContainer
+    public class Relationship : Containers.BorderContainer, IToolbarProvider
     {
-        public Containers.Form Form { get; private set; }
+        private Containers.Toolbar _toolbar;
+        public virtual Containers.Toolbar Toolbar
+        {
+            get
+            {
+                if (this._toolbar == null)
+                {
+                    // Create Toolbar
+                    this._toolbar = new Containers.Toolbar(this.Session);
+                    this._toolbar.Children.NotifyListChanged = false;
+
+                    // Add Create Button
+                    Button createbutton = new Button(this.Session);
+                    createbutton.Icon = "New";
+                    createbutton.Tooltip = "Create " + this.RelationshipType.SingularLabel;
+                    this._toolbar.Children.Add(createbutton);
+                    createbutton.Command = this.Create;
+
+                    // Add Create Button
+                    Button deletebutton = new Button(this.Session);
+                    deletebutton.Icon = "Delete";
+                    deletebutton.Tooltip = "Delete " + this.RelationshipType.PluralLabel;
+                    this._toolbar.Children.Add(deletebutton);
+                    deletebutton.Command = this.Delete;
+
+                    this._toolbar.Children.NotifyListChanged = true;
+                }
+
+                return this._toolbar;
+            }
+        }
+
+        [ViewModel.Attributes.Command("Create")]
+        public CreateCommand Create { get; private set; }
+
+        [ViewModel.Attributes.Command("Delete")]
+        public DeleteCommand Delete { get; private set; }
+
+        private Dialogs.Searches.ItemType _dialog;
+        [Attributes.Property("Dialog", Attributes.PropertyTypes.Control, true)]
+        public Dialogs.Searches.ItemType Dialog
+        {
+            get
+            {
+                return this._dialog;
+            }
+            private set
+            {
+                if (this._dialog != value)
+                {
+                    this._dialog = value;
+                    this.OnPropertyChanged("Dialog");
+                }
+            }
+        }
+
+        public IItemControl Parent { get; private set; }
 
         public Model.RelationshipType RelationshipType { get; private set; }
 
@@ -66,6 +122,9 @@ namespace Aras.ViewModel.Grids
                     this.RelationshipType.RelatedItemType.AddRelationshipGridPropertyTypesToSelect();
                 }
             }
+
+            // Ensure Dialog is Closed
+            this.Dialog.Open = false;
 
             this.LoadRows();
         }
@@ -191,17 +250,19 @@ namespace Aras.ViewModel.Grids
                 // Clear all Rows
                 this.Grid.NoRows = 0;
             }
+
+            this.UpdateCommandsCanExecute();
         }
 
         public void EditRelationship()
         {
-            if (this.Form.Transaction != null)
+            if (this.Parent.Transaction != null)
             {
                 if (this.Binding != null)
                 {
                     foreach(Model.Relationship currentitem in ((Model.Item)this.Binding).Store(this.RelationshipType).CurrentItems())
                     {
-                        currentitem.Update(this.Form.Transaction);
+                        currentitem.Update(this.Parent.Transaction);
                     }
                 }
             }
@@ -237,6 +298,8 @@ namespace Aras.ViewModel.Grids
                     this.Grid.SelectedRows.Add(this.Grid.Rows[index]);
                 }
             }
+
+            this.UpdateCommandsCanExecute();
         }
 
         private void SelectedRows_ListChanged(object sender, EventArgs e)
@@ -251,16 +314,156 @@ namespace Aras.ViewModel.Grids
                 this.Selected.Add(relationships[row.Index]);
             }
 
+            this.UpdateCommandsCanExecute();
+
             this.Selected.NotifyListChanged = true;
         }
 
-        public Relationship(Containers.Form Form, Model.RelationshipType RelationshipType)
-            :base(Form.Session)
+        private void UpdateCommandsCanExecute()
         {
-            this.Selected = new Model.ObservableList<Model.Item>();
+            if (this.Binding != null)
+            {
+                if (this.Parent.Transaction != null)
+                {
+                    this.Create.UpdateCanExecute(true);
 
-            // Store Form
-            this.Form = Form;
+                    if (this.Selected.Count() > 0)
+                    {
+                        this.Delete.UpdateCanExecute(true);
+                    }
+                    else
+                    {
+                        this.Delete.UpdateCanExecute(false);
+                    }
+                }
+                else
+                {
+                    this.Create.UpdateCanExecute(false);
+                    this.Delete.UpdateCanExecute(false);
+                }
+            }
+            else
+            {
+                this.Create.UpdateCanExecute(false);
+                this.Delete.UpdateCanExecute(false);
+            }
+        }
+
+        private void CreateRelationship()
+        {
+            if (this.Binding != null)
+            {
+                if (this.Parent.Transaction != null)
+                {
+                    if (this.RelationshipType.RelatedItemType != null)
+                    {
+                        if (this.Dialog == null)
+                        {
+                            // Create Search Dialog
+                            this.Dialog = new Dialogs.Searches.ItemType(this.Session);
+                            this.Dialog.Binding = this.Session.Model.Store(this.RelationshipType.RelatedItemType);
+
+                            // Watch for changes in selection
+                            this.Dialog.Search.Selected.ListChanged += Selected_ListChanged;
+                        }
+
+                        // Open Search Dialog
+                        this.Dialog.Open = true;
+                    }
+                    else
+                    {
+                        // Create null Relationship
+                        Model.Relationship relationship = ((Model.Item)this.Binding).Store(this.RelationshipType).Create(null, this.Parent.Transaction);
+
+                        // Load Rows
+                        this.LoadRows();
+                    }
+                }
+            }
+        }
+
+        private void Selected_ListChanged(object sender, EventArgs e)
+        {
+            if (this.Binding != null)
+            {
+                if (this.Dialog != null)
+                {
+                    if (this.Parent.Transaction != null)
+                    {
+                        foreach (Model.Item relateditem in this.Dialog.Search.Selected)
+                        {
+                            Model.Relationship relationship = ((Model.Item)this.Binding).Store(this.RelationshipType).Create(relateditem, this.Parent.Transaction);
+                        }
+
+                        this.LoadRows();
+                    }
+
+                    // Close Dialog
+                    this.Dialog.Open = false;
+                }
+            }
+        }
+
+        private void DeleteRelationship()
+        {
+            if (this.Binding != null)
+            {
+                if (this.Parent.Transaction != null)
+                {
+                    // Delete Selected Relationships
+                    foreach(Model.Relationship relationship in this.Selected)
+                    {
+                        relationship.Delete(this.Parent.Transaction);
+                    }
+
+                    // Load Roes
+                    this.LoadRows();
+                }
+            }
+        }
+
+        private void Parent_Saved(object sender, EventArgs e)
+        {
+            this.UpdateCommandsCanExecute();
+        }
+
+        void Parent_Undone(object sender, EventArgs e)
+        {
+            this.UpdateCommandsCanExecute();
+        }
+
+        void Parent_Edited(object sender, EventArgs e)
+        {
+
+            this.UpdateCommandsCanExecute();
+        }
+
+        void Parent_Created(object sender, EventArgs e)
+        {
+            this.UpdateCommandsCanExecute();
+        }
+
+        public Relationship(IItemControl Parent, Model.RelationshipType RelationshipType)
+            :base(Parent.Session)
+        {
+            // Only create Dialog when needed
+            this._dialog = null;
+
+            // Create Selected
+            this.Selected = new Model.ObservableList<Model.Item>();
+            
+            // Create Comands
+            this.Create = new CreateCommand(this);
+            this.Delete = new DeleteCommand(this);
+
+            // Store Parent
+            this.Parent = Parent;
+            
+            // Watch Parent Events
+            this.Parent.Created += Parent_Created;
+            this.Parent.Edited += Parent_Edited;
+            this.Parent.Undone += Parent_Undone;
+            this.Parent.Saved += Parent_Saved;
 
             // Store RelationshipType
             this.RelationshipType = RelationshipType;
@@ -274,6 +477,46 @@ namespace Aras.ViewModel.Grids
 
             // Load Columns
             this.LoadColumns();
+        }
+
+        public class CreateCommand : Aras.ViewModel.Command
+        {
+            internal void UpdateCanExecute(Boolean CanExecute)
+            {
+                this.CanExecute = CanExecute;
+            }
+
+            protected override void Run(IEnumerable<Aras.ViewModel.Control> Parameters)
+            {
+                ((Relationship)this.Control).CreateRelationship();
+                this.CanExecute = true;
+            }
+
+            internal CreateCommand(Relationship Relationship)
+                : base(Relationship)
+            {
+                this.CanExecute = false;
+            }
+        }
+
+        public class DeleteCommand : Aras.ViewModel.Command
+        {
+            internal void UpdateCanExecute(Boolean CanExecute)
+            {
+                this.CanExecute = CanExecute;
+            }
+
+            protected override void Run(IEnumerable<Aras.ViewModel.Control> Parameters)
+            {
+                ((Relationship)this.Control).DeleteRelationship();
+                this.CanExecute = true;
+            }
+
+            internal DeleteCommand(Relationship Relationship)
+                : base(Relationship)
+            {
+                this.CanExecute = false;
+            }
         }
     }
 }

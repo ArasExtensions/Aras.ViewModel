@@ -30,8 +30,48 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel.Containers
 {
-    public abstract class Form : BorderContainer, IToolbarProvider
+    public abstract class Form : BorderContainer, IToolbarProvider, IItemControl
     {
+        public event EventHandler Created;
+
+        private void OnCreated()
+        {
+            if (this.Created != null)
+            {
+                this.Created(this, new EventArgs());
+            }
+        }
+
+        public event EventHandler Edited;
+
+        private void OnEdited()
+        {
+            if (this.Edited != null)
+            {
+                this.Edited(this, new EventArgs());
+            }
+        }
+
+        public event EventHandler Saved;
+
+        private void OnSaved()
+        {
+            if (this.Saved != null)
+            {
+                this.Saved(this, new EventArgs());
+            }
+        }
+
+        public event EventHandler Undone;
+
+        private void OnUndone()
+        {
+            if (this.Undone != null)
+            {
+                this.Undone(this, new EventArgs());
+            }
+        }
+
         public Model.Stores.Item Store { get; private set; }
 
         [ViewModel.Attributes.Command("Refresh")]
@@ -154,7 +194,7 @@ namespace Aras.ViewModel.Containers
 
         protected Model.Item Item { get; private set; }
 
-        internal Model.Transaction Transaction { get; private set; }
+        public Model.Transaction Transaction { get; private set; }
 
         private void CreateForm()
         {
@@ -166,6 +206,8 @@ namespace Aras.ViewModel.Containers
             this.Transaction = this.Session.Model.BeginTransaction();
             this.Binding = this.Store.Create(this.Transaction);
             this.SetCommandsCanExecute();
+
+            this.OnCreated();
         }
 
         private void SaveForm()
@@ -178,6 +220,7 @@ namespace Aras.ViewModel.Containers
                 {
                     this.Transaction.Commit(true);
                     this.Transaction = null;
+                    this.OnSaved();
                 }
                 catch (Model.Exceptions.ServerException e)
                 {
@@ -204,6 +247,7 @@ namespace Aras.ViewModel.Containers
                     this.Transaction = this.Session.Model.BeginTransaction();
                     this.Item.Update(this.Transaction);
                     this.SetCommandsCanExecute();
+                    this.OnEdited();
                 }
             }
         }
@@ -223,6 +267,7 @@ namespace Aras.ViewModel.Containers
                 }
 
                 this.SetCommandsCanExecute();
+                this.OnUndone();
             }
         }
 

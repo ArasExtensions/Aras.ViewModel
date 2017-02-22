@@ -66,6 +66,7 @@
     <Compile Include="Dialog.cs" />
     <Compile Include="Dialogs\Searches\ItemType.cs" />
     <Compile Include="Grids\Relationship.cs" />
+    <Compile Include="IItemControl.cs" />
     <Compile Include="Panes\ContentPane.cs" />
     <Compile Include="Panes\TitlePane.cs" />
     <Compile Include="Grids\Search.cs" />

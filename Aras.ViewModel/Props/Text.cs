@@ -113,7 +113,7 @@ namespace Aras.ViewModel.Properties
                 switch (e.PropertyName)
                 {
                     case "Value":
-                        this.Value = (System.String)((Model.Properties.String)this.Binding).Value;
+                        this.Value = (System.String)((Model.Properties.Text)this.Binding).Value;
                         break;
                     default:
                         break;
