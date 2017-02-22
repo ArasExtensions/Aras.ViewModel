@@ -108,6 +108,14 @@ namespace Aras.ViewModel
             this.ErrorMessage = ErrorMessage;
         }
 
+        [ViewModel.Attributes.Property("Dialogs", Aras.ViewModel.Attributes.PropertyTypes.ControlList, true)]
+        public Model.ObservableList<Dialog> Dialogs { get; private set; }
+
+        private void Dialogs_ListChanged(object sender, EventArgs e)
+        {
+            this.OnPropertyChanged("Dialogs");
+        }
+
         protected virtual void CheckBinding(Object Binding)
         {
 
@@ -337,10 +345,11 @@ namespace Aras.ViewModel
             this.ID = Guid.NewGuid();
             this.ErrorMessage = null;
             this.Region = Regions.Center;
+            this.Dialogs = new Model.ObservableList<Dialog>();
+            this.Dialogs.ListChanged += Dialogs_ListChanged;
 
             // Add Control to Cache
             this.Session.CacheControl(this);
         }
-
     }
 }

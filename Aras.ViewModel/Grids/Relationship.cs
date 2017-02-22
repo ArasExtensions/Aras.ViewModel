@@ -70,23 +70,7 @@ namespace Aras.ViewModel.Grids
         [ViewModel.Attributes.Command("Delete")]
         public DeleteCommand Delete { get; private set; }
 
-        private Dialogs.Searches.ItemType _dialog;
-        [Attributes.Property("Dialog", Attributes.PropertyTypes.Control, true)]
-        public Dialogs.Searches.ItemType Dialog
-        {
-            get
-            {
-                return this._dialog;
-            }
-            private set
-            {
-                if (this._dialog != value)
-                {
-                    this._dialog = value;
-                    this.OnPropertyChanged("Dialog");
-                }
-            }
-        }
+        public Dialogs.Searches.ItemType Dialog { get; private set; }
 
         public IItemControl Parent { get; private set; }
 
@@ -124,7 +108,11 @@ namespace Aras.ViewModel.Grids
             }
 
             // Ensure Dialog is Closed
-            this.Dialog.Open = false;
+
+            if (this.Dialog != null)
+            {
+                this.Dialog.Open = false;
+            }
 
             this.LoadRows();
         }
@@ -360,7 +348,7 @@ namespace Aras.ViewModel.Grids
                         if (this.Dialog == null)
                         {
                             // Create Search Dialog
-                            this.Dialog = new Dialogs.Searches.ItemType(this.Session);
+                            this.Dialog = new Dialogs.Searches.ItemType(this);
                             this.Dialog.Binding = this.Session.Model.Store(this.RelationshipType.RelatedItemType);
 
                             // Watch for changes in selection
@@ -447,7 +435,7 @@ namespace Aras.ViewModel.Grids
             :base(Parent.Session)
         {
             // Only create Dialog when needed
-            this._dialog = null;
+            this.Dialog = null;
 
             // Create Selected
             this.Selected = new Model.ObservableList<Model.Item>();

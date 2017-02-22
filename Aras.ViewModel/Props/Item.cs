@@ -54,23 +54,7 @@ namespace Aras.ViewModel.Properties
             }
         }
 
-        private Dialogs.Searches.ItemType _dialog;
-        [Attributes.Property("Dialog", Attributes.PropertyTypes.Control, true)]
-        public Dialogs.Searches.ItemType Dialog
-        {
-            get
-            {
-                return this._dialog;
-            }
-            private set
-            {
-                if (this._dialog != value)
-                {
-                    this._dialog = value;
-                    this.OnPropertyChanged("Dialog");
-                }
-            }
-        }
+        public Dialogs.Searches.ItemType Dialog { get; private set; }
 
         [Attributes.Property("Select", Attributes.PropertyTypes.Command, true)]
         [ViewModel.Attributes.Command("Select")]
@@ -95,7 +79,11 @@ namespace Aras.ViewModel.Properties
 
             if (this.Binding != null)
             {
+                // Set Value
                 this.SetValue();
+
+                // Set Select Command CanExecute
+                this.Select.SetCanExecute(!((Model.Properties.Item)this.Binding).ReadOnly);
 
                 // Watch for changes in Binding
                 ((Model.Properties.Item)this.Binding).PropertyChanged += Item_PropertyChanged;
@@ -167,7 +155,7 @@ namespace Aras.ViewModel.Properties
                 if (this.Dialog == null)
                 {
                     // Create Search Dialog
-                    this.Dialog = new Dialogs.Searches.ItemType(this.Session);
+                    this.Dialog = new Dialogs.Searches.ItemType(this);
                     this.Dialog.Binding = this.Session.Model.Store(this.PropertyType.ValueType);
 
                     // Watch for changes in selection
@@ -201,7 +189,7 @@ namespace Aras.ViewModel.Properties
             : base(Session)
         {
             this.PropertyType = null;
-            this._dialog = null;
+            this.Dialog = null;
             this.Select = new SelectCommand(this);
         }
 
@@ -209,7 +197,7 @@ namespace Aras.ViewModel.Properties
             : base(Session, PropertyType)
         {
             this.PropertyType = PropertyType;
-            this._dialog = null;
+            this.Dialog = null;
             this.Select = new SelectCommand(this);
         }
 

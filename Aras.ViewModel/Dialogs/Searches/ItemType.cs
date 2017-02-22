@@ -67,8 +67,8 @@ namespace Aras.ViewModel.Dialogs.Searches
             }
         }
 
-        public ItemType(Manager.Session Session)
-            :base(Session)
+        public ItemType(Control Parent)
+            :base(Parent)
         {
             // Set Default Width
             this.Width = 600;

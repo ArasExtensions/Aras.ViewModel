@@ -106,12 +106,15 @@ namespace Aras.ViewModel
             }
         }
 
-        public Dialog(Manager.Session Session)
-            : base(Session)
+        public Dialog(Control Parent)
+            : base(Parent.Session)
         {
             this._title = null;
             this._open = false;
             this._content = null;
+
+            // Add to Parent Dialogs
+            Parent.Dialogs.Add(this);
         }
     }
 }
