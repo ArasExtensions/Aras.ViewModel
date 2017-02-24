@@ -38,21 +38,11 @@ namespace Aras.ViewModel.Design.Debug
             Logging.Console log = new Logging.Console();
 
             // Connect to Server
-            ViewModel.Manager.Server server = new ViewModel.Manager.Server("http://localhost/InnovatorServer100SP4", log);
+            ViewModel.Manager.Server server = new ViewModel.Manager.Server("http://localhost/11SP9", log);
             server.LoadAssembly("Aras.Model.Design");
             server.LoadAssembly("Aras.ViewModel.Design");
-            ViewModel.Manager.Database database = server.Database("CMB");
+            ViewModel.Manager.Database database = server.Database("Development");
             ViewModel.Manager.Session session = database.Login("admin", IO.Server.PasswordHash("innovator"));
-
-            //Model.Design.Order order = (Model.Design.Order)session.Store("v_Order").Get("D2F760CC3F9E4CA18E825BEAC170AFAF");
-
-            Model.Queries.Item query = session.Model.Store("v_Order").Query(Aras.Conditions.Eq("item_number", "RJM04"));
-            Model.Item order = query.First();
-
-            ViewModel.Design.Order vmorder = new ViewModel.Design.Order(session);
-            vmorder.Binding = order;
-            vmorder.Edit.Execute();
-            vmorder.Save.Execute();
         }
     }
 }

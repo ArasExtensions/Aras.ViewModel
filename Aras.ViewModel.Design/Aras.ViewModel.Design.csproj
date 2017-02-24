@@ -60,9 +60,7 @@
     <Compile Include="ItemFormatters\Part.cs" />
     <Compile Include="PartRelationshipTree.cs" />
     <Compile Include="PartEditor.cs" />
-    <Compile Include="Order.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Props\OrderContextList.cs" />
     <Compile Include="RelationshipFormatters\Part.cs" />
   </ItemGroup>
   <ItemGroup>
