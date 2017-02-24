@@ -61,8 +61,6 @@ namespace Aras.ViewModel.WebService
             this.ViewModel.AssemblyDirectory = new DirectoryInfo(System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath + "\\bin");
             
             // Load Assemblies
-            this.ViewModel.LoadAssembly("Aras.Model.Design");
-            this.ViewModel.LoadAssembly("Aras.ViewModel.Design");
             this.ViewModel.LoadAssembly("CMB.Model");
             this.ViewModel.LoadAssembly("CMB.ViewModel");
 
