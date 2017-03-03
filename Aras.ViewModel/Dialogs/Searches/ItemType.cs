@@ -34,7 +34,7 @@ namespace Aras.ViewModel.Dialogs.Searches
     {
         public Containers.Toolbar Toolbar { get; private set; }
 
-        public Grids.Searches.ItemType Search { get; private set; }
+        public Grids.Search Search { get; private set; }
 
         protected override void CheckBinding(object Binding)
         {
@@ -81,7 +81,7 @@ namespace Aras.ViewModel.Dialogs.Searches
             this.Content = bordercontainer;
 
             // Create Search
-            this.Search = new Grids.Searches.ItemType(this.Session);
+            this.Search = new Grids.Search(this.Session);
             this.Search.Region = Regions.Center;
            
             // Set Toolbar

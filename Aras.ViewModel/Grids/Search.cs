@@ -30,8 +30,82 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel.Grids
 {
-    public abstract class Search : Containers.BorderContainer, IToolbarProvider
+    public class Search : Containers.BorderContainer, IToolbarProvider
     {
+        public IEnumerable<Model.Item> Displayed
+        {
+            get
+            {
+                if (this.Query != null)
+                {
+                    return this.Query.CurrentItems();
+                }
+                else
+                {
+                    return new List<Model.Item>();
+                }
+            }
+        }
+
+        public Model.ObservableList<Model.Item> Selected { get; private set; }
+
+        public void Select(Model.Item Item)
+        {
+            if (Item != null)
+            {
+                List<Model.Item> displayed = this.Displayed.ToList();
+                int index = displayed.IndexOf(Item);
+
+                if (index >= 0)
+                {
+                    this.Grid.SelectedRows.Clear();
+                    this.Grid.SelectedRows.Add(this.Grid.Rows[index]);
+                }
+            }
+        }
+
+        private Model.Condition Condition(Model.PropertyType PropertyType)
+        {
+            switch (PropertyType.GetType().Name)
+            {
+                case "String":
+                case "Sequence":
+                    return Aras.Conditions.Like(PropertyType.Name, "%" + this.QueryString.Value + "%");
+                case "Integer":
+                    System.Int32 int32value = 0;
+
+                    if (System.Int32.TryParse(this.QueryString.Value, out int32value))
+                    {
+                        return Aras.Conditions.Eq(PropertyType.Name, int32value);
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                default:
+                    return null;
+            }
+        }
+
+        private Model.Queries.Item _query;
+        private Model.Queries.Item Query
+        {
+            get
+            {
+                if (this._query == null)
+                {
+                    if (this.Binding != null)
+                    {
+                        this._query = ((Model.Stores.Item)this.Binding).Query();
+                        this._query.PageSize = (System.Int32)this.PageSize.Value;
+                        this._query.Paging = true;
+                    }
+                }
+
+                return this._query;
+            }
+        }
+
         private Containers.Toolbar _toolbar;
         public virtual Containers.Toolbar Toolbar
         {
@@ -96,7 +170,58 @@ namespace Aras.ViewModel.Grids
 
         public Properties.Integer NoPages { get; protected set; }
 
-        protected abstract void LoadColumns();
+        private void LoadRows()
+        {
+            if (this.Query != null)
+            {
+                this.Grid.NoRows = this.Query.Count();
+
+                for (int i = 0; i < this.Grid.NoRows; i++)
+                {
+                    Model.Item item = this.Query[i];
+                    int j = 0;
+
+                    foreach (Model.PropertyType proptype in this.Query.Store.ItemType.SearchPropertyTypes)
+                    {
+                        Model.Property property = item.Property(proptype);
+
+                        if (this.Grid.Rows[i].Cells[j].Value == null)
+                        {
+                            this.Grid.Rows[i].Cells[j].Value = this.Session.CreateProperty(property);
+                        }
+                        else
+                        {
+                            this.Grid.Rows[i].Cells[j].Value.Binding = property;
+                        }
+
+                        j++;
+                    }
+                }
+            }
+            else
+            {
+                // Clear all Rows
+                this.Grid.NoRows = 0;
+            }
+        }
+
+        protected void LoadColumns()
+        {
+            if (this.Binding != null)
+            {
+                this.Grid.Columns.Clear();
+
+                foreach (Model.PropertyType proptype in this.Query.Store.ItemType.SearchPropertyTypes)
+                {
+                    this.Grid.AddColumn(proptype.Name, proptype.Label, proptype.ColumnWidth);
+                }
+            }
+            else
+            {
+                // Clear Columns
+                this.Grid.Columns.Clear();
+            }
+        }
 
         protected override void AfterBindingChanged()
         {
@@ -107,6 +232,15 @@ namespace Aras.ViewModel.Grids
 
             // Load Rows
             this.RefreshControl();
+
+            // Reset Query
+            this._query = null;
+
+            if (this.Binding != null)
+            {
+                // Add Search PropertTypes to Select
+                ((Model.Stores.Item)this.Binding).ItemType.AddSearchPropertyTypesToSelect();
+            }
         }
 
         private void PageSize_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -131,14 +265,88 @@ namespace Aras.ViewModel.Grids
             }
         }
 
-        protected virtual void RefreshControl()
+        protected void RefreshControl()
         {
-            
+            if (this.Query != null)
+            {
+                // Set Condition
+                if (String.IsNullOrEmpty(this.QueryString.Value))
+                {
+                    this.Query.Condition = null;
+                }
+                else
+                {
+                    List<Model.Condition> conditions = new List<Model.Condition>();
+
+                    foreach (Model.PropertyType proptype in this.Query.Store.ItemType.SearchPropertyTypes)
+                    {
+                        Model.Condition condition = this.Condition(proptype);
+
+                        if (condition != null)
+                        {
+                            conditions.Add(condition);
+                        }
+                    }
+
+                    if (conditions.Count() == 1)
+                    {
+                        this.Query.Condition = conditions[0];
+                    }
+                    else
+                    {
+                        this.Query.Condition = Aras.Conditions.Or(conditions[0], conditions[1]);
+
+                        if (conditions.Count() > 2)
+                        {
+                            for (int i = 2; i < conditions.Count(); i++)
+                            {
+                                ((Model.Conditions.Or)this.Query.Condition).Add(conditions[i]);
+                            }
+                        }
+                    }
+                }
+
+                // Set PageSize and required Page
+                this.Query.PageSize = (System.Int32)this.PageSize.Value;
+                this.Query.Page = (System.Int32)this.Page.Value;
+
+                // Refresh Query
+                this.Query.Refresh();
+
+                // Update NoPages
+                this.NoPages.Value = this.Query.NoPages;
+            }
+            else
+            {
+                this.NoPages.Value = 0;
+            }
+
+            // Load Grid
+            this.LoadRows();
+
+            // Refresh Buttons
+            this.NextPage.Refesh();
+            this.PreviousPage.Refesh();
+        }
+
+        private void SelectedRows_ListChanged(object sender, EventArgs e)
+        {
+            this.Selected.NotifyListChanged = false;
+            this.Selected.Clear();
+
+            List<Model.Item> items = this.Displayed.ToList();
+
+            foreach (Row row in this.Grid.SelectedRows)
+            {
+                this.Selected.Add(items[row.Index]);
+            }
+
+            this.Selected.NotifyListChanged = true;
         }
 
         public Search(Manager.Session Session)
             : base(Session)
-        {
+        {           
             // Create Page
             this.Page = new Properties.Integer(this.Session);
             this.Page.Value = 1;
@@ -152,6 +360,10 @@ namespace Aras.ViewModel.Grids
             this.Grid.AllowSelect = true;
             this.Grid.Width = this.Width;
             this.Children.Add(this.Grid);
+            this.Grid.SelectedRows.ListChanged += SelectedRows_ListChanged;
+
+            // Create Selected
+            this.Selected = new Model.ObservableList<Model.Item>();
 
             // Create Commands
             this.Refresh = new RefreshCommand(this);

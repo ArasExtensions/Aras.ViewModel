@@ -167,7 +167,7 @@ namespace Aras.ViewModel
         }
 
         [ViewModel.Attributes.Property("Search", Aras.ViewModel.Attributes.PropertyTypes.Control, true)]
-        public Grids.Searches.ItemType Search { get; private set; }
+        public Grids.Search Search { get; private set; }
    
         private Dictionary<String, RelationshipTreeNode> NodeCache;
 
@@ -295,7 +295,7 @@ namespace Aras.ViewModel
             this.Indent = new IndentCommand(this);
             this.Outdent = new OutdentCommand(this);
             this.SearchClosed = new SearchClosedCommand(this);
-            this.Search = new Grids.Searches.ItemType(this.Session);
+            this.Search = new Grids.Search(this.Session);
 
             // Watch for Selection on Search Control
             this.Search.Selected.ListChanged += Selected_ListChanged;
