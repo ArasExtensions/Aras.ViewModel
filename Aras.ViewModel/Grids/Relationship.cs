@@ -70,7 +70,7 @@ namespace Aras.ViewModel.Grids
         [ViewModel.Attributes.Command("Delete")]
         public DeleteCommand Delete { get; private set; }
 
-        public Dialogs.Searches.ItemType Dialog { get; private set; }
+        public Dialogs.Search Dialog { get; private set; }
 
         public IItemControl Parent { get; private set; }
 
@@ -348,11 +348,11 @@ namespace Aras.ViewModel.Grids
                         if (this.Dialog == null)
                         {
                             // Create Search Dialog
-                            this.Dialog = new Dialogs.Searches.ItemType(this);
+                            this.Dialog = new Dialogs.Search(this);
                             this.Dialog.Binding = this.Session.Model.Store(this.RelationshipType.RelatedItemType);
 
                             // Watch for changes in selection
-                            this.Dialog.Search.Selected.ListChanged += Selected_ListChanged;
+                            this.Dialog.Grid.Selected.ListChanged += Selected_ListChanged;
                         }
 
                         // Open Search Dialog
@@ -378,7 +378,7 @@ namespace Aras.ViewModel.Grids
                 {
                     if (this.Parent.Transaction != null)
                     {
-                        foreach (Model.Item relateditem in this.Dialog.Search.Selected)
+                        foreach (Model.Item relateditem in this.Dialog.Grid.Selected)
                         {
                             Model.Relationship relationship = ((Model.Item)this.Binding).Store(this.RelationshipType).Create(relateditem, this.Parent.Transaction);
                         }

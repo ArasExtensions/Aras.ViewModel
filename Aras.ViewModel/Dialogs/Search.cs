@@ -28,13 +28,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Aras.ViewModel.Dialogs.Searches
+namespace Aras.ViewModel.Dialogs
 {
-    public class ItemType : Dialog
+    public class Search : Dialog
     {
         public Containers.Toolbar Toolbar { get; private set; }
 
-        public Grids.Search Search { get; private set; }
+        public Grids.Search Grid { get; private set; }
 
         protected override void CheckBinding(object Binding)
         {
@@ -54,7 +54,7 @@ namespace Aras.ViewModel.Dialogs.Searches
             base.AfterBindingChanged();
 
             // Set Search Binding
-            this.Search.Binding = this.Binding;
+            this.Grid.Binding = this.Binding;
 
             // Set Title
             if (this.Binding != null)
@@ -67,7 +67,7 @@ namespace Aras.ViewModel.Dialogs.Searches
             }
         }
 
-        public ItemType(Control Parent)
+        public Search(Control Parent)
             :base(Parent)
         {
             // Set Default Width
@@ -81,16 +81,16 @@ namespace Aras.ViewModel.Dialogs.Searches
             this.Content = bordercontainer;
 
             // Create Search
-            this.Search = new Grids.Search(this.Session);
-            this.Search.Region = Regions.Center;
+            this.Grid = new Grids.Search(this.Session);
+            this.Grid.Region = Regions.Center;
            
             // Set Toolbar
-            this.Toolbar = ((IToolbarProvider)this.Search).Toolbar;
+            this.Toolbar = ((IToolbarProvider)this.Grid).Toolbar;
             this.Toolbar.Region = Regions.Top;
 
             // Add Children
             bordercontainer.Children.Add(this.Toolbar);
-            bordercontainer.Children.Add(this.Search);
+            bordercontainer.Children.Add(this.Grid);
         }
     }
 }

@@ -54,7 +54,7 @@ namespace Aras.ViewModel.Properties
             }
         }
 
-        public Dialogs.Searches.ItemType Dialog { get; private set; }
+        public Dialogs.Search Dialog { get; private set; }
 
         [Attributes.Property("Select", Attributes.PropertyTypes.Command, true)]
         [ViewModel.Attributes.Command("Select")]
@@ -155,11 +155,11 @@ namespace Aras.ViewModel.Properties
                 if (this.Dialog == null)
                 {
                     // Create Search Dialog
-                    this.Dialog = new Dialogs.Searches.ItemType(this);
+                    this.Dialog = new Dialogs.Search(this);
                     this.Dialog.Binding = this.Session.Model.Store(this.PropertyType.ValueType);
 
                     // Watch for changes in selection
-                    this.Dialog.Search.Selected.ListChanged += Selected_ListChanged;
+                    this.Dialog.Grid.Selected.ListChanged += Selected_ListChanged;
                 }
 
                 // Open Search Dialog
@@ -171,9 +171,9 @@ namespace Aras.ViewModel.Properties
         {
             if (this.Binding != null)
             {
-                if (this.Dialog.Search.Selected.Count() > 0)
+                if (this.Dialog.Grid.Selected.Count() > 0)
                 {
-                    ((Model.Properties.Item)this.Binding).Value = this.Dialog.Search.Selected.First();
+                    ((Model.Properties.Item)this.Binding).Value = this.Dialog.Grid.Selected.First();
                 }
                 else
                 {
