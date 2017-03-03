@@ -62,6 +62,8 @@
     <Compile Include="Attributes\ClientControl.cs" />
     <Compile Include="Attributes\Command.cs" />
     <Compile Include="Attributes\Property.cs" />
+    <Compile Include="Containers\BorderContainers\Relationship.cs" />
+    <Compile Include="Containers\BorderContainers\Search.cs" />
     <Compile Include="Containers\TableContainers\Item.cs" />
     <Compile Include="Dialog.cs" />
     <Compile Include="Dialogs\Search.cs" />

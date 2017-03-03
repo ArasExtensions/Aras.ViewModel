@@ -70,6 +70,7 @@ namespace Aras.ViewModel.Grids
             {
                 case "String":
                 case "Sequence":
+                case "Text":
                     return Aras.Conditions.Like(PropertyType.Name, "%" + this.QueryString.Value + "%");
                 case "Integer":
                     System.Int32 int32value = 0;
@@ -77,6 +78,17 @@ namespace Aras.ViewModel.Grids
                     if (System.Int32.TryParse(this.QueryString.Value, out int32value))
                     {
                         return Aras.Conditions.Eq(PropertyType.Name, int32value);
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                case "Decimal":
+                    System.Decimal decimalvalue = 0;
+
+                    if (System.Decimal.TryParse(this.QueryString.Value, out decimalvalue))
+                    {
+                        return Aras.Conditions.Eq(PropertyType.Name, decimalvalue);
                     }
                     else
                     {
@@ -115,6 +127,8 @@ namespace Aras.ViewModel.Grids
                 {
                     // Create Toolbar
                     this._toolbar = new Containers.Toolbar(this.Session);
+
+                    // Stop Notification
                     this._toolbar.Children.NotifyListChanged = false;
 
                     // Add Search Button
@@ -144,6 +158,7 @@ namespace Aras.ViewModel.Grids
                     // Add Query String
                     this._toolbar.Children.Add(this.QueryString);
 
+                    // Start Notification
                     this._toolbar.Children.NotifyListChanged = true;
                 }
 
@@ -288,21 +303,28 @@ namespace Aras.ViewModel.Grids
                         }
                     }
 
-                    if (conditions.Count() == 1)
+                    if (conditions.Count() > 0)
                     {
-                        this.Query.Condition = conditions[0];
+                        if (conditions.Count() == 1)
+                        {
+                            this.Query.Condition = conditions[0];
+                        }
+                        else
+                        {
+                            this.Query.Condition = Aras.Conditions.Or(conditions[0], conditions[1]);
+
+                            if (conditions.Count() > 2)
+                            {
+                                for (int i = 2; i < conditions.Count(); i++)
+                                {
+                                    ((Model.Conditions.Or)this.Query.Condition).Add(conditions[i]);
+                                }
+                            }
+                        }
                     }
                     else
                     {
-                        this.Query.Condition = Aras.Conditions.Or(conditions[0], conditions[1]);
-
-                        if (conditions.Count() > 2)
-                        {
-                            for (int i = 2; i < conditions.Count(); i++)
-                            {
-                                ((Model.Conditions.Or)this.Query.Condition).Add(conditions[i]);
-                            }
-                        }
+                        this.Query.Condition = null;
                     }
                 }
 

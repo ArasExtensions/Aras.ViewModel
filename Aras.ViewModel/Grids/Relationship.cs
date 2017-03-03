@@ -41,7 +41,38 @@ namespace Aras.ViewModel.Grids
                 {
                     // Create Toolbar
                     this._toolbar = new Containers.Toolbar(this.Session);
+
+                    // Stop Notification
                     this._toolbar.Children.NotifyListChanged = false;
+
+                    // Add Search Button
+                    Button searchbutton = new Button(this.Session);
+                    searchbutton.Icon = "Search";
+                    searchbutton.Tooltip = "Search";
+                    this._toolbar.Children.Add(searchbutton);
+                    searchbutton.Command = this.Refresh;
+
+                    // Add Page Size
+                    this._toolbar.Children.Add(this.PageSize);
+
+                    // Add Next Page Button
+                    Button nextbutton = new Button(this.Session);
+                    nextbutton.Icon = "NextPage";
+                    nextbutton.Tooltip = "Next Page";
+                    this._toolbar.Children.Add(nextbutton);
+                    nextbutton.Command = this.NextPage;
+
+                    // Add Previous Page Button
+                    Button previousbutton = new Button(this.Session);
+                    previousbutton.Icon = "PreviousPage";
+                    previousbutton.Tooltip = "Previous Page";
+                    this._toolbar.Children.Add(previousbutton);
+                    previousbutton.Command = this.PreviousPage;
+
+                    // Add Query String - disabled for now, need to work out how to query Related
+                    // this._toolbar.Children.Add(this.QueryString);
+
+                    this._toolbar.Children.Add(new ToolbarSeparator(this.Session));
 
                     // Add Create Button
                     Button createbutton = new Button(this.Session);
@@ -53,16 +84,34 @@ namespace Aras.ViewModel.Grids
                     // Add Create Button
                     Button deletebutton = new Button(this.Session);
                     deletebutton.Icon = "Delete";
-                    deletebutton.Tooltip = "Delete " + this.RelationshipType.PluralLabel;
+                    deletebutton.Tooltip = "Delete Selected " + this.RelationshipType.PluralLabel;
                     this._toolbar.Children.Add(deletebutton);
                     deletebutton.Command = this.Delete;
 
+                    // Start Notification
                     this._toolbar.Children.NotifyListChanged = true;
                 }
 
                 return this._toolbar;
             }
         }
+
+        [ViewModel.Attributes.Command("Refresh")]
+        public RefreshCommand Refresh { get; private set; }
+
+        [ViewModel.Attributes.Command("NextPage")]
+        public NextPageCommand NextPage { get; private set; }
+
+        [ViewModel.Attributes.Command("PreviousPage")]
+        public PreviousPageCommand PreviousPage { get; private set; }
+
+        public Properties.String QueryString { get; private set; }
+
+        public Properties.Integers.Spinner PageSize { get; private set; }
+
+        public Properties.Integer Page { get; protected set; }
+
+        public Properties.Integer NoPages { get; protected set; }
 
         [ViewModel.Attributes.Command("Create")]
         public CreateCommand Create { get; private set; }
@@ -91,6 +140,61 @@ namespace Aras.ViewModel.Grids
             }
         }
 
+        private Model.Condition Condition(Model.PropertyType PropertyType)
+        {
+            switch (PropertyType.GetType().Name)
+            {
+                case "String":
+                case "Sequence":
+                case "Text":
+                    return Aras.Conditions.Like(PropertyType.Name, "%" + this.QueryString.Value + "%");
+                case "Integer":
+                    System.Int32 int32value = 0;
+
+                    if (System.Int32.TryParse(this.QueryString.Value, out int32value))
+                    {
+                        return Aras.Conditions.Eq(PropertyType.Name, int32value);
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                case "Decimal":
+                    System.Decimal decimalvalue = 0;
+
+                    if (System.Decimal.TryParse(this.QueryString.Value, out decimalvalue))
+                    {
+                        return Aras.Conditions.Eq(PropertyType.Name, decimalvalue);
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                default:
+                    return null;
+            }
+        }
+
+        private Model.Queries.Relationship _query;
+        private Model.Queries.Relationship Query
+        {
+            get
+            {
+                if (this._query == null)
+                {
+                    if (this.Binding != null)
+                    {
+                        Model.Item item = (Model.Item)this.Binding;
+                        this._query = item.Store(this.RelationshipType).Query();
+                        this._query.PageSize = (System.Int32)this.PageSize.Value;
+                        this._query.Paging = true;
+                    }
+                }
+
+                return this._query;
+            }
+        }
+
         protected override void AfterBindingChanged()
         {
             base.AfterBindingChanged();
@@ -108,7 +212,6 @@ namespace Aras.ViewModel.Grids
             }
 
             // Ensure Dialog is Closed
-
             if (this.Dialog != null)
             {
                 this.Dialog.Open = false;
@@ -181,19 +284,16 @@ namespace Aras.ViewModel.Grids
         {
             if (this.Binding != null)
             {
-                // Get Current Items
-                List<Model.Relationship> currentitems = ((Model.Item)this.Binding).Store(this.RelationshipType).CurrentItems().ToList();
-                
                 // Set Number of Rows in Grid
-                this.Grid.NoRows = currentitems.Count();
+                this.Grid.NoRows = this.Query.Count();
 
                 // Clear current Grid Selection
                 this.Grid.SelectedRows.Clear();
 
                 // Load Current Items into Grid
-                for(int i=0; i < currentitems.Count(); i++)
+                for (int i = 0; i < this.Grid.NoRows; i++)
                 {
-                    Model.Relationship relationship = currentitems[i];
+                    Model.Relationship relationship = this.Query[i];
 
                     int j = 0;
 
@@ -240,6 +340,77 @@ namespace Aras.ViewModel.Grids
             }
 
             this.UpdateCommandsCanExecute();
+        }
+
+        protected void RefreshControl()
+        {
+            if (this.Query != null)
+            {
+                // Set Condition
+                if (String.IsNullOrEmpty(this.QueryString.Value))
+                {
+                    this.Query.Condition = null;
+                }
+                else
+                {
+                    List<Model.Condition> conditions = new List<Model.Condition>();
+
+                    foreach (Model.PropertyType proptype in this.Query.Store.ItemType.SearchPropertyTypes)
+                    {
+                        Model.Condition condition = this.Condition(proptype);
+
+                        if (condition != null)
+                        {
+                            conditions.Add(condition);
+                        }
+                    }
+
+                    if (conditions.Count() > 0)
+                    {
+                        if (conditions.Count() == 1)
+                        {
+                            this.Query.Condition = conditions[0];
+                        }
+                        else
+                        {
+                            this.Query.Condition = Aras.Conditions.Or(conditions[0], conditions[1]);
+
+                            if (conditions.Count() > 2)
+                            {
+                                for (int i = 2; i < conditions.Count(); i++)
+                                {
+                                    ((Model.Conditions.Or)this.Query.Condition).Add(conditions[i]);
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        this.Query.Condition = null;
+                    }
+                }
+
+                // Set PageSize and required Page
+                this.Query.PageSize = (System.Int32)this.PageSize.Value;
+                this.Query.Page = (System.Int32)this.Page.Value;
+
+                // Refresh Query
+                this.Query.Refresh();
+
+                // Update NoPages
+                this.NoPages.Value = this.Query.NoPages;
+            }
+            else
+            {
+                this.NoPages.Value = 0;
+            }
+
+            // Load Grid
+            this.LoadRows();
+
+            // Refresh Buttons
+            this.NextPage.Refesh();
+            this.PreviousPage.Refesh();
         }
 
         public void EditRelationship()
@@ -431,9 +602,39 @@ namespace Aras.ViewModel.Grids
             this.UpdateCommandsCanExecute();
         }
 
+        private void PageSize_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Value")
+            {
+                // Set Page to 1
+                this.Page.Value = 1;
+
+                this.RefreshControl();
+            }
+        }
+
+        private void QueryString_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Value")
+            {
+                // Set Page to 1
+                this.Page.Value = 1;
+
+                this.RefreshControl();
+            }
+        }
+
         public Relationship(IItemControl Parent, Model.RelationshipType RelationshipType)
             :base(Parent.Session)
         {
+            // Create Page
+            this.Page = new Properties.Integer(this.Session);
+            this.Page.Value = 1;
+
+            // Create No Pages
+            this.NoPages = new Properties.Integer(this.Session);
+            this.NoPages.Value = 0;
+
             // Only create Dialog when needed
             this.Dialog = null;
 
@@ -441,6 +642,9 @@ namespace Aras.ViewModel.Grids
             this.Selected = new Model.ObservableList<Model.Item>();
             
             // Create Comands
+            this.Refresh = new RefreshCommand(this);
+            this.NextPage = new NextPageCommand(this);
+            this.PreviousPage = new PreviousPageCommand(this);
             this.Create = new CreateCommand(this);
             this.Delete = new DeleteCommand(this);
 
@@ -463,8 +667,116 @@ namespace Aras.ViewModel.Grids
             this.Grid.Width = this.Width;
             this.Children.Add(this.Grid);
 
+            // Create Query String
+            this.QueryString = new Properties.String(this.Session);
+            this.QueryString.Enabled = true;
+            this.QueryString.IntermediateChanges = true;
+            this.QueryString.Tooltip = "Search String";
+            this.QueryString.PropertyChanged += QueryString_PropertyChanged;
+
+            // Create Page Size
+            this.PageSize = new Properties.Integers.Spinner(this.Session);
+            this.PageSize.Tooltip = "Page Size";
+            this.PageSize.Width = 40;
+            this.PageSize.Enabled = true;
+            this.PageSize.MinValue = 5;
+            this.PageSize.MaxValue = 100;
+            this.PageSize.Value = 25;
+            this.PageSize.PropertyChanged += PageSize_PropertyChanged;
+
             // Load Columns
             this.LoadColumns();
+        }
+
+        public class RefreshCommand : Aras.ViewModel.Command
+        {
+            protected override void Run(IEnumerable<Control> Parameters)
+            {
+                ((Relationship)this.Control).RefreshControl();
+                this.CanExecute = true;
+            }
+
+            internal RefreshCommand(Relationship Relationship)
+                : base(Relationship)
+            {
+                this.CanExecute = true;
+            }
+        }
+
+        public class NextPageCommand : Aras.ViewModel.Command
+        {
+            public Relationship Relationship
+            {
+                get
+                {
+                    return ((Relationship)this.Control);
+                }
+            }
+
+            protected override void Run(IEnumerable<Control> Parameters)
+            {
+                if (this.Relationship.Page.Value < this.Relationship.NoPages.Value)
+                {
+                    this.Relationship.Page.Value = this.Relationship.Page.Value + 1;
+                    this.Relationship.RefreshControl();
+                }
+            }
+
+            internal void Refesh()
+            {
+                if (this.Relationship.Page.Value < this.Relationship.NoPages.Value)
+                {
+                    this.CanExecute = true;
+                }
+                else
+                {
+                    this.CanExecute = false;
+                }
+            }
+
+            internal NextPageCommand(Relationship Relationship)
+                : base(Relationship)
+            {
+                this.Refesh();
+            }
+        }
+
+        public class PreviousPageCommand : Aras.ViewModel.Command
+        {
+            public Relationship Relationship
+            {
+                get
+                {
+                    return ((Relationship)this.Control);
+                }
+            }
+
+            protected override void Run(IEnumerable<Control> Parameters)
+            {
+                if (this.Relationship.Page.Value > 1)
+                {
+                    this.Relationship.Page.Value = this.Relationship.Page.Value - 1;
+                    this.Relationship.RefreshControl();
+                }
+            }
+
+            internal void Refesh()
+            {
+                if (this.Relationship.Page.Value > 1)
+                {
+                    this.CanExecute = true;
+                }
+                else
+                {
+                    this.CanExecute = false;
+                }
+            }
+
+            internal PreviousPageCommand(Relationship Relationship)
+                : base(Relationship)
+            {
+                this.Refesh();
+            }
         }
 
         public class CreateCommand : Aras.ViewModel.Command

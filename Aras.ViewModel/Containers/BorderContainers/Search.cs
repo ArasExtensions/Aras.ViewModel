@@ -1,4 +1,4 @@
-﻿/*  
+﻿/*
   Aras.ViewModel provides a .NET library for building Aras Innovator Applications
 
   Copyright (C) 2017 Processwall Limited.
@@ -28,17 +28,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Aras.ViewModel.Dialogs
+namespace Aras.ViewModel.Containers.BorderContainers
 {
-    public class Search : Dialog
+    public class Search : BorderContainer
     {
-        public Grids.Search Grid
-        {
-            get
-            {
-                return ((Containers.BorderContainers.Search)this.Content).Grid;
-            }
-        }
+        public Containers.Toolbar Toolbar { get; private set; }
+
+        public Grids.Search Grid { get; private set; }
 
         protected override void CheckBinding(object Binding)
         {
@@ -58,30 +54,24 @@ namespace Aras.ViewModel.Dialogs
             base.AfterBindingChanged();
 
             // Set Search Binding
-            this.Content.Binding = this.Binding;
-
-            // Set Title
-            if (this.Binding != null)
-            {
-                this.Title = "Select " + ((Model.Stores.Item)this.Binding).ItemType.SingularLabel;
-            }
-            else
-            {
-                this.Title = null;
-            }
+            this.Grid.Binding = this.Binding;
         }
 
-        public Search(Control Parent)
-            :base(Parent)
+        public Search(Manager.Session Session)
+            :base(Session)
         {
-            // Set Default Width
-            this.Width = 600;
+            // Create Search
+            this.Grid = new Grids.Search(this.Session);
+            this.Grid.Region = Regions.Center;
 
-            // Set Default Height
-            this.Height = 800;
+            // Set Toolbar
+            this.Toolbar = ((IToolbarProvider)this.Grid).Toolbar;
+            this.Toolbar.Region = Regions.Top;
 
-            // Create Border Content
-            this.Content = new Containers.BorderContainers.Search(this.Session);
+            // Add Children
+            this.Children.Add(this.Toolbar);
+            this.Children.Add(this.Grid);
         }
+
     }
 }
