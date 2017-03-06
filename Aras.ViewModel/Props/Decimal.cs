@@ -129,7 +129,9 @@ namespace Aras.ViewModel.Properties
 
             if (this.Binding != null)
             {
+                this.UpdatingBinding = true;
                 ((Model.Properties.Decimal)this.Binding).Value = this.Value;
+                this.UpdatingBinding = false;
             }
         }
 
@@ -174,7 +176,12 @@ namespace Aras.ViewModel.Properties
                 switch (e.PropertyName)
                 {
                     case "Value":
-                        this.Value = (System.Decimal?)((Model.Properties.Decimal)this.Binding).Value;
+
+                        if (!this.UpdatingBinding)
+                        {
+                            this.Value = (System.Decimal?)((Model.Properties.Decimal)this.Binding).Value;
+                        }
+
                         break;
                     default:
                         break;

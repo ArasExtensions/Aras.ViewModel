@@ -98,7 +98,9 @@ namespace Aras.ViewModel.Properties
 
                 if (this.Binding != null)
                 {
+                    this.UpdatingBinding = true;
                     ((Model.Properties.String)this.Binding).Value = this.Value;
+                    this.UpdatingBinding = false;
                 }
             }
             else
@@ -149,7 +151,12 @@ namespace Aras.ViewModel.Properties
                 switch (e.PropertyName)
                 {
                     case "Value":
-                        this.Value = (System.String)((Model.Properties.String)this.Binding).Value;
+
+                        if (!this.UpdatingBinding)
+                        {
+                            this.Value = (System.String)((Model.Properties.String)this.Binding).Value;
+                        }
+
                         break;
                     default:
                         break;

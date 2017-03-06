@@ -86,6 +86,8 @@ namespace Aras.ViewModel
             }
         }
 
+        protected Boolean UpdatingBinding { get; set; }
+
         protected override void CheckBinding(object Binding)
         {
             base.CheckBinding(Binding);
@@ -142,6 +144,7 @@ namespace Aras.ViewModel
         public Property(Manager.Session Session)
             :base(Session)
         {
+            this.UpdatingBinding = false;
             this.IntermediateChanges = false;
             this.Required = false;
             this.Width = 180;
@@ -150,6 +153,7 @@ namespace Aras.ViewModel
         public Property(Manager.Session Session, Model.PropertyType PropertyType)
             : this(Session)
         {
+            this.UpdatingBinding = false;
             this.IntermediateChanges = false;
             this.Label = PropertyType.Label;
         }

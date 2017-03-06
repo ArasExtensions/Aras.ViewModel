@@ -71,6 +71,8 @@ namespace Aras.ViewModel.Properties
         {
             if (this.Binding != null)
             {
+                this.UpdatingBinding = true;
+
                 if (Value == null)
                 {
                     ((Model.Properties.List)this.Binding).Value = null;
@@ -86,6 +88,8 @@ namespace Aras.ViewModel.Properties
                         }
                     }
                 }
+
+                this.UpdatingBinding = false;
             }
         }
 
@@ -138,13 +142,16 @@ namespace Aras.ViewModel.Properties
             {
                 if (e.PropertyName.Equals("Selected") || e.PropertyName.Equals("Value"))
                 {
-                    if (((Model.Properties.List)this.Binding).Selected == -1)
+                    if (!this.UpdatingBinding)
                     {
-                        this.Value = null;
-                    }
-                    else
-                    {
-                        this.Value = ((Aras.Model.ListValue)((Model.Properties.List)this.Binding).Value).Value;
+                        if (((Model.Properties.List)this.Binding).Selected == -1)
+                        {
+                            this.Value = null;
+                        }
+                        else
+                        {
+                            this.Value = ((Aras.Model.ListValue)((Model.Properties.List)this.Binding).Value).Value;
+                        }
                     }
                 }
             }

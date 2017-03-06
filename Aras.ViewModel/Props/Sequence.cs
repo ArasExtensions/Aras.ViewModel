@@ -111,8 +111,8 @@ namespace Aras.ViewModel.Properties
                     case "Value":
 
                         this.SetValue();
-                        
-break;
+
+                        break;
                     case "ReadOnly":
 
                         // Always Disabled

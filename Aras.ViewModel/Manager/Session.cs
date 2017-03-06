@@ -94,10 +94,10 @@ namespace Aras.ViewModel.Manager
             ViewModel.Control plugin = (ViewModel.Control)Activator.CreateInstance(PluginType.Type, new object[1] { this });
 
             // Set Context
-            ((Aras.ViewModel.Item)plugin).SetBinding(this.Model, Context);
+            ((Aras.ViewModel.Containers.Plugin)plugin).SetBinding(Context);
 
             // Refresh Plugin
-            ((Aras.ViewModel.Item)plugin).Refresh.Execute();
+            ((Aras.ViewModel.Containers.Plugin)plugin).Refresh.Execute();
 
             return plugin;
         }

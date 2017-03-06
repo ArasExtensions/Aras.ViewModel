@@ -33,6 +33,7 @@ namespace Aras.ViewModel
     public class ControlCache<I,C> : Dictionary<I,C> where I:Model.Item where C:Control
     {
         public Manager.Session Session { get; private set; }
+
         public C Get(I Item)
         {
             if (!this.ContainsKey(Item))
@@ -46,6 +47,7 @@ namespace Aras.ViewModel
         public ControlCache(Manager.Session Session)
             :base()
         {
+            this.Session = Session;
         }
 
     }

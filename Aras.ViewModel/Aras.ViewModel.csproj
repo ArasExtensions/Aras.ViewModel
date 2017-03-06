@@ -91,7 +91,6 @@
     <Compile Include="Props\Text.cs" />
     <Compile Include="ToolbarSeparator.cs" />
     <Compile Include="Button.cs" />
-    <Compile Include="Containers\Plugin.cs" />
     <Compile Include="IContained.cs" />
     <Compile Include="Container.cs" />
     <Compile Include="ControlCache.cs" />
@@ -100,11 +99,10 @@
     <Compile Include="File.cs" />
     <Compile Include="IRelationshipFormatter.cs" />
     <Compile Include="IItemFormatter.cs" />
-    <Compile Include="Item.cs" />
     <Compile Include="ItemFormatters\Default.cs" />
     <Compile Include="Layout.cs" />
     <Compile Include="Containers\TabContainer.cs" />
-    <Compile Include="Plugin.cs" />
+    <Compile Include="Containers\Plugin.cs" />
     <Compile Include="Containers\Application.cs" />
     <Compile Include="Containers\BorderContainer.cs" />
     <Compile Include="ObservableControlList.cs" />
@@ -143,9 +141,7 @@
       <Name>Aras.Model</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Panes\ContentPanes\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

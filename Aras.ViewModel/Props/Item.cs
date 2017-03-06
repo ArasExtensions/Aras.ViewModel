@@ -171,6 +171,8 @@ namespace Aras.ViewModel.Properties
         {
             if (this.Binding != null)
             {
+                this.UpdatingBinding = true;
+
                 if (this.Dialog.Grid.Selected.Count() > 0)
                 {
                     ((Model.Properties.Item)this.Binding).Value = this.Dialog.Grid.Selected.First();
@@ -179,6 +181,8 @@ namespace Aras.ViewModel.Properties
                 {
                     ((Model.Properties.Item)this.Binding).Value = null;
                 }
+
+                this.UpdatingBinding = false;
             }
 
             // Close Dialog

@@ -61,8 +61,8 @@ namespace Aras.ViewModel.WebService.Models
                 
                 // Create Control
                 Control control = new Control(id, type.ClientType);
-                
-                // Add Properties to Model Contorl
+
+                // Add Properties to Model Control
                 foreach (String name in ViewModelControl.Properties)
                 {
                     // Get Type
