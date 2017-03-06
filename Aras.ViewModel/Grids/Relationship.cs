@@ -46,33 +46,33 @@ namespace Aras.ViewModel.Grids
                     this._toolbar.Children.NotifyListChanged = false;
 
                     // Add Search Button
-                    Button searchbutton = new Button(this.Session);
-                    searchbutton.Icon = "Search";
-                    searchbutton.Tooltip = "Search";
-                    this._toolbar.Children.Add(searchbutton);
-                    searchbutton.Command = this.Refresh;
+                    //Button searchbutton = new Button(this.Session);
+                    //searchbutton.Icon = "Search";
+                    //searchbutton.Tooltip = "Search";
+                    //this._toolbar.Children.Add(searchbutton);
+                    //searchbutton.Command = this.Refresh;
 
                     // Add Page Size
-                    this._toolbar.Children.Add(this.PageSize);
+                    //this._toolbar.Children.Add(this.PageSize);
 
                     // Add Next Page Button
-                    Button nextbutton = new Button(this.Session);
-                    nextbutton.Icon = "NextPage";
-                    nextbutton.Tooltip = "Next Page";
-                    this._toolbar.Children.Add(nextbutton);
-                    nextbutton.Command = this.NextPage;
+                    //Button nextbutton = new Button(this.Session);
+                    //nextbutton.Icon = "NextPage";
+                    //nextbutton.Tooltip = "Next Page";
+                    //this._toolbar.Children.Add(nextbutton);
+                    //nextbutton.Command = this.NextPage;
 
                     // Add Previous Page Button
-                    Button previousbutton = new Button(this.Session);
-                    previousbutton.Icon = "PreviousPage";
-                    previousbutton.Tooltip = "Previous Page";
-                    this._toolbar.Children.Add(previousbutton);
-                    previousbutton.Command = this.PreviousPage;
+                    //Button previousbutton = new Button(this.Session);
+                    //previousbutton.Icon = "PreviousPage";
+                    //previousbutton.Tooltip = "Previous Page";
+                    //this._toolbar.Children.Add(previousbutton);
+                    //previousbutton.Command = this.PreviousPage;
 
                     // Add Query String - disabled for now, need to work out how to query Related
                     // this._toolbar.Children.Add(this.QueryString);
 
-                    this._toolbar.Children.Add(new ToolbarSeparator(this.Session));
+                    //this._toolbar.Children.Add(new ToolbarSeparator(this.Session));
 
                     // Add Create Button
                     Button createbutton = new Button(this.Session);
@@ -284,8 +284,11 @@ namespace Aras.ViewModel.Grids
         {
             if (this.Binding != null)
             {
+                Model.Item item = (Model.Item)this.Binding;
+                List<Model.Relationship> currentitems = item.Store(this.RelationshipType).CurrentItems().ToList();
+
                 // Set Number of Rows in Grid
-                this.Grid.NoRows = this.Query.Count();
+                this.Grid.NoRows = currentitems.Count();
 
                 // Clear current Grid Selection
                 this.Grid.SelectedRows.Clear();
@@ -293,7 +296,7 @@ namespace Aras.ViewModel.Grids
                 // Load Current Items into Grid
                 for (int i = 0; i < this.Grid.NoRows; i++)
                 {
-                    Model.Relationship relationship = this.Query[i];
+                    Model.Relationship relationship = currentitems[i];
 
                     int j = 0;
 
