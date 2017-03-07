@@ -300,6 +300,9 @@ namespace Aras.ViewModel.Manager
                 case "String":
                     viewmodelproperty = new Properties.String(this, (Model.PropertyTypes.String)PropertyType);
                     break;
+                case "Federated":
+                    viewmodelproperty = new Properties.Federated(this, (Model.PropertyTypes.Federated)PropertyType);
+                    break;
                 case "Integer":
                     viewmodelproperty = new Properties.Integer(this, (Model.PropertyTypes.Integer)PropertyType);
                     break;

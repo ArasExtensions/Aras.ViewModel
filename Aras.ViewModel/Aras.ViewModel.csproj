@@ -88,6 +88,7 @@
     <Compile Include="Props\Item.cs" />
     <Compile Include="Props\Sequence.cs" />
     <Compile Include="Props\Boolean.cs" />
+    <Compile Include="Props\Federated.cs" />
     <Compile Include="Props\Text.cs" />
     <Compile Include="ToolbarSeparator.cs" />
     <Compile Include="Button.cs" />
