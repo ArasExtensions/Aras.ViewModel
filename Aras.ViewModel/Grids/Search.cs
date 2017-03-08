@@ -242,12 +242,6 @@ namespace Aras.ViewModel.Grids
         {
             base.AfterBindingChanged();
 
-            // Load Columns
-            this.LoadColumns();
-
-            // Load Rows
-            this.RefreshControl();
-
             // Reset Query
             this._query = null;
 
@@ -256,6 +250,12 @@ namespace Aras.ViewModel.Grids
                 // Add Search PropertTypes to Select
                 ((Model.Stores.Item)this.Binding).ItemType.AddSearchPropertyTypesToSelect();
             }
+
+            // Load Columns
+            this.LoadColumns();
+
+            // Load Rows
+            this.RefreshControl();
         }
 
         private void PageSize_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
