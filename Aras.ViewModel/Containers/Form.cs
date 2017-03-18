@@ -210,7 +210,7 @@ namespace Aras.ViewModel.Containers
             this.OnCreated();
         }
 
-        private void SaveForm()
+        protected virtual void SaveForm()
         {
             this.ResetError();
 
@@ -252,7 +252,7 @@ namespace Aras.ViewModel.Containers
             }
         }
 
-        private void UndoForm()
+        protected virtual void UndoForm()
         {
             this.ResetError();
 
