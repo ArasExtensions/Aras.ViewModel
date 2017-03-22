@@ -33,6 +33,24 @@ namespace Aras.ViewModel.Panes
     [Attributes.ClientControl("Aras.View.Panes.ContentPane")]
     public class ContentPane : Control
     {
+        private System.String _title;
+        [Attributes.Property("Title", Attributes.PropertyTypes.String, true)]
+        public System.String Title
+        {
+            get
+            {
+                return this._title;
+            }
+            set
+            {
+                if (this._title != value)
+                {
+                    this._title = value;
+                    this.OnPropertyChanged("Title");
+                }
+            }
+        }
+
         private Control _content;
         [Attributes.Property("Content", Attributes.PropertyTypes.Control, true)]
         public Control Content
@@ -54,6 +72,7 @@ namespace Aras.ViewModel.Panes
         public ContentPane(Manager.Session Session)
             :base(Session)
         {
+            this._title = null;
             this._content = null;
         }
     }

@@ -33,24 +33,6 @@ namespace Aras.ViewModel.Panes
     [Attributes.ClientControl("Aras.View.Panes.TitlePane")]
     public class TitlePane : ContentPane
     {
-        private System.String _title;
-        [Attributes.Property("Title", Attributes.PropertyTypes.String, true)]
-        public System.String Title
-        {
-            get
-            {
-                return this._title;
-            }
-            set
-            {
-                if (this._title != value)
-                {
-                    this._title = value;
-                    this.OnPropertyChanged("Title");
-                }
-            }
-        }
-
         private System.Boolean _open;
         [Attributes.Property("Open", Attributes.PropertyTypes.Boolean, false)]
         public System.Boolean Open
@@ -72,7 +54,6 @@ namespace Aras.ViewModel.Panes
         public TitlePane(Manager.Session Session)
             : base(Session)
         {
-            this._title = null;
             this._open = true;
         }
     }

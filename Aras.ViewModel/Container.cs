@@ -32,6 +32,24 @@ namespace Aras.ViewModel
 {
     public abstract class Container : Control
     {
+        private System.String _title;
+        [Attributes.Property("Title", Attributes.PropertyTypes.String, true)]
+        public System.String Title
+        {
+            get
+            {
+                return this._title;
+            }
+            set
+            {
+                if (this._title != value)
+                {
+                    this._title = value;
+                    this.OnPropertyChanged("Title");
+                }
+            }
+        }
+
         [ViewModel.Attributes.Property("Children", Aras.ViewModel.Attributes.PropertyTypes.ControlList, true)]
         public Model.ObservableList<Control> Children { get; private set; }
 
