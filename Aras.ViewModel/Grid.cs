@@ -33,6 +33,9 @@ namespace Aras.ViewModel
     [Attributes.ClientControl("Aras.View.Grid")]
     public class Grid : Control
     {
+        [ViewModel.Attributes.Property("ShowHeader", Aras.ViewModel.Attributes.PropertyTypes.Boolean, true)]
+        public Boolean ShowHeader { get; set; }
+
         [ViewModel.Attributes.Property("Select", Aras.ViewModel.Attributes.PropertyTypes.Command, true)]
         [ViewModel.Attributes.Command("Select")]
         public SelectCommand Select { get; private set; }
@@ -141,6 +144,7 @@ namespace Aras.ViewModel
             :base(Session)
         {
             this._allowSelect = false;
+            this.ShowHeader = true;
             this.Select = new SelectCommand(this);
             this.Columns = new Model.ObservableList<Column>();
             this.Columns.ListChanged += Columns_ListChanged;
