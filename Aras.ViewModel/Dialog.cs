@@ -78,12 +78,12 @@ namespace Aras.ViewModel
             }
         }
 
-        protected void OnOpen()
+        protected virtual void OnOpen()
         {
 
         }
 
-        protected void OnClose()
+        protected virtual void OnClose()
         {
 
         }

@@ -32,6 +32,8 @@ namespace Aras.ViewModel.Dialogs
 {
     public class Search : Dialog
     {
+        public Model.Stores.Item Store { get; private set; }
+
         public Grids.Search Grid
         {
             get
@@ -40,40 +42,22 @@ namespace Aras.ViewModel.Dialogs
             }
         }
 
-        protected override void CheckBinding(object Binding)
+        public Search(Control Parent, Model.Stores.Item Store)
+            :base(Parent)
         {
-            base.CheckBinding(Binding);
-
-            if (Binding != null)
-            {
-                if (!(Binding is Model.Stores.Item))
-                {
-                    throw new Model.Exceptions.ArgumentException("Binding must be Aras.Model.Stores.Item");
-                }
-            }
-        }
-
-        protected override void AfterBindingChanged()
-        {
-            base.AfterBindingChanged();
-
-            // Set Search Binding
-            this.Content.Binding = this.Binding;
-
+            // Save Store
+            this.Store = Store;
+            
             // Set Title
-            if (this.Binding != null)
+            if (this.Store != null)
             {
-                this.Title = "Select " + ((Model.Stores.Item)this.Binding).ItemType.SingularLabel;
+                this.Title = "Select " + this.Store.ItemType.SingularLabel;
             }
             else
             {
                 this.Title = null;
             }
-        }
-
-        public Search(Control Parent)
-            :base(Parent)
-        {
+            
             // Set Default Width
             this.Width = 600;
 
@@ -82,6 +66,7 @@ namespace Aras.ViewModel.Dialogs
 
             // Create Border Content
             this.Content = new Containers.BorderContainers.Search(this.Session);
+            this.Content.Binding = this.Store;
         }
     }
 }

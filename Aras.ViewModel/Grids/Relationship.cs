@@ -522,8 +522,7 @@ namespace Aras.ViewModel.Grids
                         if (this.Dialog == null)
                         {
                             // Create Search Dialog
-                            this.Dialog = new Dialogs.Search(this);
-                            this.Dialog.Binding = this.Session.Model.Store(this.RelationshipType.RelatedItemType);
+                            this.Dialog = new Dialogs.Search(this, this.Session.Model.Store(this.RelationshipType.RelatedItemType));
 
                             // Watch for changes in selection
                             this.Dialog.Grid.Selected.ListChanged += Selected_ListChanged;

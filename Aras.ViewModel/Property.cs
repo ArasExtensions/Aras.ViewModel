@@ -86,6 +86,8 @@ namespace Aras.ViewModel
             }
         }
 
+        public Model.PropertyType PropertyType { get; private set; }
+
         protected Boolean UpdatingBinding { get; set; }
 
         protected override void CheckBinding(object Binding)
@@ -155,6 +157,7 @@ namespace Aras.ViewModel
         {
             this.UpdatingBinding = false;
             this.IntermediateChanges = false;
+            this.PropertyType = PropertyType;
             this.Label = PropertyType.Label;
         }
     }

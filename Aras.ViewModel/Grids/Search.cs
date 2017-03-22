@@ -64,41 +64,6 @@ namespace Aras.ViewModel.Grids
             }
         }
 
-        private Model.Condition Condition(Model.PropertyType PropertyType)
-        {
-            switch (PropertyType.GetType().Name)
-            {
-                case "String":
-                case "Sequence":
-                case "Text":
-                    return Aras.Conditions.Like(PropertyType.Name, "%" + this.QueryString.Value + "%");
-                case "Integer":
-                    System.Int32 int32value = 0;
-
-                    if (System.Int32.TryParse(this.QueryString.Value, out int32value))
-                    {
-                        return Aras.Conditions.Eq(PropertyType.Name, int32value);
-                    }
-                    else
-                    {
-                        return null;
-                    }
-                case "Decimal":
-                    System.Decimal decimalvalue = 0;
-
-                    if (System.Decimal.TryParse(this.QueryString.Value, out decimalvalue))
-                    {
-                        return Aras.Conditions.Eq(PropertyType.Name, decimalvalue);
-                    }
-                    else
-                    {
-                        return null;
-                    }
-                default:
-                    return null;
-            }
-        }
-
         private Model.Queries.Item _query;
         private Model.Queries.Item Query
         {
@@ -115,6 +80,32 @@ namespace Aras.ViewModel.Grids
                 }
 
                 return this._query;
+            }
+        }
+
+        private Dialogs.Filters _dialog;
+        public Dialogs.Filters Dialog
+        {
+            get
+            {
+                if (this._dialog == null)
+                {
+                    this._dialog = new Dialogs.Filters(this, this.Query.Store.ItemType.SearchPropertyTypes);
+                    this._dialog.PropertyChanged += _dialog_PropertyChanged;
+                }
+
+                return this._dialog;
+            }
+        }
+
+        private void _dialog_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Open")
+            {
+                if (!this.Dialog.Open)
+                {
+                    this.RefreshControl();
+                }
             }
         }
 
@@ -138,6 +129,20 @@ namespace Aras.ViewModel.Grids
                     this._toolbar.Children.Add(searchbutton);
                     searchbutton.Command = this.Refresh;
 
+                    // Add Filter Button
+                    Button filterbutton = new Button(this.Session);
+                    filterbutton.Icon = "AddFilter";
+                    filterbutton.Tooltip = "Add Filters";
+                    this._toolbar.Children.Add(filterbutton);
+                    filterbutton.Command = this.Filters;
+
+                    // Add Clear Button
+                    Button clearbutton = new Button(this.Session);
+                    clearbutton.Icon = "ClearFilter";
+                    clearbutton.Tooltip = "Clear Filters";
+                    this._toolbar.Children.Add(clearbutton);
+                    clearbutton.Command = this.Clear;
+
                     // Add Page Size
                     this._toolbar.Children.Add(this.PageSize);
 
@@ -155,9 +160,6 @@ namespace Aras.ViewModel.Grids
                     this._toolbar.Children.Add(previousbutton);
                     previousbutton.Command = this.PreviousPage;
 
-                    // Add Query String
-                    this._toolbar.Children.Add(this.QueryString);
-
                     // Start Notification
                     this._toolbar.Children.NotifyListChanged = true;
                 }
@@ -171,13 +173,17 @@ namespace Aras.ViewModel.Grids
         [ViewModel.Attributes.Command("Refresh")]
         public RefreshCommand Refresh { get; private set; }
 
+        [ViewModel.Attributes.Command("Filters")]
+        public FiltersCommand Filters { get; private set; }
+
+        [ViewModel.Attributes.Command("Clear")]
+        public ClearCommand Clear { get; private set; }
+
         [ViewModel.Attributes.Command("NextPage")]
         public NextPageCommand NextPage { get; private set; }
 
         [ViewModel.Attributes.Command("PreviousPage")]
         public PreviousPageCommand PreviousPage { get; private set; }
-
-        public Properties.String QueryString { get; private set; }
 
         public Properties.Integers.Spinner PageSize { get; private set; }
 
@@ -269,64 +275,12 @@ namespace Aras.ViewModel.Grids
             }
         }
 
-        private void QueryString_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "Value")
-            {
-                // Set Page to 1
-                this.Page.Value = 1;
-
-                this.RefreshControl();
-            }
-        }
-
         protected void RefreshControl()
         {
             if (this.Query != null)
-            {
+            {              
                 // Set Condition
-                if (String.IsNullOrEmpty(this.QueryString.Value))
-                {
-                    this.Query.Condition = null;
-                }
-                else
-                {
-                    List<Model.Condition> conditions = new List<Model.Condition>();
-
-                    foreach (Model.PropertyType proptype in this.Query.Store.ItemType.SearchPropertyTypes)
-                    {
-                        Model.Condition condition = this.Condition(proptype);
-
-                        if (condition != null)
-                        {
-                            conditions.Add(condition);
-                        }
-                    }
-
-                    if (conditions.Count() > 0)
-                    {
-                        if (conditions.Count() == 1)
-                        {
-                            this.Query.Condition = conditions[0];
-                        }
-                        else
-                        {
-                            this.Query.Condition = Aras.Conditions.Or(conditions[0], conditions[1]);
-
-                            if (conditions.Count() > 2)
-                            {
-                                for (int i = 2; i < conditions.Count(); i++)
-                                {
-                                    ((Model.Conditions.Or)this.Query.Condition).Add(conditions[i]);
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        this.Query.Condition = null;
-                    }
-                }
+                this.Query.Condition = this.Dialog.Condition();
 
                 // Set PageSize and required Page
                 this.Query.PageSize = (System.Int32)this.PageSize.Value;
@@ -366,6 +320,20 @@ namespace Aras.ViewModel.Grids
             this.Selected.NotifyListChanged = true;
         }
 
+        private void DisplayFilters()
+        {
+            this.Dialog.Open = true;
+        }
+
+        private void ClearFilters()
+        {
+            // Clear Filters
+            this.Dialog.Clear();
+
+            // Run Search
+            this.RefreshControl();
+        }
+
         public Search(Manager.Session Session)
             : base(Session)
         {           
@@ -389,15 +357,10 @@ namespace Aras.ViewModel.Grids
 
             // Create Commands
             this.Refresh = new RefreshCommand(this);
+            this.Filters = new FiltersCommand(this);
+            this.Clear = new ClearCommand(this);
             this.NextPage = new NextPageCommand(this);
             this.PreviousPage = new PreviousPageCommand(this);
-
-            // Create Query String
-            this.QueryString = new Properties.String(this.Session);
-            this.QueryString.Enabled = true;
-            this.QueryString.IntermediateChanges = true;
-            this.QueryString.Tooltip = "Search String";
-            this.QueryString.PropertyChanged += QueryString_PropertyChanged;
 
             // Create Page Size
             this.PageSize = new Properties.Integers.Spinner(this.Session);
@@ -419,6 +382,36 @@ namespace Aras.ViewModel.Grids
             }
 
             internal RefreshCommand(Control Control)
+                : base(Control)
+            {
+                this.CanExecute = true;
+            }
+        }
+
+        public class FiltersCommand : Aras.ViewModel.Command
+        {
+            protected override void Run(IEnumerable<Control> Parameters)
+            {
+                ((Search)this.Control).DisplayFilters();
+                this.CanExecute = true;
+            }
+
+            internal FiltersCommand(Control Control)
+                : base(Control)
+            {
+                this.CanExecute = true;
+            }
+        }
+
+        public class ClearCommand : Aras.ViewModel.Command
+        {
+            protected override void Run(IEnumerable<Control> Parameters)
+            {
+                ((Search)this.Control).ClearFilters();
+                this.CanExecute = true;
+            }
+
+            internal ClearCommand(Control Control)
                 : base(Control)
             {
                 this.CanExecute = true;

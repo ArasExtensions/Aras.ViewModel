@@ -33,9 +33,6 @@ namespace Aras.ViewModel.Properties
     [Attributes.ClientControl("Aras.View.Properties.Item")]
     public class Item : Property
     {
-
-        protected Model.PropertyTypes.Item PropertyType { get; private set; }
-
         private System.String _value;
         [Attributes.Property("Value", Attributes.PropertyTypes.String, false)]
         public System.String Value
@@ -129,6 +126,21 @@ namespace Aras.ViewModel.Properties
             }
         }
 
+        public Model.Item PropetyItem
+        {
+            get
+            {
+                if (this.Binding != null)
+                {
+                    return ((Model.Properties.Item)this.Binding).Item;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
         protected override void Property_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             base.Property_PropertyChanged(sender, e);
@@ -150,21 +162,17 @@ namespace Aras.ViewModel.Properties
 
         private void SelectValue()
         {
-            if (this.Binding != null)
+            if (this.Dialog == null)
             {
-                if (this.Dialog == null)
-                {
-                    // Create Search Dialog
-                    this.Dialog = new Dialogs.Search(this);
-                    this.Dialog.Binding = this.Session.Model.Store(this.PropertyType.ValueType);
+                // Create Search Dialog
+                this.Dialog = new Dialogs.Search(this, this.Session.Model.Store(((Model.PropertyTypes.Item)this.PropertyType).ValueType));
 
-                    // Watch for changes in selection
-                    this.Dialog.Grid.Selected.ListChanged += Selected_ListChanged;
-                }
-
-                // Open Search Dialog
-                this.Dialog.Open = true;
+                // Watch for changes in selection
+                this.Dialog.Grid.Selected.ListChanged += Selected_ListChanged;
             }
+
+            // Open Search Dialog
+            this.Dialog.Open = true;
         }
 
         void Selected_ListChanged(object sender, EventArgs e)
@@ -192,7 +200,6 @@ namespace Aras.ViewModel.Properties
         public Item(Manager.Session Session)
             : base(Session)
         {
-            this.PropertyType = null;
             this.Dialog = null;
             this.Select = new SelectCommand(this);
         }
@@ -200,7 +207,6 @@ namespace Aras.ViewModel.Properties
         public Item(Manager.Session Session, Model.PropertyTypes.Item PropertyType)
             : base(Session, PropertyType)
         {
-            this.PropertyType = PropertyType;
             this.Dialog = null;
             this.Select = new SelectCommand(this);
         }
