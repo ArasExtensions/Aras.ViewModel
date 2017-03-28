@@ -35,7 +35,7 @@ namespace Aras.ViewModel.Properties
     {
 
         private System.String _value;
-        [Attributes.Property("Value", Attributes.PropertyTypes.String, true)]
+        [Attributes.Property("Value", Attributes.PropertyTypes.String, false)]
         public System.String Value
         {
             get

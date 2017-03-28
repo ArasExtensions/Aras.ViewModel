@@ -41,12 +41,12 @@ namespace Aras.ViewModel.Dialogs
             this.Table = new Containers.TableContainer(this.Session);
             this.Table.Columns = 3;
 
-            foreach(Model.PropertyType proptype in this.PropertyTypes)
+            foreach (Model.PropertyType proptype in this.PropertyTypes)
             {
-                ViewModel.Property prop = this.Session.CreateProperty(proptype);
-                prop.IntermediateChanges = true;
-                prop.Enabled = true;
-                this.Table.Children.Add(prop);
+                ViewModel.Property viewmodelproperty = this.Session.CreateProperty(proptype);
+                viewmodelproperty.IntermediateChanges = true;
+                viewmodelproperty.Enabled = true;
+                this.Table.Children.Add(viewmodelproperty);
             }
         }
 
@@ -73,21 +73,12 @@ namespace Aras.ViewModel.Dialogs
 
                         break;
                     case "Date":
-                    
                         break;
                     case "Decimal":
 
                         if (((Properties.Decimal)prop).Value != null)
                         {
                             condition = Aras.Conditions.Eq(((Properties.Decimal)prop).PropertyType.Name, ((Properties.Decimal)prop).Value);
-                        }
-
-                        break;
-                    case "Federated":
-
-                        if (!String.IsNullOrEmpty(((Properties.Federated)prop).Value))
-                        {
-                            condition = Aras.Conditions.Like(((Properties.Federated)prop).PropertyType.Name, ((Properties.Federated)prop).Value);
                         }
 
                         break;
@@ -133,6 +124,7 @@ namespace Aras.ViewModel.Dialogs
                         break;
                     case "String":
 
+
                         if (!String.IsNullOrEmpty(((Properties.String)prop).Value))
                         {
                             condition = Aras.Conditions.Like(((Properties.String)prop).PropertyType.Name, ((Properties.String)prop).Value);
@@ -144,6 +136,14 @@ namespace Aras.ViewModel.Dialogs
                         if (!String.IsNullOrEmpty(((Properties.Text)prop).Value))
                         {
                             condition = Aras.Conditions.Like(((Properties.Text)prop).PropertyType.Name, ((Properties.Text)prop).Value);
+                        }
+
+                        break;
+                    case "Federated":
+
+                        if (!String.IsNullOrEmpty(((Properties.Federated)prop).Value))
+                        {
+                            condition = Aras.Conditions.Like(((Properties.Federated)prop).PropertyType.Name, ((Properties.Federated)prop).Value);
                         }
 
                         break;

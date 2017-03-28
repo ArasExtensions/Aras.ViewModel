@@ -306,6 +306,9 @@ namespace Aras.ViewModel.Manager
                 case "Integer":
                     viewmodelproperty = new Properties.Integer(this, (Model.PropertyTypes.Integer)PropertyType);
                     break;
+                case "Float":
+                    viewmodelproperty = new Properties.Float(this, (Model.PropertyTypes.Float)PropertyType);
+                    break;
                 case "Sequence":
                     viewmodelproperty = new Properties.Sequence(this, (Model.PropertyTypes.Sequence)PropertyType);
                     break;
