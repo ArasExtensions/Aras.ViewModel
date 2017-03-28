@@ -87,7 +87,7 @@ namespace Aras.ViewModel.Dialogs
 
                         if (!String.IsNullOrEmpty(((Properties.Federated)prop).Value))
                         {
-                            condition = Aras.Conditions.Like(((Properties.Federated)prop).PropertyType.Name, "%" + ((Properties.Federated)prop).Value + "%");
+                            condition = Aras.Conditions.Like(((Properties.Federated)prop).PropertyType.Name, ((Properties.Federated)prop).Value);
                         }
 
                         break;
@@ -127,7 +127,7 @@ namespace Aras.ViewModel.Dialogs
 
                         if (!String.IsNullOrEmpty(((Properties.Sequence)prop).Value))
                         {
-                            condition = Aras.Conditions.Like(((Properties.Sequence)prop).PropertyType.Name, "%" + ((Properties.Sequence)prop).Value + "%");
+                            condition = Aras.Conditions.Like(((Properties.Sequence)prop).PropertyType.Name, ((Properties.Sequence)prop).Value);
                         }
 
                         break;
@@ -135,7 +135,7 @@ namespace Aras.ViewModel.Dialogs
 
                         if (!String.IsNullOrEmpty(((Properties.String)prop).Value))
                         {
-                            condition = Aras.Conditions.Like(((Properties.String)prop).PropertyType.Name, "%" + ((Properties.String)prop).Value + "%");
+                            condition = Aras.Conditions.Like(((Properties.String)prop).PropertyType.Name, ((Properties.String)prop).Value);
                         }
 
                         break;
@@ -143,7 +143,7 @@ namespace Aras.ViewModel.Dialogs
 
                         if (!String.IsNullOrEmpty(((Properties.Text)prop).Value))
                         {
-                            condition = Aras.Conditions.Like(((Properties.Text)prop).PropertyType.Name, "%" + ((Properties.Text)prop).Value + "%");
+                            condition = Aras.Conditions.Like(((Properties.Text)prop).PropertyType.Name, ((Properties.Text)prop).Value);
                         }
 
                         break;
