@@ -199,7 +199,7 @@ namespace Aras.ViewModel.Dialogs
                         ((Properties.Integer)prop).Value = null;
                         break;
                     case "Item":
-                        ((Properties.Item)prop).Value = null;
+                        ((Properties.Item)prop).PropetyItem = null;
                         break;
                     case "List":
                         ((Properties.List)prop).Value = null;

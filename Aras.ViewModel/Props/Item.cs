@@ -126,6 +126,7 @@ namespace Aras.ViewModel.Properties
             }
         }
 
+        private Model.Item _propertyItem;
         public Model.Item PropetyItem
         {
             get
@@ -136,7 +137,27 @@ namespace Aras.ViewModel.Properties
                 }
                 else
                 {
-                    return null;
+                    return this._propertyItem;
+                }
+            }
+            set
+            {
+                if (this.Binding == null)
+                {
+                    this._propertyItem = value;
+
+                    if (this._propertyItem != null)
+                    {
+                        this.Value = (System.String)this._propertyItem.Property("keyed_name").Value;
+                    }
+                    else
+                    {
+                        this.Value = null;
+                    }
+                }
+                else
+                {
+                    throw new Model.Exceptions.ArgumentException("Not able to set PropertyItem when Binding is set");
                 }
             }
         }
@@ -192,9 +213,37 @@ namespace Aras.ViewModel.Properties
 
                 this.UpdatingBinding = false;
             }
+            else
+            {
+                if (this.Dialog.Grid.Selected.Count() > 0)
+                {
+                    this.PropetyItem = this.Dialog.Grid.Selected.First();
+                }
+                else
+                {
+                    this.PropetyItem = null;
+                }
+            }
 
             // Close Dialog
             this.Dialog.Open = false;
+        }
+
+        private void Control_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case "Enabled":
+
+                    if (this.Binding == null)
+                    {
+                        this.Select.SetCanExecute(this.Enabled);
+                    }
+
+                    break;
+                default:
+                    break;
+            }
         }
 
         public Item(Manager.Session Session)
@@ -202,6 +251,7 @@ namespace Aras.ViewModel.Properties
         {
             this.Dialog = null;
             this.Select = new SelectCommand(this);
+            this.PropertyChanged += Control_PropertyChanged;
         }
 
         public Item(Manager.Session Session, Model.PropertyTypes.Item PropertyType)
@@ -209,6 +259,7 @@ namespace Aras.ViewModel.Properties
         {
             this.Dialog = null;
             this.Select = new SelectCommand(this);
+            this.PropertyChanged += Control_PropertyChanged;
         }
 
         public class SelectCommand : Aras.ViewModel.Command
