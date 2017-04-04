@@ -99,7 +99,16 @@ namespace Aras.ViewModel.Properties
                 if (this.Binding != null)
                 {
                     this.UpdatingBinding = true;
-                    ((Model.Properties.String)this.Binding).Value = this.Value;
+
+                    if (this.Binding is Model.Properties.String)
+                    {
+                        ((Model.Properties.String)this.Binding).Value = this.Value;
+                    }
+                    else
+                    {
+                        ((Model.Properties.Text)this.Binding).Value = this.Value;
+                    }
+
                     this.UpdatingBinding = false;
                 }
             }
@@ -115,9 +124,9 @@ namespace Aras.ViewModel.Properties
 
             if (Binding != null)
             {
-                if (!(Binding is Model.Properties.String))
+                if (!((Binding is Model.Properties.String) || (Binding is Model.Properties.Text)))
                 {
-                    throw new Model.Exceptions.ArgumentException("Binding must be of type Aras.Model.Properties.String");
+                    throw new Model.Exceptions.ArgumentException("Binding must be of type Aras.Model.Properties.String or Aras.Model.Properties.Text");
                 }
             }
         }
@@ -127,9 +136,17 @@ namespace Aras.ViewModel.Properties
             base.AfterBindingChanged();
 
             if (this.Binding != null)
-            {     
-                this.Length = ((Model.Properties.String)this.Binding).Length;
-                this.Value = (System.String)((Model.Properties.String)this.Binding).Value;
+            {
+                if (this.Binding is Model.Properties.String)
+                {
+                    this.Length = ((Model.Properties.String)this.Binding).Length;
+                    this.Value = (System.String)((Model.Properties.String)this.Binding).Value;
+                }
+                else
+                {
+                    this.Length = MaxLength;
+                    this.Value = (System.String)((Model.Properties.Text)this.Binding).Value;
+                }
             }
             else
             {
@@ -154,7 +171,14 @@ namespace Aras.ViewModel.Properties
 
                         if (!this.UpdatingBinding)
                         {
-                            this.Value = (System.String)((Model.Properties.String)this.Binding).Value;
+                            if (this.Binding is Model.Properties.String)
+                            {
+                                this.Value = (System.String)((Model.Properties.String)this.Binding).Value;
+                            }
+                            else
+                            {
+                                this.Value = (System.String)((Model.Properties.Text)this.Binding).Value;
+                            }
                         }
 
                         break;
@@ -174,6 +198,12 @@ namespace Aras.ViewModel.Properties
             : base(Session, PropertyType)
         {
             this._length = DefaultLength;
+        }
+
+        public String(Manager.Session Session, Model.PropertyTypes.Text PropertyType)
+            : base(Session, PropertyType)
+        {
+            this._length = MaxLength;
         }
     }
 }

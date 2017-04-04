@@ -57,7 +57,7 @@ namespace Aras.ViewModel.Dialogs
 
             foreach (Model.PropertyType proptype in this.PropertyTypes)
             {
-                ViewModel.Property viewmodelproperty = this.Session.CreateProperty(proptype);
+                ViewModel.Property viewmodelproperty = this.Session.CreateProperty(proptype, false);
                 viewmodelproperty.IntermediateChanges = true;
                 viewmodelproperty.Enabled = true;
                 this.Table.Children.Add(viewmodelproperty);

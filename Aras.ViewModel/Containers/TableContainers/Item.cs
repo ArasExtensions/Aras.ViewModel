@@ -49,7 +49,7 @@ namespace Aras.ViewModel.Containers.TableContainers
                 {
                     Model.PropertyType proptype = this.ItemType.PropertyType(prop);
 
-                    this.PropertyCache[proptype] = this.Session.CreateProperty(proptype);
+                    this.PropertyCache[proptype] = this.Session.CreateProperty(proptype, false);
                     this.Children.Add(this.PropertyCache[proptype]);
                 }
                 else

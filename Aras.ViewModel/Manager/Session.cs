@@ -284,14 +284,14 @@ namespace Aras.ViewModel.Manager
             }
         }
 
-        public ViewModel.Property CreateProperty(Model.Property Property)
+        public ViewModel.Property CreateProperty(Model.Property Property, System.Boolean SubstitueStringForText)
         {
-            ViewModel.Property viewmodelproperty = this.CreateProperty(Property.Type);
+            ViewModel.Property viewmodelproperty = this.CreateProperty(Property.Type, SubstitueStringForText);
             viewmodelproperty.Binding = Property;
             return viewmodelproperty;
         }
 
-        public ViewModel.Property CreateProperty(Model.PropertyType PropertyType)
+        public ViewModel.Property CreateProperty(Model.PropertyType PropertyType, System.Boolean SubstitueStringForText)
         {
             ViewModel.Property viewmodelproperty = null;
 
@@ -322,7 +322,16 @@ namespace Aras.ViewModel.Manager
                     viewmodelproperty = new Properties.Date(this, (Model.PropertyTypes.Date)PropertyType);
                     break;
                 case "Text":
-                    viewmodelproperty = new Properties.Text(this, (Model.PropertyTypes.Text)PropertyType);
+
+                    if (SubstitueStringForText)
+                    {
+                        viewmodelproperty = new Properties.String(this, (Model.PropertyTypes.Text)PropertyType);
+                    }
+                    else
+                    {
+                        viewmodelproperty = new Properties.Text(this, (Model.PropertyTypes.Text)PropertyType);
+                    }
+
                     break;
                 case "Boolean":
                     viewmodelproperty = new Properties.Boolean(this, (Model.PropertyTypes.Boolean)PropertyType);

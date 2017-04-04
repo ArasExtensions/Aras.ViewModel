@@ -210,7 +210,7 @@ namespace Aras.ViewModel.Grids
 
                         if (this.Grid.Rows[i].Cells[j].Value == null)
                         {
-                            this.Grid.Rows[i].Cells[j].Value = this.Session.CreateProperty(property);
+                            this.Grid.Rows[i].Cells[j].Value = this.Session.CreateProperty(property, true);
                         }
                         else
                         {
