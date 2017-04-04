@@ -33,6 +33,34 @@ namespace Aras.ViewModel.Properties
     [Attributes.ClientControl("Aras.View.Properties.Text")]
     public class Text : Property
     {
+        private const System.Int32 MinRows = 1;
+        private const System.Int32 MaxRows = 20;
+        private const System.Int32 DefaultRows = 3;
+
+        private System.Int32 _rows;
+        [Attributes.Property("Rows", Attributes.PropertyTypes.Int32, true)]
+        public System.Int32 Rows
+        {
+            get
+            {
+                return this._rows;
+            }
+            set
+            {
+                if (!this._rows.Equals(value))
+                {
+                    if (value >= MinRows && value <= MaxRows)
+                    {
+                        this._rows = value;
+                        this.OnPropertyChanged("Rows");
+                    }
+                    else
+                    {
+                        throw new ArgumentException("Rows must be between " + MinRows.ToString() + " and " + MaxRows.ToString());
+                    }
+                }
+            }
+        }
 
         private System.String _value;
         [Attributes.Property("Value", Attributes.PropertyTypes.String, false)]
@@ -131,13 +159,13 @@ namespace Aras.ViewModel.Properties
         public Text(Manager.Session Session)
             : base(Session)
         {
-
+            this._rows = DefaultRows;
         }
 
         public Text(Manager.Session Session, Model.PropertyTypes.Text PropertyType)
             : base(Session, PropertyType)
         {
-        
+            this._rows = DefaultRows;
         }
     }
 }
