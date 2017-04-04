@@ -58,7 +58,15 @@ namespace Aras.ViewModel.Containers.TableContainers
                 }
             }
 
+            // Run After Build Properties
+            this.AfterBuildProperties();
+
             this.Children.NotifyListChanged = true;
+        }
+
+        protected virtual void AfterBuildProperties()
+        {
+
         }
 
         protected override void AfterBindingChanged()
