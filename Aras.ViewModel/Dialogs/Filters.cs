@@ -32,7 +32,21 @@ namespace Aras.ViewModel.Dialogs
 {
     public class Filters : Dialog
     {
+        [ViewModel.Attributes.Command("ApplyFilter")]
+        public FilterCommand ApplyFilter { get; private set; }
+
+        [ViewModel.Attributes.Command("ClearFilter")]
+        public ClearCommand ClearFilter { get; private set; }
+
         public IEnumerable<Model.PropertyType> PropertyTypes { get; private set; }
+
+        public Containers.BorderContainer Layout { get; private set; }
+
+        public Containers.Toolbar Toolbar { get; private set; }
+
+        public Button ClearButton { get; private set; }
+
+        public Button FilterButton { get; private set; }
 
         public Containers.TableContainer Table { get; private set; }
 
@@ -226,14 +240,85 @@ namespace Aras.ViewModel.Dialogs
             // Store PropertyTypes
             this.PropertyTypes = PropertyTypes;
 
+            // Create Commands
+            this.ApplyFilter = new FilterCommand(this);
+            this.ClearFilter = new ClearCommand(this);
+
             // Set Title
             this.Title = "Search Filters";
 
+            // Create Layout
+            this.Layout = new Containers.BorderContainer(this.Session);
+            this.Content = this.Layout;
+
+            this.Layout.Children.NotifyListChanged = false;
+
+            // Build Toolbar
+            this.Toolbar = new Containers.Toolbar(this.Session);
+            this.Toolbar.Region = Regions.Top;
+            this.Layout.Children.Add(this.Toolbar);
+
+            this.Toolbar.Children.NotifyListChanged = false;
+
+            // Add Filter Button
+            this.FilterButton = new Button(this.Session);
+            this.Toolbar.Children.Add(this.FilterButton);
+            this.FilterButton.Icon = "Search";
+            this.FilterButton.Tooltip = "Apply Filters";
+            this.FilterButton.Command = this.ApplyFilter;
+
+            // Add Clear Button
+            this.ClearButton = new Button(this.Session);
+            this.Toolbar.Children.Add(this.ClearButton);
+            this.ClearButton.Icon = "ClearFilter";
+            this.ClearButton.Tooltip = "Clear Filters";
+            this.ClearButton.Command = this.ClearFilter;
+
+            this.Toolbar.Children.NotifyListChanged = true;
+
             // Build Table
             this.BuildTable();
+            this.Table.Region = Regions.Center;
+            this.Layout.Children.Add(this.Table);
 
-            // Set Dialog Content
-            this.Content = this.Table;
+            this.Layout.Children.NotifyListChanged = true;
+        }
+
+        public class FilterCommand : Aras.ViewModel.Command
+        {
+            protected override void Run(IEnumerable<Control> Parameters)
+            {
+                // Close Dialogue
+                ((Filters)this.Control).Open = false;
+                
+                this.CanExecute = true;
+            }
+
+            internal FilterCommand(Control Control)
+                : base(Control)
+            {
+                this.CanExecute = true;
+            }
+        }
+
+        public class ClearCommand : Aras.ViewModel.Command
+        {
+            protected override void Run(IEnumerable<Control> Parameters)
+            {
+                // Clear Filters
+                ((Filters)this.Control).Clear();
+                
+                // Close Dialogue
+                ((Filters)this.Control).Open = false;
+
+                this.CanExecute = true;
+            }
+
+            internal ClearCommand(Control Control)
+                : base(Control)
+            {
+                this.CanExecute = true;
+            }
         }
     }
 }

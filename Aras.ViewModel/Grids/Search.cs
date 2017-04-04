@@ -91,6 +91,8 @@ namespace Aras.ViewModel.Grids
                 if (this._dialog == null)
                 {
                     this._dialog = new Dialogs.Filters(this, this.Query.Store.ItemType.SearchPropertyTypes);
+                    this._dialog.Width = 600;
+                    this._dialog.Height = 300;
                     this._dialog.PropertyChanged += _dialog_PropertyChanged;
                 }
 
