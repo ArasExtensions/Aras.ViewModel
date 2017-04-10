@@ -52,6 +52,16 @@ namespace Aras.ViewModel.Containers
             }
         }
 
+        public event EventHandler Promoted;
+
+        private void OnPromoted()
+        {
+            if (this.Promoted != null)
+            {
+                this.Promoted(this, new EventArgs());
+            }
+        }
+
         public event EventHandler Saved;
 
         private void OnSaved()
@@ -85,6 +95,9 @@ namespace Aras.ViewModel.Containers
 
         [ViewModel.Attributes.Command("Edit")]
         public EditCommand Edit { get; private set; }
+
+        [ViewModel.Attributes.Command("Promote")]
+        public PromoteCommand Promote { get; private set; }
 
         [ViewModel.Attributes.Command("Undo")]
         public UndoCommand Undo { get; private set; }
@@ -133,6 +146,13 @@ namespace Aras.ViewModel.Containers
                     savebutton.Tooltip = "Save";
                     this._toolbar.Children.Add(savebutton);
                     savebutton.Command = this.Save;
+
+                    // Add Promote Button
+                    Button promotebutton = new Button(this.Session);
+                    promotebutton.Icon = "Promote";
+                    promotebutton.Tooltip = "Promote";
+                    this._toolbar.Children.Add(promotebutton);
+                    promotebutton.Command = this.Promote;
                 }
 
                 return this._toolbar;
@@ -252,6 +272,27 @@ namespace Aras.ViewModel.Containers
             }
         }
 
+        protected virtual void PromoteForm()
+        {
+            this.ResetError();
+
+            if (this.Item != null)
+            {
+                if (this.Transaction == null)
+                {
+                    IEnumerable<Model.LifeCycleState> newstates = this.Item.NextStates;
+                   
+                    if (newstates.Count() > 0)
+                    {
+                        this.Item.Promote(newstates.First());
+                    }
+
+                    this.SetCommandsCanExecute();
+                    this.OnPromoted();
+                }
+            }
+        }
+
         protected virtual void UndoForm()
         {
             this.ResetError();
@@ -280,12 +321,22 @@ namespace Aras.ViewModel.Containers
                     this.Edit.UpdateCanExecute(true);
                     this.Save.UpdateCanExecute(false);
                     this.Undo.UpdateCanExecute(false);
+
+                    if (this.Item.NextStates.Count() > 0)
+                    {
+                        this.Promote.UpdateCanExecute(true);
+                    }
+                    else
+                    {
+                        this.Promote.UpdateCanExecute(false);
+                    }
                 }
                 else
                 {
                     this.Edit.UpdateCanExecute(false);
                     this.Save.UpdateCanExecute(true);
                     this.Undo.UpdateCanExecute(true);
+                    this.Promote.UpdateCanExecute(false);
                 }
             }
             else
@@ -293,6 +344,7 @@ namespace Aras.ViewModel.Containers
                 this.Edit.UpdateCanExecute(false);
                 this.Save.UpdateCanExecute(false);
                 this.Undo.UpdateCanExecute(false);
+                this.Promote.UpdateCanExecute(false);
             }
 
             this.Create.UpdateCanExecute(true);
@@ -311,6 +363,7 @@ namespace Aras.ViewModel.Containers
             this.Create = new CreateCommand(this);
             this.Edit = new EditCommand(this);
             this.Save = new SaveCommand(this);
+            this.Promote = new PromoteCommand(this);
             this.Undo = new UndoCommand(this);
             this.Transaction = null;
         }
@@ -381,6 +434,24 @@ namespace Aras.ViewModel.Containers
 
             internal EditCommand(Form Form)
                 :base(Form)
+            {
+            }
+        }
+
+        public class PromoteCommand : Aras.ViewModel.Command
+        {
+            internal void UpdateCanExecute(Boolean CanExecute)
+            {
+                this.CanExecute = CanExecute;
+            }
+
+            protected override void Run(IEnumerable<Control> Parameters)
+            {
+                ((Form)this.Control).PromoteForm();
+            }
+
+            internal PromoteCommand(Form Form)
+                : base(Form)
             {
             }
         }
