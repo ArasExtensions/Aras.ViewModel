@@ -39,6 +39,8 @@ namespace Aras.ViewModel.WebService.Models
 
         public String Icon { get; set; }
 
+        public Boolean Start { get; set; }
+
         public List<ApplicationType> Children { get; set; }
 
         public ApplicationType()

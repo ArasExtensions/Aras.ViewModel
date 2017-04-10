@@ -71,6 +71,7 @@ namespace Aras.ViewModel.WebService.Controllers
                     thischild.ID = Guid.NewGuid().ToString();
                     thischild.Name = null;
                     thischild.Label = thispath;
+                    thischild.Start = false;
                     thischild.Children = new List<Models.ApplicationType>();
                     Parent.Children.Add(thischild);
                 }
@@ -101,6 +102,7 @@ namespace Aras.ViewModel.WebService.Controllers
                 root.ID = Guid.NewGuid().ToString();
                 root.Name = null;
                 root.Label = "Root";
+                root.Start = false;
                 root.Children = new List<Models.ApplicationType>();
 
                 foreach (ViewModel.Manager.ControlTypes.ApplicationType apptype in this.Session.ApplicationTypes)
@@ -111,6 +113,7 @@ namespace Aras.ViewModel.WebService.Controllers
                     modelapptype.Name = apptype.Name;
                     modelapptype.Label = apptype.Label;
                     modelapptype.Icon = apptype.Icon;
+                    modelapptype.Start = apptype.Start;
                     parent.Children.Add(modelapptype);
                 }
 

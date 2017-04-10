@@ -39,6 +39,8 @@ namespace Aras.ViewModel.Manager.ControlTypes
 
         public String Path { get; private set; }
 
+        public Boolean Start { get; private set; }
+
         internal ApplicationType(Type Type)
             :base(Type)
         {
@@ -50,6 +52,7 @@ namespace Aras.ViewModel.Manager.ControlTypes
                 this.Label = applicationattribute.Label;
                 this.Icon = applicationattribute.Icon;
                 this.Path = applicationattribute.Path;
+                this.Start = applicationattribute.Start;
             }
         }
     }

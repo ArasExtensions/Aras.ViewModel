@@ -39,15 +39,18 @@ namespace Aras.ViewModel.Attributes
 
         public String Path { get; private set; }
 
-        public Application(String Label, String Icon, String Path)
+        public Boolean Start { get; private set; }
+
+        public Application(String Label, String Icon, String Path, Boolean Start)
         {
             this.Label = Label;
             this.Icon = Icon;
             this.Path = Path;
+            this.Start = Start;
         }
 
-         public Application(String Label, String Icon)
-             :this(Label, Icon, null)
+         public Application(String Label, String Icon, Boolean Start)
+             :this(Label, Icon, null, Start)
         {
 
         }
