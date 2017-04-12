@@ -39,9 +39,6 @@ namespace Aras.ViewModel
 
         public Guid ID { get; private set; }
 
-        [Attributes.Property("Region", Attributes.PropertyTypes.Int32, true)]
-        public Regions Region { get; set; }
-
         [Attributes.Property("Tooltip", Attributes.PropertyTypes.String, true)]
         public System.String Tooltip { get; set; }
 
@@ -344,7 +341,6 @@ namespace Aras.ViewModel
             this.Session = Session;
             this.ID = Guid.NewGuid();
             this.ErrorMessage = null;
-            this.Region = Regions.Center;
             this.Dialogs = new Model.ObservableList<Dialog>();
             this.Dialogs.ListChanged += Dialogs_ListChanged;
 

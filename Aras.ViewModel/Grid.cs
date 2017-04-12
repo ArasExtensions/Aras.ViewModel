@@ -33,6 +33,12 @@ namespace Aras.ViewModel
     [Attributes.ClientControl("Aras.View.Grid")]
     public class Grid : Control
     {
+        [Attributes.Property("Region", Attributes.PropertyTypes.Int32, true)]
+        public Regions Region { get; set; }
+
+        [Attributes.Property("Splitter", Attributes.PropertyTypes.Boolean, true)]
+        public Boolean Splitter { get; set; }
+
         [ViewModel.Attributes.Property("ShowHeader", Aras.ViewModel.Attributes.PropertyTypes.Boolean, true)]
         public Boolean ShowHeader { get; set; }
 
@@ -145,6 +151,8 @@ namespace Aras.ViewModel
         {
             this._allowSelect = false;
             this.ShowHeader = true;
+            this.Region = Regions.Center;
+            this.Splitter = false;
             this.Select = new SelectCommand(this);
             this.Columns = new Model.ObservableList<Column>();
             this.Columns.ListChanged += Columns_ListChanged;

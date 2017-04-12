@@ -50,6 +50,12 @@ namespace Aras.ViewModel
             }
         }
 
+        [Attributes.Property("Region", Attributes.PropertyTypes.Int32, true)]
+        public Regions Region { get; set; }
+
+        [Attributes.Property("Splitter", Attributes.PropertyTypes.Boolean, true)]
+        public Boolean Splitter { get; set; }
+
         [ViewModel.Attributes.Property("Children", Aras.ViewModel.Attributes.PropertyTypes.ControlList, true)]
         public Model.ObservableList<Control> Children { get; private set; }
 
@@ -61,6 +67,8 @@ namespace Aras.ViewModel
         public Container(Manager.Session Session)
             :base(Session)
         {
+            this.Region = Regions.Center;
+            this.Splitter = false;
             this.Children = new Model.ObservableList<Control>();
             this.Children.ListChanged += Children_ListChanged;
         }

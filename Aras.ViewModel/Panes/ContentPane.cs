@@ -51,6 +51,12 @@ namespace Aras.ViewModel.Panes
             }
         }
 
+        [Attributes.Property("Region", Attributes.PropertyTypes.Int32, true)]
+        public Regions Region { get; set; }
+
+        [Attributes.Property("Splitter", Attributes.PropertyTypes.Boolean, true)]
+        public Boolean Splitter { get; set; }
+
         private Control _content;
         [Attributes.Property("Content", Attributes.PropertyTypes.Control, true)]
         public Control Content
@@ -73,6 +79,8 @@ namespace Aras.ViewModel.Panes
             :base(Session)
         {
             this._title = null;
+            this.Region = Regions.Center;
+            this.Splitter = false;
             this._content = null;
         }
     }
