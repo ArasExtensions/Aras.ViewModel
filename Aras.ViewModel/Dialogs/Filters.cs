@@ -185,6 +185,11 @@ namespace Aras.ViewModel.Dialogs
                 }
             }
 
+            if (ret == null)
+            {
+                ret = Aras.Conditions.All();
+            }
+
             return ret;
         }
 
