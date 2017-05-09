@@ -436,7 +436,14 @@ namespace Aras.ViewModel.Grids
             {
                 if (this.Binding != null)
                 {
-                    return (IEnumerable<Model.Relationship>)((Model.Item)this.Binding).Relationships(this.RelationshipType);
+                    List<Model.Relationship> ret = new List<Model.Relationship>();
+
+                    foreach (Model.Relationship rel in ((Model.Item)this.Binding).Relationships(this.RelationshipType))
+                    {
+                        ret.Add(rel);
+                    }
+
+                    return ret;
                 }
                 else
                 {
