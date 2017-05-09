@@ -38,7 +38,7 @@ namespace Aras.ViewModel.Grids
             {
                 if (this.Query != null)
                 {
-                    return this.Query.CurrentItems();
+                    return this.Query.Store;
                 }
                 else
                 {
@@ -64,8 +64,8 @@ namespace Aras.ViewModel.Grids
             }
         }
 
-        private Model.Queries.Item _query;
-        private Model.Queries.Item Query
+        private Model.Query _query;
+        private Model.Query Query
         {
             get
             {
@@ -73,7 +73,7 @@ namespace Aras.ViewModel.Grids
                 {
                     if (this.Binding != null)
                     {
-                        this._query = ((Model.Stores.Item)this.Binding).Query();
+                        this._query = ((Model.Store)this.Binding).Query;
                         this._query.PageSize = (System.Int32)this.PageSize.Value;
                         this._query.Paging = true;
                     }
@@ -197,11 +197,11 @@ namespace Aras.ViewModel.Grids
         {
             if (this.Query != null)
             {
-                this.Grid.NoRows = this.Query.Count();
+                this.Grid.NoRows = this.Query.Store.Count();
 
                 for (int i = 0; i < this.Grid.NoRows; i++)
                 {
-                    Model.Item item = this.Query[i];
+                    Model.Item item = this.Query.Store[i];
                     int j = 0;
 
                     foreach (Model.PropertyType proptype in this.Query.Store.ItemType.SearchPropertyTypes)
@@ -253,12 +253,6 @@ namespace Aras.ViewModel.Grids
             // Reset Query
             this._query = null;
 
-            if (this.Binding != null)
-            {
-                // Add Search PropertTypes to Select
-                ((Model.Stores.Item)this.Binding).ItemType.AddSearchPropertyTypesToSelect();
-            }
-
             // Load Columns
             this.LoadColumns();
 
@@ -289,10 +283,10 @@ namespace Aras.ViewModel.Grids
                 this.Query.Page = (System.Int32)this.Page.Value;
 
                 // Refresh Query
-                this.Query.Refresh();
+                this.Query.Store.Refresh();
 
                 // Update NoPages
-                this.NoPages.Value = this.Query.NoPages;
+                this.NoPages.Value = this.Query.Store.NoPages;
             }
             else
             {

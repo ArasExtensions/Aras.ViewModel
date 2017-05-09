@@ -33,7 +33,7 @@ namespace Aras.ViewModel.Design
     public class PartEditor : Control
     {
         [ViewModel.Attributes.Property("Parts", Aras.ViewModel.Attributes.PropertyTypes.Control, true)]
-        public ViewModel.Grids.Searches.ItemType Parts { get; private set; }
+        public ViewModel.Grids.Search Parts { get; private set; }
 
         [ViewModel.Attributes.Property("Relationships", Aras.ViewModel.Attributes.PropertyTypes.Control, true)]
         public ViewModel.RelationshipTree Relationships { get; private set; }
@@ -86,7 +86,7 @@ namespace Aras.ViewModel.Design
         public PartEditor(ViewModel.Manager.Session Session)
             :base(Session)
         {
-            this.Parts = new Grids.Searches.ItemType (this.Session);
+            this.Parts = new Grids.Search (this.Session);
             this.Relationships = new RelationshipTree(this.Session, new RelationshipFormatters.Part(), new ItemFormatters.Part());
         }
     }

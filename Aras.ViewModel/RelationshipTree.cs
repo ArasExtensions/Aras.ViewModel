@@ -206,7 +206,7 @@ namespace Aras.ViewModel
                 {
                     if (this.Binding != null)
                     {
-                        this._transaction = ((Model.Item)this.Binding).Session.BeginTransaction();
+                        this._transaction = ((Model.Item)this.Binding).Store.Session.BeginTransaction();
                     }
                 }
 
@@ -235,9 +235,6 @@ namespace Aras.ViewModel
             {
                 if (this.Binding is Model.Item)
                 {
-                    // Ensure Permission is Selected for Items
-                    ((Model.Item)this.Binding).ItemType.AddToSelect("permission_id");
-
                     // Create Root Node
                     this.Node = this.GetNodeFromCache(((Model.Item)this.Binding).ID);
 
@@ -474,7 +471,8 @@ namespace Aras.ViewModel
                 this.Selected.Item.Update(this.Transaction);
 
                 // Create Relationship to Selected Search Item
-                ((RelationshipTreeNode)this.Selected).Store.Create(this.Search.Selected.First(), this.Transaction);
+                //((RelationshipTreeNode)this.Selected).Store.Create(this.Transaction);
+                //this.Search.Selected.First()
 
                 // Refresh Parent Node
                 this.Selected.Refresh.Execute();
@@ -564,7 +562,7 @@ namespace Aras.ViewModel
                     this.RelationshipTree.Selected.Item.Update(this.RelationshipTree.Transaction);
 
                     // Create Relationship
-                    this.RelationshipTree.Selected.Store.Create(this.RelationshipTree.CopyPasteBuffer, this.RelationshipTree.Transaction);
+                    //this.RelationshipTree.Selected.Store.Create(this.RelationshipTree.CopyPasteBuffer, this.RelationshipTree.Transaction);
 
                     // Refresh Parent Node
                     this.RelationshipTree.Selected.Refresh.Execute();
@@ -783,7 +781,7 @@ namespace Aras.ViewModel
                     newparentnode.Item.Update(this.RelationshipTree.Transaction);
 
                     // Add New Relationship
-                    newparentnode.Store.Create(childitem, this.RelationshipTree.Transaction);
+                    //newparentnode.Store.Create(childitem, this.RelationshipTree.Transaction);
 
                     // Refresh new Parent
                     newparentnode.Refresh.Execute();
@@ -895,7 +893,7 @@ namespace Aras.ViewModel
                     newparentnode.Item.Update(this.RelationshipTree.Transaction);
 
                     // Create new Relationship
-                    newparentnode.Store.Create(childnode.Item, this.RelationshipTree.Transaction);
+                    //newparentnode.Store.Create(childnode.Item, this.RelationshipTree.Transaction);
 
                     // Refresh New Parent Node
                     newparentnode.Refresh.Execute();

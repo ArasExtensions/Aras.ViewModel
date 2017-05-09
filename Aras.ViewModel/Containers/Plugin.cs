@@ -71,9 +71,9 @@ namespace Aras.ViewModel.Containers
         {
             if (this.ModelItem != null)
             {
-                this.ModelItem.Refresh();
+                // this.ModelItem.Refresh();
 
-                if (this.ModelItem.Locked(true))
+                if (this.ModelItem.Locked == Model.Item.Locks.User)
                 {
                     // Item is Locked by User set to Edit
                     this.EditItem();
@@ -98,7 +98,7 @@ namespace Aras.ViewModel.Containers
             {
                 if (this.ModelItem != null)
                 {
-                    return this.ModelItem.Session;
+                    return this.ModelItem.Store.Session;
                 }
                 else
                 {
@@ -129,7 +129,7 @@ namespace Aras.ViewModel.Containers
         {
             base.AfterBindingChanged();
 
-            if (this.ModelItem.Locked(true))
+            if (this.ModelItem.Locked == Model.Item.Locks.User)
             {
                 // Item is Locked by User set to Edit
                 this.EditItem();
@@ -189,7 +189,7 @@ namespace Aras.ViewModel.Containers
                     this.ModelTransaction = this.ModelSession.BeginTransaction();
                 }
 
-                if (this.ModelItem.Locked(true))
+                if (this.ModelItem.Locked == Model.Item.Locks.User)
                 {
                     // Currently Locked by User, ensure added to Transaction
                     this.ModelItem.Update(this.ModelTransaction);
@@ -197,7 +197,7 @@ namespace Aras.ViewModel.Containers
                 else
                 {
                     // Not currently Locked by User - try and Lock
-                    this.ModelItem.UnlockUpdate(this.ModelTransaction);
+                    this.ModelItem.Update(this.ModelTransaction);
                 }
 
                 // Run After Lock

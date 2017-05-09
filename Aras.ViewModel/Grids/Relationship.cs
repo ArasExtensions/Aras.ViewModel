@@ -175,8 +175,8 @@ namespace Aras.ViewModel.Grids
             }
         }
 
-        private Model.Queries.Relationship _query;
-        private Model.Queries.Relationship Query
+        private Model.Query _query;
+        private Model.Query Query
         {
             get
             {
@@ -185,7 +185,7 @@ namespace Aras.ViewModel.Grids
                     if (this.Binding != null)
                     {
                         Model.Item item = (Model.Item)this.Binding;
-                        this._query = item.Store(this.RelationshipType).Query();
+                        this._query = item.Store.Query;
                         this._query.PageSize = (System.Int32)this.PageSize.Value;
                         this._query.Paging = true;
                     }
@@ -202,12 +202,12 @@ namespace Aras.ViewModel.Grids
             if (this.Binding != null)
             {
                 // Add RelationshipGrid PropertTypes to Select for the Relationship
-                this.RelationshipType.AddRelationshipGridPropertyTypesToSelect();
+                //this.RelationshipType.AddRelationshipGridPropertyTypesToSelect();
 
                 // Add RelationshipGrid PropertTypes to Select for the Related ItemType
-                if (this.RelationshipType.RelatedItemType != null)
+                if (this.RelationshipType.Related != null)
                 {
-                    this.RelationshipType.RelatedItemType.AddRelationshipGridPropertyTypesToSelect();
+                    //this.RelationshipType.Related.AddRelationshipGridPropertyTypesToSelect();
                 }
             }
 
@@ -234,9 +234,9 @@ namespace Aras.ViewModel.Grids
                         case Model.RelationshipGridViews.InterMix:
                             this._propertyTypes.AddRange(this.RelationshipType.RelationshipGridPropertyTypes);
 
-                            if (this.RelationshipType.RelatedItemType != null)
+                            if (this.RelationshipType.Related != null)
                             {
-                                this._propertyTypes.AddRange(this.RelationshipType.RelatedItemType.RelationshipGridPropertyTypes);
+                                this._propertyTypes.AddRange(this.RelationshipType.Related.RelationshipGridPropertyTypes);
                             }
 
                             this._propertyTypes.Sort();
@@ -244,9 +244,9 @@ namespace Aras.ViewModel.Grids
                             break;
                         case Model.RelationshipGridViews.Right:
 
-                            if (this.RelationshipType.RelatedItemType != null)
+                            if (this.RelationshipType.Related != null)
                             {
-                                this._propertyTypes.AddRange(this.RelationshipType.RelatedItemType.RelationshipGridPropertyTypes);
+                                this._propertyTypes.AddRange(this.RelationshipType.Related.RelationshipGridPropertyTypes);
                             }
 
                             this._propertyTypes.AddRange(this.RelationshipType.RelationshipGridPropertyTypes);
@@ -255,9 +255,9 @@ namespace Aras.ViewModel.Grids
                         default:
                             this._propertyTypes.AddRange(this.RelationshipType.RelationshipGridPropertyTypes);
 
-                            if (this.RelationshipType.RelatedItemType != null)
+                            if (this.RelationshipType.Related != null)
                             {
-                                this._propertyTypes.AddRange(this.RelationshipType.RelatedItemType.RelationshipGridPropertyTypes);
+                                this._propertyTypes.AddRange(this.RelationshipType.Related.RelationshipGridPropertyTypes);
                             }
 
                             break;
@@ -285,7 +285,7 @@ namespace Aras.ViewModel.Grids
             if (this.Binding != null)
             {
                 Model.Item item = (Model.Item)this.Binding;
-                List<Model.Relationship> currentitems = item.Store(this.RelationshipType).CurrentItems().ToList();
+                List<Model.Item> currentitems = item.Relationships(this.RelationshipType).ToList();
 
                 // Set Number of Rows in Grid
                 this.Grid.NoRows = currentitems.Count();
@@ -296,7 +296,7 @@ namespace Aras.ViewModel.Grids
                 // Load Current Items into Grid
                 for (int i = 0; i < this.Grid.NoRows; i++)
                 {
-                    Model.Relationship relationship = currentitems[i];
+                    Model.Relationship relationship = (Model.Relationship)currentitems[i];
 
                     int j = 0;
 
@@ -394,14 +394,14 @@ namespace Aras.ViewModel.Grids
                 }
 
                 // Set PageSize and required Page
-                this.Query.PageSize = (System.Int32)this.PageSize.Value;
-                this.Query.Page = (System.Int32)this.Page.Value;
+                this.Query.Store.PageSize = (System.Int32)this.PageSize.Value;
+                this.Query.Store.Page = (System.Int32)this.Page.Value;
 
                 // Refresh Query
-                this.Query.Refresh();
+                this.Query.Store.Refresh();
 
                 // Update NoPages
-                this.NoPages.Value = this.Query.NoPages;
+                this.NoPages.Value = this.Query.Store.NoPages;
             }
             else
             {
@@ -422,7 +422,7 @@ namespace Aras.ViewModel.Grids
             {
                 if (this.Binding != null)
                 {
-                    foreach(Model.Relationship currentitem in ((Model.Item)this.Binding).Store(this.RelationshipType).CurrentItems())
+                    foreach(Model.Relationship currentitem in ((Model.Item)this.Binding).Relationships(this.RelationshipType))
                     {
                         currentitem.Update(this.Parent.Transaction);
                     }
@@ -436,7 +436,7 @@ namespace Aras.ViewModel.Grids
             {
                 if (this.Binding != null)
                 {
-                    return ((Model.Item)this.Binding).Store(this.RelationshipType).CurrentItems();
+                    return (IEnumerable<Model.Relationship>)((Model.Item)this.Binding).Relationships(this.RelationshipType);
                 }
                 else
                 {
@@ -517,12 +517,12 @@ namespace Aras.ViewModel.Grids
             {
                 if (this.Parent.Transaction != null)
                 {
-                    if (this.RelationshipType.RelatedItemType != null)
+                    if (this.RelationshipType.Related != null)
                     {
                         if (this.Dialog == null)
                         {
                             // Create Search Dialog
-                            this.Dialog = new Dialogs.Search(this, this.Session.Model.Store(this.RelationshipType.RelatedItemType));
+                            //this.Dialog = new Dialogs.Search(this, this.Session.Model.Relationships(this.RelationshipType.RelatedItemType));
 
                             // Watch for changes in selection
                             this.Dialog.Grid.Selected.ListChanged += Selected_ListChanged;
@@ -534,7 +534,7 @@ namespace Aras.ViewModel.Grids
                     else
                     {
                         // Create null Relationship
-                        Model.Relationship relationship = ((Model.Item)this.Binding).Store(this.RelationshipType).Create(null, this.Parent.Transaction);
+                        //Model.Relationship relationship = ((Model.Item)this.Binding).Store(this.RelationshipType).Create(null, this.Parent.Transaction);
 
                         // Load Rows
                         this.LoadRows();
@@ -553,7 +553,8 @@ namespace Aras.ViewModel.Grids
                     {
                         foreach (Model.Item relateditem in this.Dialog.Grid.Selected)
                         {
-                            Model.Relationship relationship = ((Model.Item)this.Binding).Store(this.RelationshipType).Create(relateditem, this.Parent.Transaction);
+                            Model.Relationship relationship = (Model.Relationship)((Model.Item)this.Binding).Relationships(this.RelationshipType).Create(this.Parent.Transaction);
+                            relationship.Related = relateditem;
                         }
 
                         this.LoadRows();

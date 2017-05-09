@@ -82,7 +82,7 @@ namespace Aras.ViewModel.Containers
             }
         }
 
-        public Model.Stores.Item Store { get; private set; }
+        public Model.Store Store { get; private set; }
 
         [ViewModel.Attributes.Command("Refresh")]
         public RefreshCommand Refresh { get; private set; }
@@ -170,7 +170,7 @@ namespace Aras.ViewModel.Containers
                     // Set Item
                     this.Item = (Model.Item)this.Binding;
 
-                    if (this.Item.DatabaseState != Model.Item.DatabaseStates.New)
+                    if (this.Item.State != Model.Item.States.New)
                     {
                         if (this.Transaction != null)
                         {
@@ -179,7 +179,7 @@ namespace Aras.ViewModel.Containers
                             this.Transaction = null;
                         }
 
-                        if (this.Item.Locked(true))
+                        if (this.Item.Locked == Model.Item.Locks.User)
                         {
                             // Create Transaction and add Item
                             this.Transaction = this.Session.Model.BeginTransaction();
@@ -280,7 +280,7 @@ namespace Aras.ViewModel.Containers
             {
                 if (this.Transaction == null)
                 {
-                    IEnumerable<Model.LifeCycleState> newstates = this.Item.NextStates;
+                    IEnumerable<Model.Relationships.LifeCycleState> newstates = this.Item.NextStates();
                    
                     if (newstates.Count() > 0)
                     {
@@ -322,7 +322,7 @@ namespace Aras.ViewModel.Containers
                     this.Save.UpdateCanExecute(false);
                     this.Undo.UpdateCanExecute(false);
 
-                    if (this.Item.NextStates.Count() > 0)
+                    if (this.Item.NextStates().Count() > 0)
                     {
                         this.Promote.UpdateCanExecute(true);
                     }
@@ -355,7 +355,7 @@ namespace Aras.ViewModel.Containers
 
         }
 
-        public Form(Manager.Session Session, Model.Stores.Item Store)
+        public Form(Manager.Session Session, Model.Store Store)
             :base(Session)
         {
             this.Store = Store;

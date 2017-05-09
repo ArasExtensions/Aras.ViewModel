@@ -38,7 +38,7 @@ namespace Aras.ViewModel.Design.RelationshipFormatters
             {
                 if (Relationship.Related != null)
                 {
-                    if (Relationship.RelationshipType.Name.Equals("Part BOM"))
+                    if (Relationship.ItemType.Name.Equals("Part BOM"))
                     {
                         Double? quantity = (Double?)Relationship.Property("quantity").Value;
                         String item_number = (String)Relationship.Related.Property("item_number").Value;

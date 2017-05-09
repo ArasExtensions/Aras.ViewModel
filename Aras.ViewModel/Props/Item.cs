@@ -186,7 +186,7 @@ namespace Aras.ViewModel.Properties
             if (this.Dialog == null)
             {
                 // Create Search Dialog
-                this.Dialog = new Dialogs.Search(this, this.Session.Model.Store(((Model.PropertyTypes.Item)this.PropertyType).ValueType));
+                //this.Dialog = new Dialogs.Search(this, this.Session.Model.Store(((Model.PropertyTypes.Item)this.PropertyType).ValueType));
 
                 // Watch for changes in selection
                 this.Dialog.Grid.Selected.ListChanged += Selected_ListChanged;

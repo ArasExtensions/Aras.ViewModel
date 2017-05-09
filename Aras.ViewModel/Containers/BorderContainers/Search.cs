@@ -42,9 +42,9 @@ namespace Aras.ViewModel.Containers.BorderContainers
 
             if (Binding != null)
             {
-                if (!(Binding is Model.Stores.Item))
+                if (!(Binding is Model.Store))
                 {
-                    throw new Model.Exceptions.ArgumentException("Binding must be Aras.Model.Stores.Item");
+                    throw new Model.Exceptions.ArgumentException("Binding must be Aras.Model.Store");
                 }
             }
         }

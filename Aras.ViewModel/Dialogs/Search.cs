@@ -32,7 +32,7 @@ namespace Aras.ViewModel.Dialogs
 {
     public class Search : Dialog
     {
-        public Model.Stores.Item Store { get; private set; }
+        public Model.Store Store { get; private set; }
 
         public Grids.Search Grid
         {
@@ -42,7 +42,7 @@ namespace Aras.ViewModel.Dialogs
             }
         }
 
-        public Search(Control Parent, Model.Stores.Item Store)
+        public Search(Control Parent, Model.Store Store)
             :base(Parent)
         {
             // Save Store

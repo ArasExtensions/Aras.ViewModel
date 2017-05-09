@@ -84,12 +84,13 @@ namespace Aras.ViewModel
             }
         }
 
-        internal Model.Stores.Relationship Store { get; private set; }
+        internal Model.Store Store { get; private set; }
 
         protected override void LoadChildren()
         {
             base.LoadChildren();
 
+            /*
             if (this.Item != null)
             {
                 this.Children.NotifyListChanged = false;
@@ -124,7 +125,7 @@ namespace Aras.ViewModel
                 }
 
                 this.Children.NotifyListChanged = true;
-            }
+            } */
         }
 
         protected override void BeforeBindingChanged()
