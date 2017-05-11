@@ -350,9 +350,12 @@ namespace Aras.ViewModel.Containers
             this.Create.UpdateCanExecute(true);
         }
 
-        protected virtual void RefreshControl()
+        protected virtual void RefreshForm()
         {
-
+            if (this.Item != null)
+            {
+                this.Item.Refresh();
+            }
         }
 
         public Form(Manager.Session Session, Model.Store Store)
@@ -372,7 +375,7 @@ namespace Aras.ViewModel.Containers
         {
             protected override void Run(IEnumerable<Control> Parameters)
             {
-                ((Form)this.Control).RefreshControl();
+                ((Form)this.Control).RefreshForm();
                 this.CanExecute = true;
             }
 
