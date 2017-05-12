@@ -75,7 +75,7 @@ namespace Aras.ViewModel.Properties
 
             if (Binding != null)
             {
-                if (!(Binding is Model.ListValue))
+                if (!(Binding is Model.Relationships.Value))
                 {
                     throw new Model.Exceptions.ArgumentException("Binding must be of type Aras.Model.ListValue");
                 }
@@ -88,8 +88,8 @@ namespace Aras.ViewModel.Properties
 
             if (this.Binding != null)
             {
-                this.Value = ((Model.ListValue)this.Binding).Value;
-                this.Label = ((Model.ListValue)this.Binding).Label;
+                this.Value = (System.String)((Model.Relationships.Value)this.Binding).Property("value").Value;
+                this.Label = (System.String)((Model.Relationships.Value)this.Binding).Property("label").Value;
             }
             else
             {

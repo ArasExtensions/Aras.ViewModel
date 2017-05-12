@@ -79,9 +79,9 @@ namespace Aras.ViewModel.Properties
                 }
                 else
                 {
-                    foreach (Model.ListValue listvalue in ((Model.Properties.List)this.Binding).Values.Values)
+                    foreach (Model.Relationships.Value listvalue in ((Model.Properties.List)this.Binding).Values.Relationships("Value"))
                     {
-                        if (listvalue.Value.Equals(Value))
+                        if (listvalue.Property("value").Value.Equals(Value))
                         {
                             ((Model.Properties.List)this.Binding).Value = listvalue;
                             break;
@@ -115,13 +115,13 @@ namespace Aras.ViewModel.Properties
 
             if (this.Binding != null)
             {
-                Model.ListValue modelvalue = (Model.ListValue)((Model.Properties.List)this.Binding).Value;
+                Model.Relationships.Value modelvalue = (Model.Relationships.Value)((Model.Properties.List)this.Binding).Value;
 
                 // Set Value
 
                 if (modelvalue != null)
                 {
-                    this.Value = modelvalue.Value;
+                    this.Value = (System.String)modelvalue.Property("value").Value;
                 }
                 else
                 {
@@ -150,7 +150,7 @@ namespace Aras.ViewModel.Properties
                         }
                         else
                         {
-                            this.Value = ((Aras.Model.ListValue)((Model.Properties.List)this.Binding).Value).Value;
+                            this.Value = (System.String)((Aras.Model.Relationships.Value)((Model.Properties.List)this.Binding).Value).Property("value").Value;
                         }
                     }
                 }
@@ -194,7 +194,7 @@ namespace Aras.ViewModel.Properties
                 }
 
                 // Add Values
-                foreach (Model.ListValue modellistvalue in PropertyType.Values.Values)
+                foreach (Model.Relationships.Value modellistvalue in PropertyType.Values.Relationships("Value"))
                 {
                     ListValue listvalue = new ListValue(this.Session);
                     listvalue.Binding = modellistvalue;
