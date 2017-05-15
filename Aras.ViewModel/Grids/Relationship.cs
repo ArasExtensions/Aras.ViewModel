@@ -199,18 +199,6 @@ namespace Aras.ViewModel.Grids
         {
             base.AfterBindingChanged();
 
-            if (this.Binding != null)
-            {
-                // Add RelationshipGrid PropertTypes to Select for the Relationship
-                //this.RelationshipType.AddRelationshipGridPropertyTypesToSelect();
-
-                // Add RelationshipGrid PropertTypes to Select for the Related ItemType
-                if (this.RelationshipType.Related != null)
-                {
-                    //this.RelationshipType.Related.AddRelationshipGridPropertyTypesToSelect();
-                }
-            }
-
             // Ensure Dialog is Closed
             if (this.Dialog != null)
             {
