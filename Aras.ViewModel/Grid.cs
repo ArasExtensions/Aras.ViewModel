@@ -54,9 +54,136 @@ namespace Aras.ViewModel
 
         public Model.ObservableList<Row> SelectedRows { get; private set; }
 
-        public Column AddColumn(String Name, String Label, Int32 Width)
+        public Column Column(String Name)
         {
-            Column col = new Column(this, Name, Label, Width);
+            foreach(Column col in this.Columns)
+            {
+                if (col.Name.Equals(Name))
+                {
+                    return col;
+                }
+            }
+
+            throw new Model.Exceptions.ArgumentException("Invalid Column Name");
+        }
+
+        public Column AddColumn(Model.PropertyType PropertyType, Model.Query Query)
+        {
+            Column ret = null;
+
+            switch (PropertyType.GetType().Name)
+            {
+                case "Boolean":
+                    ret = this.AddBooleanColumn(PropertyType.Name, PropertyType.Label, PropertyType.ColumnWidth);
+                    break;
+                case "Decimal":
+                    ret = this.AddDecimalColumn(PropertyType.Name, PropertyType.Label, PropertyType.ColumnWidth);
+                    break;
+                case "Integer":
+                    ret = this.AddIntegerColumn(PropertyType.Name, PropertyType.Label, PropertyType.ColumnWidth);
+                    break;
+                case "Item":
+                    ret = this.AddItemColumn(PropertyType.Name, PropertyType.Label, PropertyType.ColumnWidth, Query);
+                    break;
+                case "List":
+                    ret = this.AddListColumn(PropertyType.Name, PropertyType.Label, PropertyType.ColumnWidth);
+                    break;
+                case "Sequence":
+                    ret = this.AddSequenceColumn(PropertyType.Name, PropertyType.Label, PropertyType.ColumnWidth);
+                    break;
+                case "String":
+                    ret = this.AddStringColumn(PropertyType.Name, PropertyType.Label, PropertyType.ColumnWidth);
+                    break;
+                case "Text":
+                    ret = this.AddTextColumn(PropertyType.Name, PropertyType.Label, PropertyType.ColumnWidth);
+                    break;
+                default:
+                    throw new Model.Exceptions.ArgumentException("PropertyType not implemented: " + PropertyType.GetType().Name);
+            }
+
+            return ret;
+        }
+
+        public Column AddColumn(Model.PropertyType PropertyType)
+        {
+            return this.AddColumn(PropertyType, null);
+        }
+
+        private void Column_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            this.OnPropertyChanged("Columns");
+        }
+
+        public Columns.Integer AddIntegerColumn(String Name, String Label, Int32 Width)
+        {
+            Columns.Integer col = new Columns.Integer(this, Name, Label, Width);
+            col.PropertyChanged += Column_PropertyChanged;
+            this.Columns.Add(col);
+            return col;
+        }
+
+
+
+        public Columns.String AddStringColumn(String Name, String Label, Int32 Width)
+        {
+            Columns.String col = new Columns.String(this, Name, Label, Width);
+            col.PropertyChanged += Column_PropertyChanged;
+            this.Columns.Add(col);
+            return col;
+        }
+
+        public Columns.Sequence AddSequenceColumn(String Name, String Label, Int32 Width)
+        {
+            Columns.Sequence col = new Columns.Sequence(this, Name, Label, Width);
+            col.PropertyChanged += Column_PropertyChanged;
+            this.Columns.Add(col);
+            return col;
+        }
+
+        public Columns.Item AddItemColumn(String Name, String Label, Int32 Width, Model.Query Query)
+        {
+            Columns.Item col = new Columns.Item(this, Name, Label, Width, Query);
+            col.PropertyChanged += Column_PropertyChanged;
+            this.Columns.Add(col);
+            return col;
+        }
+
+        public Columns.List AddListColumn(String Name, String Label, Int32 Width)
+        {
+            Columns.List col = new Columns.List(this, Name, Label, Width);
+            col.PropertyChanged += Column_PropertyChanged;
+            this.Columns.Add(col);
+            return col;
+        }
+
+        public Columns.Boolean AddBooleanColumn(String Name, String Label, Int32 Width)
+        {
+            Columns.Boolean col = new Columns.Boolean(this, Name, Label, Width);
+            col.PropertyChanged += Column_PropertyChanged;
+            this.Columns.Add(col);
+            return col;
+        }
+
+        public Columns.Decimal AddDecimalColumn(String Name, String Label, Int32 Width)
+        {
+            Columns.Decimal col = new Columns.Decimal(this, Name, Label, Width);
+            col.PropertyChanged += Column_PropertyChanged;
+            this.Columns.Add(col);
+            return col;
+        }
+
+        public Columns.Text AddTextColumn(String Name, String Label, Int32 Width)
+        {
+            Columns.Text col = new Columns.Text(this, Name, Label, Width);
+            col.PropertyChanged += Column_PropertyChanged;
+            this.Columns.Add(col);
+            return col;
+        }
+
+        public Columns.Float AddFloatColumn(String Name, String Label, Int32 Width)
+        {
+            Columns.Float col = new Columns.Float(this, Name, Label, Width);
+            col.PropertyChanged += Column_PropertyChanged;
             this.Columns.Add(col);
             return col;
         }
@@ -94,10 +221,16 @@ namespace Aras.ViewModel
             {
                 // Create new Row
                 Row row = new Row(this, this.RowCache.Count());
+                row.PropertyChanged += Row_PropertyChanged;
                 this.Rows.Add(row);
                 this.RowCache.Add(row);
                 return row;
             }
+        }
+
+        private void Row_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            this.OnPropertyChanged("Rows");
         }
 
         public System.Int32 NoRows

@@ -195,6 +195,16 @@ namespace Aras.ViewModel.Grids
             }
         }
 
+        protected override void BeforeBindingChanged()
+        {
+            base.BeforeBindingChanged();
+
+            if (this.Binding != null)
+            {
+                ((Model.Item)this.Binding).PropertyChanged -= Relationship_PropertyChanged;
+            }
+        }
+
         protected override void AfterBindingChanged()
         {
             base.AfterBindingChanged();
@@ -205,7 +215,27 @@ namespace Aras.ViewModel.Grids
                 this.Dialog.Open = false;
             }
 
+            // Watch for Lock
+            if (this.Binding != null)
+            {
+                ((Model.Item)this.Binding).PropertyChanged += Relationship_PropertyChanged;
+            }
+
             this.LoadRows();
+        }
+
+        void Relationship_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            switch(e.PropertyName)
+            {
+                case "Locked":
+                    this.SetColumnEditing();
+                    break;
+
+                default:
+
+                    break;
+            }
         }
 
         private List<Model.PropertyType> _propertyTypes;
@@ -263,9 +293,39 @@ namespace Aras.ViewModel.Grids
 
             foreach (Model.PropertyType proptype in this.PropertyTypes)
             {
-                this.Grid.AddColumn(proptype.Name, proptype.Label, proptype.ColumnWidth);
+                this.Grid.AddColumn(proptype);
             }
 
+            this.SetColumnEditing();
+        }
+
+        private void SetColumnEditing()
+        {
+            foreach (Model.PropertyType proptype in this.PropertyTypes)
+            {
+                if (proptype.Type.Equals(this.RelationshipType))
+                {
+                    Column col = this.Grid.Column(proptype.Name);
+
+                    if (this.Binding != null)
+                    {
+                        Model.Item item = (Model.Item)this.Binding;
+
+                        if (item.Locked == Model.Item.Locks.User)
+                        {
+                            col.Editable = true;
+                        }
+                        else
+                        {
+                            col.Editable = false;
+                        }
+                    }
+                    else
+                    {
+                        col.Editable = false;
+                    }
+                }
+            }
         }
 
         protected void LoadRows()
@@ -306,18 +366,11 @@ namespace Aras.ViewModel.Grids
 
                         if (property != null)
                         {
-                            if (this.Grid.Rows[i].Cells[j].Value == null)
-                            {
-                                this.Grid.Rows[i].Cells[j].Value = this.Session.CreateProperty(property, true);
-                            }
-                            else
-                            {
-                                this.Grid.Rows[i].Cells[j].Value.Binding = property;
-                            }
+                            this.Grid.Rows[i].Cells[j].Binding = property;
                         }
                         else
                         {
-                            this.Grid.Rows[i].Cells[j].Value = null;
+                            this.Grid.Rows[i].Cells[j].SetValue(null);
                         }
 
                         j++;

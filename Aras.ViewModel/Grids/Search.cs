@@ -207,16 +207,7 @@ namespace Aras.ViewModel.Grids
                     foreach (Model.PropertyType proptype in this.Query.Store.ItemType.SearchPropertyTypes)
                     {
                         Model.Property property = item.Property(proptype);
-
-                        if (this.Grid.Rows[i].Cells[j].Value == null)
-                        {
-                            this.Grid.Rows[i].Cells[j].Value = this.Session.CreateProperty(property, true);
-                        }
-                        else
-                        {
-                            this.Grid.Rows[i].Cells[j].Value.Binding = property;
-                        }
-
+                        this.Grid.Rows[i].Cells[j].Binding = property;
                         j++;
                     }
                 }
@@ -236,7 +227,7 @@ namespace Aras.ViewModel.Grids
 
                 foreach (Model.PropertyType proptype in this.Query.Store.ItemType.SearchPropertyTypes)
                 {
-                    this.Grid.AddColumn(proptype.Name, proptype.Label, proptype.ColumnWidth);
+                    this.Grid.AddColumn(proptype);
                 }
             }
             else

@@ -30,8 +30,7 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel
 {
-    [Attributes.ClientControl("Aras.View.Column")]
-    public class Column : Control
+    public abstract class Column : Control
     {
         public Grid Grid { get; private set; }
 
@@ -93,6 +92,24 @@ namespace Aras.ViewModel
             }
         }
 
+        private Boolean _editable;
+        [Attributes.Property("Editable", Attributes.PropertyTypes.Boolean, true)]
+        public Boolean Editable
+        {
+            get
+            {
+                return this._editable;
+            }
+            set
+            {
+                if (!this._editable.Equals(value))
+                {
+                    this._editable = value;
+                    this.OnPropertyChanged("Editable");
+                }
+            }
+        }
+
         public override string ToString()
         {
             return this.Label;
@@ -105,6 +122,7 @@ namespace Aras.ViewModel
             this.Name = Name;
             this.Label = Label;
             this.Width = Width;
+            this._editable = false;
         }
 
     }

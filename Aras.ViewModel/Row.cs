@@ -40,19 +40,67 @@ namespace Aras.ViewModel
         [ViewModel.Attributes.Property("Cells", Aras.ViewModel.Attributes.PropertyTypes.ControlList, true)]
         public Model.ObservableList<Cell> Cells { get; private set; }
 
+        private Cell CreateCell(Column Column, Row Row)
+        {
+            Cell ret = null;
+
+            switch(Column.GetType().Name)
+            {
+                case "Boolean":
+                    ret = new Cells.Boolean(Column, Row);
+                    break;
+                case "Decimal":
+                    ret = new Cells.Decimal(Column, Row);
+                    break;
+                case "Float":
+                    ret = new Cells.Float(Column, Row);
+                    break;
+                case "Integer":
+                    ret = new Cells.Integer(Column, Row);
+                    break;
+                case "Item":
+                    ret = new Cells.Item(Column, Row);
+                    break;
+                case "List":
+                    ret = new Cells.List(Column, Row);
+                    break;
+                case "String":
+                    ret = new Cells.String(Column, Row);
+                    break;
+                case "Sequence":
+                    ret = new Cells.Sequence(Column, Row);
+                    break;
+                case "Text":
+                    ret = new Cells.Text(Column, Row);
+                    break;
+                default:
+                    throw new Model.Exceptions.ArgumentException("Column Type not implemented: " + Column.GetType().Name);
+            }
+
+            // Watch for Changes in Cell
+            ret.PropertyChanged += Cell_PropertyChanged;
+
+            return ret;
+        }
+
+        private void Cell_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            this.OnPropertyChanged("Cells");
+        }
+
         private void UpdateCells()
         {
             for (int i = 0; i < this.Grid.Columns.Count(); i++)
             {
                 if (i == this.Cells.Count())
                 {
-                    this.Cells.Add(new Cell(this.Grid.Columns[i], this));
+                    this.Cells.Add(this.CreateCell(this.Grid.Columns[i], this));
                 }
                 else
                 {
                     if (!this.Cells[i].Column.Equals(this.Grid.Columns[i]))
                     {
-                        this.Cells[i] = new Cell(this.Grid.Columns[i], this);
+                        this.Cells[i] = this.CreateCell(this.Grid.Columns[i], this);
                     }
                 }
             }

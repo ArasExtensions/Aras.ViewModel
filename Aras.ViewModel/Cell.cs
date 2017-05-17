@@ -31,21 +31,21 @@ using System.Threading.Tasks;
 namespace Aras.ViewModel
 {
     [Attributes.ClientControl("Aras.View.Cell")]
-    public class Cell : Control
+    public abstract class Cell : Control
     {
         public Column Column { get; private set; }
 
         public Row Row { get; private set; }
 
-        private Control _value;
-        [Attributes.Property("Value", Attributes.PropertyTypes.Control, true)]
-        public Control Value
+        private String _value;
+        [Attributes.Property("Value", Attributes.PropertyTypes.String, true)]
+        public String Value
         {
             get
             {
                 return this._value;
             }
-            set
+            protected set
             {
                 if (this._value == null)
                 {
@@ -66,11 +66,82 @@ namespace Aras.ViewModel
             }
         }
 
+        [Attributes.Property("UpdateValue", Attributes.PropertyTypes.String, false)]
+        public String UpdateValue
+        {
+            get
+            {
+                return null;
+            }
+            set
+            {
+                this.ProcessUpdateValue(value);        
+            }
+        }
+
+        protected abstract void ProcessUpdateValue(String Value);
+
+        private Boolean UpdatingBinding;
+        public virtual void SetValue(Object Value)
+        {
+            if (this.Binding != null)
+            {
+                if (!this.UpdatingBinding)
+                {
+                    this.UpdatingBinding = true;
+
+                    // Update Binding
+                    ((Model.Property)this.Binding).Value = Value;
+
+                    this.UpdatingBinding = false;
+                }
+            }
+        }
+
+        protected override void BeforeBindingChanged()
+        {
+            base.BeforeBindingChanged();
+
+            if (this.Binding != null)
+            {
+                // Stop Watching for Changes
+                ((Model.Property)this.Binding).PropertyChanged -= Binding_PropertyChanged;
+            }
+        }
+
+        protected override void AfterBindingChanged()
+        {
+            base.AfterBindingChanged();
+        
+            if (this.Binding != null)
+            {
+                // Set Value
+                this.SetValue(((Model.Property)this.Binding).Value);
+                
+                // Watch for Changes
+                ((Model.Property)this.Binding).PropertyChanged += Binding_PropertyChanged; 
+            }
+        }
+
+        private void Binding_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            switch(e.PropertyName)
+            {
+                case "Value":
+                    this.SetValue(((Model.Property)sender).Value);
+                    break;
+                default:
+
+                    break;
+            }
+        }
+
         internal Cell(Column Column, Row Row)
             :base(Column.Session)
         {
             this.Column = Column;
             this.Row = Row;
+            this.UpdatingBinding = false;
         }
 
     }
