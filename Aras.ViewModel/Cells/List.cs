@@ -60,7 +60,15 @@ namespace Aras.ViewModel.Cells
             {
                 if (listvalue.Value.Equals(Value))
                 {
-                    this.SetValue(listvalue.Binding);
+                    if (listvalue.Binding != null)
+                    {
+                        this.SetValue(listvalue.Binding);
+                    }
+                    else
+                    {
+                        this.Value = listvalue.Label;
+                    }
+
                     break;
                 }
             }
