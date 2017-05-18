@@ -96,7 +96,6 @@
     <Compile Include="Manager\ControlTypes\ApplicationType.cs" />
     <Compile Include="Manager\ControlTypes\PluginType.cs" />
     <Compile Include="Manager\Database.cs" />
-    <Compile Include="Manager\Exceptions\LicenceException.cs" />
     <Compile Include="Manager\Exceptions\SessionException.cs" />
     <Compile Include="Manager\Server.cs" />
     <Compile Include="Manager\Session.cs" />
