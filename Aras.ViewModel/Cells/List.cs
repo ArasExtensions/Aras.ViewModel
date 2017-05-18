@@ -30,6 +30,9 @@ namespace Aras.ViewModel.Cells
 {
     public class List : Cell
     {
+        [Attributes.Property("Values", Attributes.PropertyTypes.ControlList, true)]
+        public Model.ObservableList<ListValue> Values { get; private set; }
+
         public override void SetValue(object Value)
         {
             base.SetValue(Value);
@@ -53,7 +56,14 @@ namespace Aras.ViewModel.Cells
 
         protected override void ProcessUpdateValue(string Value)
         {
-
+            foreach(ListValue listvalue in this.Values)
+            {
+                if (listvalue.Value.Equals(Value))
+                {
+                    this.SetValue(listvalue.Binding);
+                    break;
+                }
+            }
         }
 
         protected override void CheckBinding(object Binding)
@@ -66,10 +76,31 @@ namespace Aras.ViewModel.Cells
             }
         }
 
+        protected override void AfterBindingChanged()
+        {
+            base.AfterBindingChanged();
+
+            this.Values.NotifyListChanged = false;
+
+            this.Values.Clear();
+
+            if (this.Binding != null)
+            {
+                foreach (Model.Relationships.Value listvalue in ((Model.Properties.List)this.Binding).Values.Relationships("Value"))
+                {
+                    ListValue thisvalue = new ListValue(this.Session);
+                    thisvalue.Binding = listvalue;
+                    this.Values.Add(thisvalue);
+                }
+            }
+
+            this.Values.NotifyListChanged = true;
+        }
+
         internal List(Column Column, Row Row)
             :base(Column, Row)
         {
-
+            this.Values = new Model.ObservableList<ListValue>();
         }
     }
 }

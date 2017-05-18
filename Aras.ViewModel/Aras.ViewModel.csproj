@@ -126,7 +126,7 @@
     <Compile Include="Containers\BorderContainer.cs" />
     <Compile Include="ObservableControlList.cs" />
     <Compile Include="Props\Integer.cs" />
-    <Compile Include="Props\ListValue.cs" />
+    <Compile Include="ListValue.cs" />
     <Compile Include="RelationshipFormatters\Default.cs" />
     <Compile Include="RelationshipTree.cs" />
     <Compile Include="RelationshipTreeNode.cs" />

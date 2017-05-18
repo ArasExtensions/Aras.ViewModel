@@ -30,6 +30,39 @@ namespace Aras.ViewModel.Cells
 {
     public class Float : Cell
     {
+        const System.Double DefaultMinValue = -10000.0;
+        const System.Double DefaultMaxValue = 10000.0;
+
+        private System.Double _minValue;
+        [Attributes.Property("MinValue", Attributes.PropertyTypes.Float, true)]
+        public System.Double MinValue
+        {
+            get
+            {
+                return this._minValue;
+            }
+            set
+            {
+                this._minValue = value;
+                this.OnPropertyChanged("MinValue");
+            }
+        }
+
+        private System.Double _maxValue;
+        [Attributes.Property("MaxValue", Attributes.PropertyTypes.Float, true)]
+        public System.Double MaxValue
+        {
+            get
+            {
+                return this._maxValue;
+            }
+            set
+            {
+                this._maxValue = value;
+                this.OnPropertyChanged("MaxValue");
+            }
+        }
+
         public override void SetValue(object Value)
         {
             base.SetValue(Value);
@@ -81,7 +114,8 @@ namespace Aras.ViewModel.Cells
         internal Float(Column Column, Row Row)
             :base(Column, Row)
         {
-
+            this._minValue = DefaultMinValue;
+            this._maxValue = DefaultMaxValue;
         }
     }
 }

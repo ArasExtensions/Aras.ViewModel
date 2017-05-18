@@ -26,9 +26,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Aras.ViewModel.Properties
+namespace Aras.ViewModel
 {
-    [Attributes.ClientControl("Aras.View.Properties.ListValue")]
+    [Attributes.ClientControl("Aras.View.ListValue")]
     public class ListValue : Control
     {
         private System.String _value;

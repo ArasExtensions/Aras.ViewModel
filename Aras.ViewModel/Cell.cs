@@ -35,6 +35,24 @@ namespace Aras.ViewModel
 
         public Row Row { get; private set; }
 
+        private Boolean _editable;
+        [Attributes.Property("Editable", Attributes.PropertyTypes.Boolean, true)]
+        public Boolean Editable
+        {
+            get
+            {
+                return this._editable;
+            }
+            set
+            {
+                if (!this._editable.Equals(value))
+                {
+                    this._editable = value;
+                    this.OnPropertyChanged("Editable");
+                }
+            }
+        }
+
         private String _value;
         [Attributes.Property("Value", Attributes.PropertyTypes.String, true)]
         public String Value
@@ -140,6 +158,9 @@ namespace Aras.ViewModel
             this.Column = Column;
             this.Row = Row;
             this.UpdatingBinding = false;
+
+            // Set Default Value for Editable from Column
+            this.Editable = Column.Editable;
         }
 
     }
