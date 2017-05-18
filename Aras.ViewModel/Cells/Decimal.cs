@@ -30,6 +30,39 @@ namespace Aras.ViewModel.Cells
 {
     public class Decimal : Cell
     {
+        const System.Decimal DefaultMinValue = System.Decimal.MinValue;
+        const System.Decimal DefaultMaxValue = System.Decimal.MaxValue;
+
+        private System.Decimal _minValue;
+        [Attributes.Property("MinValue", Attributes.PropertyTypes.Decimal, true)]
+        public System.Decimal MinValue
+        {
+            get
+            {
+                return this._minValue;
+            }
+            set
+            {
+                this._minValue = value;
+                this.OnPropertyChanged("MinValue");
+            }
+        }
+
+        private System.Decimal _maxValue;
+        [Attributes.Property("MaxValue", Attributes.PropertyTypes.Decimal, true)]
+        public System.Decimal MaxValue
+        {
+            get
+            {
+                return this._maxValue;
+            }
+            set
+            {
+                this._maxValue = value;
+                this.OnPropertyChanged("MaxValue");
+            }
+        }
+
         public override void SetValue(object Value)
         {
             base.SetValue(Value);
@@ -81,7 +114,8 @@ namespace Aras.ViewModel.Cells
         internal Decimal(Column Column, Row Row)
             :base(Column, Row)
         {
-
+            this._minValue = DefaultMinValue;
+            this._maxValue = DefaultMaxValue;
         }
     }
 }

@@ -30,6 +30,9 @@ namespace Aras.ViewModel.Cells
 {
     public class Integer : Cell
     {
+        const System.Int32 DefaultMinValue = System.Int32.MinValue;
+        const System.Int32 DefaultMaxValue = System.Int32.MaxValue;
+
         public override void SetValue(object Value)
         {
             base.SetValue(Value);
@@ -48,6 +51,36 @@ namespace Aras.ViewModel.Cells
                 {
                     throw new Model.Exceptions.ArgumentException("Value must be System.Int32");
                 }
+            }
+        }
+
+        private System.Int32 _minValue;
+        [Attributes.Property("MinValue", Attributes.PropertyTypes.Int32, true)]
+        public System.Int32 MinValue
+        {
+            get
+            {
+                return this._minValue;
+            }
+            set
+            {
+                this._minValue = value;
+                this.OnPropertyChanged("MinValue");
+            }
+        }
+
+        private System.Int32 _maxValue;
+        [Attributes.Property("MaxValue", Attributes.PropertyTypes.Int32, true)]
+        public System.Int32 MaxValue
+        {
+            get
+            {
+                return this._maxValue;
+            }
+            set
+            {
+                this._maxValue = value;
+                this.OnPropertyChanged("MaxValue");
             }
         }
 
@@ -81,7 +114,8 @@ namespace Aras.ViewModel.Cells
         internal Integer(Column Column, Row Row)
             :base(Column, Row)
         {
-
+            this._minValue = DefaultMinValue;
+            this._maxValue = DefaultMaxValue;
         }
     }
 }
