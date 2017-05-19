@@ -293,8 +293,6 @@ namespace Aras.ViewModel.Grids
             {
                 this.Grid.AddColumn(proptype);
             }
-
-            this.SetColumnEditing();
         }
 
         private void SetColumnEditing()
@@ -330,6 +328,8 @@ namespace Aras.ViewModel.Grids
         {
             if (this.Binding != null)
             {
+                this.SetColumnEditing();
+
                 Model.Item item = (Model.Item)this.Binding;
                 List<Model.Item> currentitems = item.Relationships(this.RelationshipType).ToList();
 
