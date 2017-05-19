@@ -568,7 +568,7 @@ namespace Aras.ViewModel.Grids
                         if (this.Dialog == null)
                         {
                             // Create Search Dialog
-                            //this.Dialog = new Dialogs.Search(this, this.Session.Model.Relationships(this.RelationshipType.RelatedItemType));
+                            this.Dialog = new Dialogs.Search(this, this.Query.Relationship(this.RelationshipType).Property("related_id").Store);
 
                             // Watch for changes in selection
                             this.Dialog.Grid.Selected.ListChanged += Selected_ListChanged;
@@ -580,7 +580,7 @@ namespace Aras.ViewModel.Grids
                     else
                     {
                         // Create null Relationship
-                        //Model.Relationship relationship = ((Model.Item)this.Binding).Store(this.RelationshipType).Create(null, this.Parent.Transaction);
+                        Model.Relationship relationship = (Model.Relationship)((Model.Item)this.Binding).Relationships(this.RelationshipType).Create(this.Parent.Transaction);
 
                         // Load Rows
                         this.LoadRows();
