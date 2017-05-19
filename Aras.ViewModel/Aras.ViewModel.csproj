@@ -62,7 +62,9 @@
     <Compile Include="Attributes\ClientControl.cs" />
     <Compile Include="Attributes\Command.cs" />
     <Compile Include="Attributes\Property.cs" />
+    <Compile Include="Cells\Date.cs" />
     <Compile Include="Cells\Sequence.cs" />
+    <Compile Include="Cells\Federated.cs" />
     <Compile Include="Cells\Text.cs" />
     <Compile Include="Cells\String.cs" />
     <Compile Include="Cells\List.cs" />
@@ -71,6 +73,8 @@
     <Compile Include="Cells\Float.cs" />
     <Compile Include="Cells\Decimal.cs" />
     <Compile Include="Cells\Boolean.cs" />
+    <Compile Include="Columns\Federated.cs" />
+    <Compile Include="Columns\Date.cs" />
     <Compile Include="Columns\Integer.cs" />
     <Compile Include="Columns\Item.cs" />
     <Compile Include="Columns\List.cs" />

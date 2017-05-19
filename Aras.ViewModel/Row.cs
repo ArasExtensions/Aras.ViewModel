@@ -47,8 +47,14 @@ namespace Aras.ViewModel
                 case "Boolean":
                     ret = new Cells.Boolean(Column, Row);
                     break;
+                case "Date":
+                    ret = new Cells.Date(Column, Row);
+                    break;
                 case "Decimal":
                     ret = new Cells.Decimal(Column, Row);
+                    break;
+                case "Federated":
+                    ret = new Cells.Federated(Column, Row);
                     break;
                 case "Float":
                     ret = new Cells.Float(Column, Row);

@@ -74,8 +74,14 @@ namespace Aras.ViewModel
                 case "Boolean":
                     ret = this.AddBooleanColumn(PropertyType.Name, PropertyType.Label, PropertyType.ColumnWidth);
                     break;
+                case "Date":
+                    ret = this.AddDateColumn(PropertyType.Name, PropertyType.Label, PropertyType.ColumnWidth);
+                    break;
                 case "Decimal":
                     ret = this.AddDecimalColumn(PropertyType.Name, PropertyType.Label, PropertyType.ColumnWidth);
+                    break;
+                case "Federated":
+                    ret = this.AddFederatedColumn(PropertyType.Name, PropertyType.Label, PropertyType.ColumnWidth);
                     break;
                 case "Integer":
                     ret = this.AddIntegerColumn(PropertyType.Name, PropertyType.Label, PropertyType.ColumnWidth);
@@ -120,7 +126,21 @@ namespace Aras.ViewModel
             return col;
         }
 
+        public Columns.Date AddDateColumn(String Name, String Label, Int32 Width)
+        {
+            Columns.Date col = new Columns.Date(this, Name, Label, Width);
+            col.PropertyChanged += Column_PropertyChanged;
+            this.Columns.Add(col);
+            return col;
+        }
 
+        public Columns.Federated AddFederatedColumn(String Name, String Label, Int32 Width)
+        {
+            Columns.Federated col = new Columns.Federated(this, Name, Label, Width);
+            col.PropertyChanged += Column_PropertyChanged;
+            this.Columns.Add(col);
+            return col;
+        }
 
         public Columns.String AddStringColumn(String Name, String Label, Int32 Width)
         {
