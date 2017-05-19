@@ -116,7 +116,6 @@ namespace Aras.ViewModel.Properties
                 Model.Relationships.Value modelvalue = (Model.Relationships.Value)((Model.Properties.List)this.Binding).Value;
 
                 // Set Value
-
                 if (modelvalue != null)
                 {
                     this.Value = (System.String)modelvalue.Property("value").Value;
