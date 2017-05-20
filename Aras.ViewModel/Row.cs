@@ -81,15 +81,7 @@ namespace Aras.ViewModel
                     throw new Model.Exceptions.ArgumentException("Column Type not implemented: " + Column.GetType().Name);
             }
 
-            // Watch for Changes in Cell
-            ret.PropertyChanged += Cell_PropertyChanged;
-
             return ret;
-        }
-
-        private void Cell_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            this.OnPropertyChanged("Cells");
         }
 
         private void UpdateCells()

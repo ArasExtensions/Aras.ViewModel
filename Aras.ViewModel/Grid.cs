@@ -239,16 +239,10 @@ namespace Aras.ViewModel
             {
                 // Create new Row
                 Row row = new Row(this, this.RowCache.Count());
-                row.PropertyChanged += Row_PropertyChanged;
                 this.Rows.Add(row);
                 this.RowCache.Add(row);
                 return row;
             }
-        }
-
-        private void Row_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            this.OnPropertyChanged("Rows");
         }
 
         public System.Int32 NoRows
