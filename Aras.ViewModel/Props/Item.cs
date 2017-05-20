@@ -183,8 +183,19 @@ namespace Aras.ViewModel.Properties
         {
             if (this.Dialog == null)
             {
-                // Create Search Dialog
-                this.Dialog = new Dialogs.Search(this, ((Model.Properties.Item)this.Binding).Store);
+                if (this.Binding != null)
+                {
+                    // Create Search Dialog
+                    this.Dialog = new Dialogs.Search(this, ((Model.Properties.Item)this.Binding).Store);
+                }
+                else
+                {
+                    Model.Query query = this.Session.Model.Query(((Model.PropertyTypes.Item)this.PropertyType).ValueType);
+                    query.Select = ((Model.PropertyTypes.Item)this.PropertyType).ValueType.SearchSelect + ",keyed_name";
+
+                    // Create Search Dialog
+                    this.Dialog = new Dialogs.Search(this, query.Store);
+                }
 
                 // Watch for changes in selection
                 this.Dialog.Grid.Selected.ListChanged += Selected_ListChanged;
