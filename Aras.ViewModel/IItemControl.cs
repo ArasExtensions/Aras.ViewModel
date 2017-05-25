@@ -28,18 +28,33 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel
 {
+    public class FormEventArgs : EventArgs
+    {
+        public Model.Item Item { get; private set; }
+
+        public FormEventArgs(Model.Item Item)
+            : base()
+        {
+            this.Item = Item;
+        }
+    }
+
+    public delegate void FormEventHandler(object sender, FormEventArgs e);
+
     public interface IItemControl
     {
         ViewModel.Manager.Session Session { get; }
 
         Model.Transaction Transaction { get; }
 
-        event EventHandler Created;
+        event FormEventHandler Created;
 
-        event EventHandler Edited;
+        event FormEventHandler Edited;
 
-        event EventHandler Saved;
+        event FormEventHandler Promoted;
 
-        event EventHandler Undone;
+        event FormEventHandler Saved;
+
+        event FormEventHandler Undone;
     }
 }

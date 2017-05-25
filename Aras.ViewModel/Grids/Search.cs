@@ -58,8 +58,32 @@ namespace Aras.ViewModel.Grids
                 {
                     this.Grid.SelectedRows.Clear();
                     this.Grid.SelectedRows.Add(this.Grid.Rows[index]);
+
+                    // Update Selected
+                    this.Selected.NotifyListChanged = false;
+
+                    this.Selected.Clear();
+                    this.Selected.Add(Item);
+
+                    this.Selected.NotifyListChanged = true;
                 }
             }
+        }
+
+        public Model.Item Add(Model.Item Item)
+        {
+            Model.Item ret = null;
+
+            if (Item != null)
+            {
+                if (this.Query != null)
+                {
+                    ret = this.Query.Store.Add(Item);
+                    this.LoadRows();
+                }
+            }
+
+            return ret;
         }
 
         private Model.Query _query;

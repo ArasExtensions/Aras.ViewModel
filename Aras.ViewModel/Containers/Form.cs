@@ -30,53 +30,53 @@ namespace Aras.ViewModel.Containers
 {
     public abstract class Form : BorderContainer, IToolbarProvider, IItemControl
     {
-        public event EventHandler Created;
+        public event FormEventHandler Created;
 
         private void OnCreated()
         {
             if (this.Created != null)
             {
-                this.Created(this, new EventArgs());
+                this.Created(this, new FormEventArgs((Model.Item)this.Binding));
             }
         }
 
-        public event EventHandler Edited;
+        public event FormEventHandler Edited;
 
         private void OnEdited()
         {
             if (this.Edited != null)
             {
-                this.Edited(this, new EventArgs());
+                this.Edited(this, new FormEventArgs((Model.Item)this.Binding));
             }
         }
 
-        public event EventHandler Promoted;
+        public event FormEventHandler Promoted;
 
         private void OnPromoted()
         {
             if (this.Promoted != null)
             {
-                this.Promoted(this, new EventArgs());
+                this.Promoted(this, new FormEventArgs((Model.Item)this.Binding));
             }
         }
 
-        public event EventHandler Saved;
+        public event FormEventHandler Saved;
 
         private void OnSaved()
         {
             if (this.Saved != null)
             {
-                this.Saved(this, new EventArgs());
+                this.Saved(this, new FormEventArgs((Model.Item)this.Binding));
             }
         }
 
-        public event EventHandler Undone;
+        public event FormEventHandler Undone;
 
         private void OnUndone()
         {
             if (this.Undone != null)
             {
-                this.Undone(this, new EventArgs());
+                this.Undone(this, new FormEventArgs((Model.Item)this.Binding));
             }
         }
 
