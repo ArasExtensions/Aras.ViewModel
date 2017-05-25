@@ -199,7 +199,11 @@ namespace Aras.ViewModel.Grids
 
             if (this.Binding != null)
             {
+                // Watch for Property Changes in Item
                 ((Model.Item)this.Binding).PropertyChanged -= Relationship_PropertyChanged;
+
+                // Stop watching for Relationship Store Changing
+                ((Model.Item)this.Binding).Relationships(this.RelationshipType).Changed -= Relationship_Changed;
             }
         }
 
@@ -213,13 +217,25 @@ namespace Aras.ViewModel.Grids
                 this.Dialog.Open = false;
             }
 
-            // Watch for Lock
             if (this.Binding != null)
             {
+                // Watch for Lock
                 ((Model.Item)this.Binding).PropertyChanged += Relationship_PropertyChanged;
+
+                // Watch for Relationship Store Changing
+                ((Model.Item)this.Binding).Relationships(this.RelationshipType).Changed += Relationship_Changed;
             }
 
             this.LoadRows();
+        }
+
+        private void Relationship_Changed(object sender, Model.ChangedEventArgs e)
+        {
+            if (!this.Dialog.Open)
+            {
+                // Load Rows
+                this.LoadRows();
+            }
         }
 
         void Relationship_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -331,7 +347,7 @@ namespace Aras.ViewModel.Grids
                 this.SetColumnEditing();
 
                 Model.Item item = (Model.Item)this.Binding;
-                List<Model.Item> currentitems = item.Relationships(this.RelationshipType).ToList();
+                List<Model.Item> currentitems = item.Relationships(this.RelationshipType).CurrentItems();
 
                 // Set Number of Rows in Grid
                 this.Grid.NoRows = currentitems.Count();
@@ -581,9 +597,6 @@ namespace Aras.ViewModel.Grids
                     {
                         // Create null Relationship
                         Model.Relationship relationship = (Model.Relationship)((Model.Item)this.Binding).Relationships(this.RelationshipType).Create(this.Parent.Transaction);
-
-                        // Load Rows
-                        this.LoadRows();
                     }
                 }
             }
@@ -624,7 +637,7 @@ namespace Aras.ViewModel.Grids
                         relationship.Delete(this.Parent.Transaction);
                     }
 
-                    // Load Roes
+                    // Load Rows
                     this.LoadRows();
                 }
             }
