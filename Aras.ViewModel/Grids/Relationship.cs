@@ -229,9 +229,9 @@ namespace Aras.ViewModel.Grids
             this.LoadRows();
         }
 
-        private void Relationship_Changed(object sender, Model.ChangedEventArgs e)
+        private void Relationship_Changed(object sender, Model.StoreChangedEventArgs e)
         {
-            if (!this.Dialog.Open)
+            if ((this.Dialog != null) && !this.Dialog.Open)
             {
                 // Load Rows
                 this.LoadRows();
