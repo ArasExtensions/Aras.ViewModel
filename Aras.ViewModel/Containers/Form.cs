@@ -85,20 +85,122 @@ namespace Aras.ViewModel.Containers
         [ViewModel.Attributes.Command("Refresh")]
         public RefreshCommand Refresh { get; private set; }
 
+        private Button _refreshButton;
+        public Button RefreshButton
+        {
+            get
+            {
+                if (this._refreshButton == null)
+                {
+                    this._refreshButton = new Button(this.Session);
+                    this._refreshButton.Icon = "Refresh";
+                    this._refreshButton.Tooltip = "Refresh";
+                    this._refreshButton.Command = this.Refresh;
+                }
+
+                return this._refreshButton;
+            }
+        }
+
         [ViewModel.Attributes.Command("Create")]
         public CreateCommand Create { get; private set; }
+
+        private Button _createButton;
+        public Button CreateButton
+        {
+            get
+            {
+                if (this._createButton == null)
+                {
+                    this._createButton = new Button(this.Session);
+                    this._createButton.Icon = "New";
+                    this._createButton.Tooltip = "Create";
+                    this._createButton.Command = this.Create;
+                }
+
+                return this._createButton;
+            }
+        }
 
         [ViewModel.Attributes.Command("Save")]
         public SaveCommand Save { get; private set; }
 
+        private Button _saveButton;
+        public Button SaveButton
+        {
+            get
+            {
+                if (this._saveButton == null)
+                {
+                    this._saveButton = new Button(this.Session);
+                    this._saveButton.Icon = "Save";
+                    this._saveButton.Tooltip = "Save";
+                    this._saveButton.Command = this.Save;
+                }
+
+                return this._saveButton;
+            }
+        }
+
         [ViewModel.Attributes.Command("Edit")]
         public EditCommand Edit { get; private set; }
+
+        private Button _editButton;
+        public Button EditButton
+        {
+            get
+            {
+                if (this._editButton == null)
+                {
+                    this._editButton = new Button(this.Session);
+                    this._editButton.Icon = "Edit";
+                    this._editButton.Tooltip = "Edit";
+                    this._editButton.Command = this.Edit;
+                }
+
+                return this._editButton;
+            }
+        }
 
         [ViewModel.Attributes.Command("Promote")]
         public PromoteCommand Promote { get; private set; }
 
+        private Button _promoteButton;
+        public Button PromoteButton
+        {
+            get
+            {
+                if (this._promoteButton == null)
+                {
+                    this._promoteButton = new Button(this.Session);
+                    this._promoteButton.Icon = "Promote";
+                    this._promoteButton.Tooltip = "Promote";
+                    this._promoteButton.Command = this.Promote;
+                }
+
+                return this._promoteButton;
+            }
+        }
+
         [ViewModel.Attributes.Command("Undo")]
         public UndoCommand Undo { get; private set; }
+
+        private Button _undoButton;
+        public Button UndoButton
+        {
+            get
+            {
+                if (this._undoButton == null)
+                {
+                    this._undoButton = new Button(this.Session);
+                    this._undoButton.Icon = "Undo";
+                    this._undoButton.Tooltip = "Undo";
+                    this._undoButton.Command = this.Undo;
+                }
+
+                return this._undoButton;
+            }
+        }
 
         private Containers.Toolbar _toolbar;
         public virtual Containers.Toolbar Toolbar
@@ -111,49 +213,47 @@ namespace Aras.ViewModel.Containers
                     this._toolbar = new Containers.Toolbar(this.Session);
 
                     // Add Refresh Button
-                    Button refreshbutton = new Button(this.Session);
-                    refreshbutton.Icon = "Refresh";
-                    refreshbutton.Tooltip = "Refresh";
-                    this._toolbar.Children.Add(refreshbutton);
-                    refreshbutton.Command = this.Refresh;
+                    this._toolbar.Children.Add(this.RefreshButton);
 
                     // Add Create Button
-                    Button createbutton = new Button(this.Session);
-                    createbutton.Icon = "New";
-                    createbutton.Tooltip = "Create";
-                    this._toolbar.Children.Add(createbutton);
-                    createbutton.Command = this.Create;
+                    this._toolbar.Children.Add(this.CreateButton);
 
                     // Add Edit Button
-                    Button editbutton = new Button(this.Session);
-                    editbutton.Icon = "Edit";
-                    editbutton.Tooltip = "Edit";
-                    this._toolbar.Children.Add(editbutton);
-                    editbutton.Command = this.Edit;
+                    this._toolbar.Children.Add(this.EditButton);
 
                     // Add Undo Button
-                    Button undobutton = new Button(this.Session);
-                    undobutton.Icon = "Undo";
-                    undobutton.Tooltip = "Undo";
-                    this._toolbar.Children.Add(undobutton);
-                    undobutton.Command = this.Undo;
+                    this._toolbar.Children.Add(this.UndoButton);
 
                     // Add Save Button
-                    Button savebutton = new Button(this.Session);
-                    savebutton.Icon = "Save";
-                    savebutton.Tooltip = "Save";
-                    this._toolbar.Children.Add(savebutton);
-                    savebutton.Command = this.Save;
+                    this._toolbar.Children.Add(this.SaveButton);
 
                     // Add Promote Button
-                    Button promotebutton = new Button(this.Session);
-                    promotebutton.Icon = "Promote";
-                    promotebutton.Tooltip = "Promote";
-                    this._toolbar.Children.Add(promotebutton);
-                    promotebutton.Command = this.Promote;
+                    this._toolbar.Children.Add(this.PromoteButton);
+
                 }
 
                 return this._toolbar;
+            }
+        }
+
+        protected override void BeforeBindingChanged()
+        {
+            base.BeforeBindingChanged();
+
+            if (this.Binding != null)
+            {
+                if (this.Binding is Model.Item)
+                {
+                    // Watch for changes in Item
+                    ((Model.Item)this.Binding).PropertyChanged -= Item_PropertyChanged;
+
+                    if (this.Transaction != null)
+                    {
+                        // Rollback existing Transaction
+                        this.Transaction.RollBack();
+                        this.Transaction = null;
+                    }
+                }
             }
         }
 
@@ -168,26 +268,8 @@ namespace Aras.ViewModel.Containers
                     // Set Item
                     this.Item = (Model.Item)this.Binding;
 
-                    if (this.Item.State != Model.Item.States.New)
-                    {
-                        if (this.Transaction != null)
-                        {
-                            // Rollback existing Transaction
-                            this.Transaction.RollBack();
-                            this.Transaction = null;
-                        }
-
-                        if (this.Item.Locked == Model.Item.Locks.User)
-                        {
-                            // Create Transaction and add Item
-                            this.Transaction = this.Session.Model.BeginTransaction();
-                            this.Item.Update(this.Transaction);
-                        }
-                        else
-                        {
-                            this.Transaction = null;
-                        }
-                    }
+                    // Watch for changes in Item
+                    this.Item.PropertyChanged += Item_PropertyChanged;
                 }
                 else
                 {
@@ -196,18 +278,24 @@ namespace Aras.ViewModel.Containers
             }
             else
             {
-                if (this.Transaction != null)
-                {
-                    // Rollback existing Transaction
-                    this.Transaction.RollBack();
-                    this.Transaction = null;
-                }
-
+                this.Transaction = null;
                 this.Item = null;
             }
 
             // Update Commands
             this.SetCommandsCanExecute();
+        }
+
+        private void Item_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            switch(e.PropertyName)
+            {
+                case "LockedBy":
+                    this.SetCommandsCanExecute();
+                    break;
+                default:
+                    break;
+            }
         }
 
         protected Model.Item Item { get; private set; }
@@ -314,35 +402,67 @@ namespace Aras.ViewModel.Containers
         {
             if (this.Item != null)
             {
-                if (this.Transaction == null)
+                switch (this.Item.Locked)
                 {
-                    this.Edit.UpdateCanExecute(true);
-                    this.Save.UpdateCanExecute(false);
-                    this.Undo.UpdateCanExecute(false);
+                    case Model.Item.Locks.None:
 
-                    if (this.Item.NextStates().Count() > 0)
-                    {
-                        this.Promote.UpdateCanExecute(true);
-                    }
-                    else
-                    {
+                        this.Edit.UpdateCanExecute(true);
+                        this.EditButton.Tooltip = "Edit";
+                        this.Save.UpdateCanExecute(false);
+                        this.Undo.UpdateCanExecute(false);
+
+                        if (this.Item.NextStates().Count() > 0)
+                        {
+                            this.Promote.UpdateCanExecute(true);
+                        }
+                        else
+                        {
+                            this.Promote.UpdateCanExecute(false);
+                        }
+
+                        if (this.Transaction != null)
+                        {
+                            // Rollback existing Transaction
+                            this.Transaction.RollBack();
+                            this.Transaction = null;
+                        }
+
+                        break;
+
+                    case Model.Item.Locks.User:
+
+                        this.Edit.UpdateCanExecute(false);
+                        this.EditButton.Tooltip = "Edit";
+                        this.Save.UpdateCanExecute(true);
+                        this.Undo.UpdateCanExecute(true);
                         this.Promote.UpdateCanExecute(false);
-                    }
+
+                        if (this.Transaction == null)
+                        {
+                            // Create Transaction and Add Item
+                            this.Transaction = this.Session.Model.BeginTransaction();
+                            this.Item.Update(this.Transaction);
+                        }
+
+                        break;
+
+                    case Model.Item.Locks.OtherUser:
+
+                        this.Edit.UpdateCanExecute(false);
+                        this.EditButton.Tooltip = "Locked by " + this.Item.LockedBy.FullName;
+                        this.Save.UpdateCanExecute(false);
+                        this.Undo.UpdateCanExecute(false);
+                        this.Promote.UpdateCanExecute(false);
+
+                        if (this.Transaction != null)
+                        {
+                            // Rollback existing Transaction
+                            this.Transaction.RollBack();
+                            this.Transaction = null;
+                        }
+
+                        break;
                 }
-                else
-                {
-                    this.Edit.UpdateCanExecute(false);
-                    this.Save.UpdateCanExecute(true);
-                    this.Undo.UpdateCanExecute(true);
-                    this.Promote.UpdateCanExecute(false);
-                }
-            }
-            else
-            {
-                this.Edit.UpdateCanExecute(false);
-                this.Save.UpdateCanExecute(false);
-                this.Undo.UpdateCanExecute(false);
-                this.Promote.UpdateCanExecute(false);
             }
 
             this.Create.UpdateCanExecute(true);
@@ -352,8 +472,12 @@ namespace Aras.ViewModel.Containers
         {
             if (this.Item != null)
             {
+                // Refresh Item
                 this.Item.Refresh();
             }
+
+            // Update Form
+            this.SetCommandsCanExecute();
         }
 
         public Form(Manager.Session Session, Model.Store Store)

@@ -37,8 +37,34 @@ namespace Aras.ViewModel
 
         public Guid ID { get; private set; }
 
+        private System.String _tooltip;
         [Attributes.Property("Tooltip", Attributes.PropertyTypes.String, true)]
-        public System.String Tooltip { get; set; }
+        public System.String Tooltip
+        {
+            get
+            {
+                return this._tooltip;
+            }
+            set
+            {
+                if (this._tooltip == null)
+                {
+                    if (value != null)
+                    {
+                        this._tooltip = value;
+                        this.OnPropertyChanged("Tooltip");
+                    }
+                }
+                else
+                {
+                    if (!this._tooltip.Equals(value))
+                    {
+                        this._tooltip = value;
+                        this.OnPropertyChanged("Tooltip");
+                    }
+                }
+            }
+        }
 
         [Attributes.Property("Height", Attributes.PropertyTypes.NullableInt32, true)]
         public System.Int32? Height { get; set; }
