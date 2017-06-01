@@ -76,7 +76,7 @@ namespace Aras.ViewModel.Cells
                 if (Value is Aras.Model.Relationships.Value)
                 {
                     // Set Label
-                    this.Value = (System.String)((Aras.Model.Relationships.Value)Value).Property("label").Value;
+                    this.Value = (System.String)((Aras.Model.Relationships.Value)Value).Property("value").Value;
 
                     // Set Selected
                     System.String thisvalue = (System.String)((Aras.Model.Relationships.Value)Value).Property("value").Value;
@@ -136,7 +136,7 @@ namespace Aras.ViewModel.Cells
                         if (listvalue.Value.Equals(Value))
                         {
                             this.Selected = listvalue;
-                            this.Value = listvalue.Label;
+                            this.Value = listvalue.Value;
                             break;
                         }
                     }

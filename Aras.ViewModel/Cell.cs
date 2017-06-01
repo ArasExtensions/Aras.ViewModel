@@ -91,7 +91,7 @@ namespace Aras.ViewModel
             }
             set
             {
-                this.ProcessUpdateValue(value);        
+                this.ProcessUpdateValue(value);
             }
         }
 
