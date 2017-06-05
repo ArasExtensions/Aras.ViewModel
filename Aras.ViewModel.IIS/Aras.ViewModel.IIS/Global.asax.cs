@@ -29,7 +29,7 @@ using System.Web.Routing;
 using System.Web.Http.Dispatcher;
 using System.IO;
 
-namespace Aras.ViewModel.WebService
+namespace Aras.ViewModel.IIS
 {
     public class WebApiApplication : System.Web.HttpApplication
     {
@@ -57,13 +57,12 @@ namespace Aras.ViewModel.WebService
 
             // Set Assembly Directory
             this.ViewModel.AssemblyDirectory = new DirectoryInfo(System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath + "\\bin");
-            
+
             // Load Assemblies
-            this.ViewModel.LoadAssembly("CMB.Model");
-            this.ViewModel.LoadAssembly("CMB.ViewModel");
+
 
             // Create Activator
-            GlobalConfiguration.Configuration.Services.Replace(typeof(IHttpControllerActivator), new ControllerActivator(this.ViewModel));
+            GlobalConfiguration.Configuration.Services.Replace(typeof(IHttpControllerActivator), new ViewModel.WebService.ControllerActivator(this.ViewModel));
 
             GlobalConfiguration.Configure(WebApiConfig.Register);
         }
