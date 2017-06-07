@@ -19,17 +19,49 @@
   Web:     http://www.processwall.com
   Email:   support@processwall.com
 */
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Aras.ViewModel
+namespace Aras.ViewModel.Trees
 {
-    public interface IItemFormatter
+    public class Relationship : Tree
     {
-        String DisplayName(Model.Item Item);
+        protected override void CheckBinding(object Binding)
+        {
+            base.CheckBinding(Binding);
+        
+            if (Binding != null)
+            {
+                if (!(Binding is Model.Item))
+                {
+                    throw new Model.Exceptions.ArgumentException("Binding must be a Aras.Model.Item");
+                }
+            }
+        }
+
+        protected override void AfterBindingChanged()
+        {
+            base.AfterBindingChanged();
+
+            if (this.Binding != null)
+            {
+                this.Root = new RelationshipNode(this, null);
+                this.Root.Binding = this.Binding;
+            }
+            else
+            {
+                this.Root = null;
+            }
+        }
+
+        public Relationship(Manager.Session Session)
+            : base(Session)
+        {
+
+        }
+
     }
 }

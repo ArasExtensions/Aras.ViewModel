@@ -57,11 +57,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ItemFormatters\Part.cs" />
-    <Compile Include="PartRelationshipTree.cs" />
-    <Compile Include="PartEditor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RelationshipFormatters\Part.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Aras.Common\Aras.Logging\Aras.Logging.csproj">

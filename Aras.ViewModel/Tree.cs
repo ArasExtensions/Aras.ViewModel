@@ -30,8 +30,12 @@ namespace Aras.ViewModel
 {
     public abstract class Tree : Control
     {
+        [ViewModel.Attributes.Property("Select", Aras.ViewModel.Attributes.PropertyTypes.Command, true)]
+        [ViewModel.Attributes.Command("Select")]
+        public SelectCommand Select { get; private set; }
+
         private Boolean _lazyLoad;
-        [ViewModel.Attributes.Property("Name", Aras.ViewModel.Attributes.PropertyTypes.Boolean, true)]
+        [ViewModel.Attributes.Property("LazyLoad", Aras.ViewModel.Attributes.PropertyTypes.Boolean, true)]
         public Boolean LazyLoad
         {
             get
@@ -48,29 +52,58 @@ namespace Aras.ViewModel
             }
         }
 
-        private TreeNode _node;
-        [ViewModel.Attributes.Property("Node", Aras.ViewModel.Attributes.PropertyTypes.Control, true)]
-        public TreeNode Node 
-        { get
+        private TreeNode _root;
+        [ViewModel.Attributes.Property("Root", Aras.ViewModel.Attributes.PropertyTypes.Control, true)]
+        public TreeNode Root 
+        { 
+            get
             {
-                return this._node;
+                return this._root;
             }
             protected set
             {
-                if (this._node == null)
+                if (this._root == null)
                 {
                     if (value != null)
                     {
-                        this._node = value;
-                        this.OnPropertyChanged("Node");
+                        this._root = value;
+                        this.OnPropertyChanged("Root");
                     }
                 }
                 else
                 {
-                    if (!this._node.Equals(value))
+                    if (!this._root.Equals(value))
                     {
-                        this._node = value;
-                        this.OnPropertyChanged("Node");
+                        this._root = value;
+                        this.OnPropertyChanged("Root");
+                    }
+                }
+            }
+        }
+
+        private TreeNode _selected;
+        public TreeNode Selected
+        {
+            get
+            {
+                return this._selected;
+            }
+            protected set
+            {
+                if (value != null)
+                {
+                    if (!value.Equals(this._selected))
+                    {
+                        this._selected = value;
+                        this.OnPropertyChanged("Selected");
+                    }
+                }
+                else
+                {
+                    if (this._selected != null)
+                    {
+                        this._selected = null;
+                        this.OnPropertyChanged("Selected");
                     }
                 }
             }
@@ -79,7 +112,37 @@ namespace Aras.ViewModel
         public Tree(Manager.Session Session)
             :base(Session)
         {
+            this.Select = new SelectCommand(this);
             this._lazyLoad = true;
+        }
+
+        public class SelectCommand : Aras.ViewModel.Command
+        {
+            internal void UpdateCanExecute(Boolean CanExecute)
+            {
+                this.CanExecute = CanExecute;
+            }
+
+            protected override void Run(IEnumerable<Control> Parameters)
+            {
+                if ((Parameters != null) && (Parameters.Count() > 0))
+                {
+                    ((Tree)this.Control).Selected = (TreeNode)Parameters.First();
+                }
+                else
+                {
+                    ((Tree)this.Control).Selected = null;
+                }
+
+                // Set to Execute
+                this.CanExecute = true;
+            }
+
+            internal SelectCommand(Tree Tree)
+                : base(Tree)
+            {
+                this.CanExecute = true;
+            }
         }
     }
 }

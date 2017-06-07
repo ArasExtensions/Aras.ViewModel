@@ -120,9 +120,6 @@
     <Compile Include="Cell.cs" />
     <Compile Include="Containers\Form.cs" />
     <Compile Include="File.cs" />
-    <Compile Include="IRelationshipFormatter.cs" />
-    <Compile Include="IItemFormatter.cs" />
-    <Compile Include="ItemFormatters\Default.cs" />
     <Compile Include="Layout.cs" />
     <Compile Include="Containers\TabContainer.cs" />
     <Compile Include="Containers\Plugin.cs" />
@@ -131,9 +128,8 @@
     <Compile Include="ObservableControlList.cs" />
     <Compile Include="Props\Integer.cs" />
     <Compile Include="ListValue.cs" />
-    <Compile Include="RelationshipFormatters\Default.cs" />
-    <Compile Include="RelationshipTree.cs" />
-    <Compile Include="RelationshipTreeNode.cs" />
+    <Compile Include="Trees\Relationship.cs" />
+    <Compile Include="Trees\RelationshipNode.cs" />
     <Compile Include="Row.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="Control.cs" />

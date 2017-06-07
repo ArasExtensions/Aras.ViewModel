@@ -37,10 +37,27 @@ namespace Aras.ViewModel.Design.Debug
 
             // Connect to Server
             ViewModel.Manager.Server server = new ViewModel.Manager.Server("http://localhost/11SP9", log);
+            
+            // Load Assemblies
             server.LoadAssembly("Aras.Model.Design");
             server.LoadAssembly("Aras.ViewModel.Design");
+            
+            // Login
             ViewModel.Manager.Database database = server.Database("Development");
             ViewModel.Manager.Session session = database.Login("admin", IO.Server.PasswordHash("innovator"));
+
+            Model.Design.Queries.Searches.Part partquery = new Model.Design.Queries.Searches.Part(session.Model);
+            Model.Design.Items.Part part = (Model.Design.Items.Part)partquery.Store.First();
+
+            Model.Design.Queries.Trees.Part treequery = new Model.Design.Queries.Trees.Part(session.Model);
+            treequery.Root = part;
+
+            Model.Design.Items.Part treeroot = (Model.Design.Items.Part)treequery.Store.First();
+
+            foreach(Model.Design.Relationships.PartBOM partbom in treeroot.Relationships("Part BOM"))
+            {
+
+            }
         }
     }
 }
