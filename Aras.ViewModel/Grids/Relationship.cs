@@ -30,6 +30,29 @@ namespace Aras.ViewModel.Grids
 {
     public class Relationship : Containers.BorderContainer, IToolbarProvider
     {
+        public class RelationshipsSelectedEventArgs : EventArgs
+        {
+            public IEnumerable<Model.Relationship> Relationships { get; private set; }
+
+            public RelationshipsSelectedEventArgs(IEnumerable<Model.Relationship> Relationships)
+                : base()
+            {
+                this.Relationships = Relationships;
+            }
+        }
+
+        public delegate void RelationshipsSelectedEventHandler(object sender, RelationshipsSelectedEventArgs e);
+
+        public event RelationshipsSelectedEventHandler RelationshipsSelected;
+
+        private void OnRelationshipsSelected()
+        {
+            if (this.RelationshipsSelected != null)
+            {
+                RelationshipsSelected(this, new RelationshipsSelectedEventArgs(this.Selected));
+            }
+        }
+
         private Containers.Toolbar _toolbar;
         public virtual Containers.Toolbar Toolbar
         {
@@ -342,6 +365,9 @@ namespace Aras.ViewModel.Grids
 
         protected void LoadRows()
         {
+            // Clear current Grid Selection
+            this.Grid.SelectedRows.Clear();
+
             if (this.Binding != null)
             {
                 this.SetColumnEditing();
@@ -351,9 +377,6 @@ namespace Aras.ViewModel.Grids
 
                 // Set Number of Rows in Grid
                 this.Grid.NoRows = currentitems.Count();
-
-                // Clear current Grid Selection
-                this.Grid.SelectedRows.Clear();
 
                 // Load Current Items into Grid
                 for (int i = 0; i < this.Grid.NoRows; i++)
@@ -493,7 +516,7 @@ namespace Aras.ViewModel.Grids
                 {
                     List<Model.Relationship> ret = new List<Model.Relationship>();
 
-                    foreach (Model.Relationship rel in ((Model.Item)this.Binding).Relationships(this.RelationshipType))
+                    foreach (Model.Relationship rel in ((Model.Item)this.Binding).Relationships(this.RelationshipType).CurrentItems())
                     {
                         ret.Add(rel);
                     }
@@ -507,7 +530,7 @@ namespace Aras.ViewModel.Grids
             }
         }
 
-        public Model.ObservableList<Model.Item> Selected { get; private set; }
+        public Model.ObservableList<Model.Relationship> Selected { get; private set; }
 
         public void Select(Model.Relationship Relationship)
         {
@@ -524,23 +547,6 @@ namespace Aras.ViewModel.Grids
             }
 
             this.UpdateCommandsCanExecute();
-        }
-
-        private void SelectedRows_ListChanged(object sender, EventArgs e)
-        {
-            this.Selected.NotifyListChanged = false;
-            this.Selected.Clear();
-
-            List<Model.Relationship> relationships = this.Displayed.ToList();
-
-            foreach (Row row in this.Grid.SelectedRows)
-            {
-                this.Selected.Add(relationships[row.Index]);
-            }
-
-            this.UpdateCommandsCanExecute();
-
-            this.Selected.NotifyListChanged = true;
         }
 
         private void UpdateCommandsCanExecute()
@@ -573,36 +579,7 @@ namespace Aras.ViewModel.Grids
             }
         }
 
-        private void CreateRelationship()
-        {
-            if (this.Binding != null)
-            {
-                if (this.Parent.Transaction != null)
-                {
-                    if (this.RelationshipType.Related != null)
-                    {
-                        if (this.Dialog == null)
-                        {
-                            // Create Search Dialog
-                            this.Dialog = new Dialogs.Search(this, this.Query.Relationship(this.RelationshipType).Property("related_id").Store);
-
-                            // Watch for changes in selection
-                            this.Dialog.Grid.Selected.ListChanged += Selected_ListChanged;
-                        }
-
-                        // Open Search Dialog
-                        this.Dialog.Open = true;
-                    }
-                    else
-                    {
-                        // Create null Relationship
-                        Model.Relationship relationship = (Model.Relationship)((Model.Item)this.Binding).Relationships(this.RelationshipType).Create(this.Parent.Transaction);
-                    }
-                }
-            }
-        }
-
-        private void Selected_ListChanged(object sender, EventArgs e)
+        private void Grid_ItemsSelected(object sender, Search.ItemsSelectedEventArgs e)
         {
             if (this.Binding != null)
             {
@@ -623,6 +600,54 @@ namespace Aras.ViewModel.Grids
                     this.Dialog.Open = false;
                 }
             }
+        }
+
+        private void CreateRelationship()
+        {
+            if (this.Binding != null)
+            {
+                if (this.Parent.Transaction != null)
+                {
+                    if (this.RelationshipType.Related != null)
+                    {
+                        if (this.Dialog == null)
+                        {
+                            // Create Search Dialog
+                            this.Dialog = new Dialogs.Search(this, this.Query.Relationship(this.RelationshipType).Property("related_id").Store);
+
+                            // Watch for Selection
+                            this.Dialog.Grid.ItemsSelected += Grid_ItemsSelected;
+                        }
+
+                        // Open Search Dialog
+                        this.Dialog.Open = true;
+                    }
+                    else
+                    {
+                        // Create null Relationship
+                        Model.Relationship relationship = (Model.Relationship)((Model.Item)this.Binding).Relationships(this.RelationshipType).Create(this.Parent.Transaction);
+                    }
+                }
+            }
+        }
+
+        private void Grid_RowsSelected(object sender, Grid.RowsSelectedEventArgs e)
+        {
+            this.Selected.NotifyListChanged = false;
+            this.Selected.Clear();
+
+            List<Model.Relationship> relationships = this.Displayed.ToList();
+
+            foreach (Row row in this.Grid.SelectedRows)
+            {
+                this.Selected.Add(relationships[row.Index]);
+            }
+
+            this.UpdateCommandsCanExecute();
+
+            this.Selected.NotifyListChanged = true;
+
+            this.OnRelationshipsSelected();
         }
 
         private void DeleteRelationship()
@@ -701,7 +726,7 @@ namespace Aras.ViewModel.Grids
             this.Dialog = null;
 
             // Create Selected
-            this.Selected = new Model.ObservableList<Model.Item>();
+            this.Selected = new Model.ObservableList<Model.Relationship>();
             
             // Create Comands
             this.Refresh = new RefreshCommand(this);
@@ -724,9 +749,9 @@ namespace Aras.ViewModel.Grids
 
             // Create Grid
             this.Grid = new Grid(this.Session);
-            this.Grid.SelectedRows.ListChanged += SelectedRows_ListChanged;
             this.Grid.AllowSelect = true;
             this.Grid.Width = this.Width;
+            this.Grid.RowsSelected += Grid_RowsSelected;
             this.Children.Add(this.Grid);
 
             // Create Query String
@@ -871,7 +896,7 @@ namespace Aras.ViewModel.Grids
             protected override void Run(IEnumerable<Aras.ViewModel.Control> Parameters)
             {
                 ((Relationship)this.Control).DeleteRelationship();
-                this.CanExecute = true;
+                this.CanExecute = false;
             }
 
             internal DeleteCommand(Relationship Relationship)

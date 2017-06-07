@@ -30,6 +30,29 @@ namespace Aras.ViewModel.Grids
 {
     public class Search : Containers.BorderContainer, IToolbarProvider
     {
+        public class ItemsSelectedEventArgs : EventArgs
+        {
+            public IEnumerable<Model.Item> Items { get; private set; }
+
+            public ItemsSelectedEventArgs(IEnumerable<Model.Item> Items)
+                : base()
+            {
+                this.Items = Items;
+            }
+        }
+
+        public delegate void ItemsSelectedEventHandler(object sender, ItemsSelectedEventArgs e);
+
+        public event ItemsSelectedEventHandler ItemsSelected;
+
+        private void OnItemsSelected()
+        {
+            if (this.ItemsSelected != null)
+            {
+                ItemsSelected(this, new ItemsSelectedEventArgs(this.Selected));
+            }
+        }
+
         public IEnumerable<Model.Item> Displayed
         {
             get
@@ -66,6 +89,9 @@ namespace Aras.ViewModel.Grids
                     this.Selected.Add(Item);
 
                     this.Selected.NotifyListChanged = true;
+
+                    // Trigger Event
+                    this.OnItemsSelected();
                 }
             }
         }
@@ -314,21 +340,6 @@ namespace Aras.ViewModel.Grids
             this.PreviousPage.Refesh();
         }
 
-        private void SelectedRows_ListChanged(object sender, EventArgs e)
-        {
-            this.Selected.NotifyListChanged = false;
-            this.Selected.Clear();
-
-            List<Model.Item> items = this.Displayed.ToList();
-
-            foreach (Row row in this.Grid.SelectedRows)
-            {
-                this.Selected.Add(items[row.Index]);
-            }
-
-            this.Selected.NotifyListChanged = true;
-        }
-
         private void DisplayFilters()
         {
             this.Dialog.Open = true;
@@ -343,9 +354,30 @@ namespace Aras.ViewModel.Grids
             this.RefreshControl();
         }
 
+        private void Grid_RowsSelected(object sender, Grid.RowsSelectedEventArgs e)
+        {
+            this.Selected.NotifyListChanged = false;
+            this.Selected.Clear();
+
+            List<Model.Item> items = this.Displayed.ToList();
+
+            foreach (Row row in this.Grid.SelectedRows)
+            {
+                this.Selected.Add(items[row.Index]);
+            }
+
+            this.Selected.NotifyListChanged = true;
+
+            // Trigger Event
+            this.OnItemsSelected();
+        }
+
         public Search(Manager.Session Session)
             : base(Session)
-        {           
+        {
+            // Create Selected
+            this.Selected = new Model.ObservableList<Model.Item>();
+
             // Create Page
             this.Page = new Properties.Integer(this.Session);
             this.Page.Value = 1;
@@ -359,10 +391,9 @@ namespace Aras.ViewModel.Grids
             this.Grid.AllowSelect = true;
             this.Grid.Width = this.Width;
             this.Children.Add(this.Grid);
-            this.Grid.SelectedRows.ListChanged += SelectedRows_ListChanged;
 
-            // Create Selected
-            this.Selected = new Model.ObservableList<Model.Item>();
+            // Watch for Rows Selected in Grid
+            this.Grid.RowsSelected += Grid_RowsSelected;
 
             // Create Commands
             this.Refresh = new RefreshCommand(this);

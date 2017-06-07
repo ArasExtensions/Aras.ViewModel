@@ -31,6 +31,29 @@ namespace Aras.ViewModel
     [Attributes.ClientControl("Aras.View.Grid")]
     public class Grid : Control
     {
+        public class RowsSelectedEventArgs : EventArgs
+        {
+            public IEnumerable<Row> Rows { get; private set; }
+
+            public RowsSelectedEventArgs(IEnumerable<Row> Rows)
+                : base()
+            {
+                this.Rows = Rows;
+            }
+        }
+
+        public delegate void RowsSelectedEventHandler(object sender, RowsSelectedEventArgs e);
+
+        public event RowsSelectedEventHandler RowsSelected;
+
+        private void OnRowsSelected()
+        {
+            if (this.RowsSelected != null)
+            {
+                RowsSelected(this, new RowsSelectedEventArgs(this.SelectedRows));
+            }
+        }
+
         [Attributes.Property("Region", Attributes.PropertyTypes.Int32, true)]
         public Regions Region { get; set; }
 
@@ -334,6 +357,9 @@ namespace Aras.ViewModel
 
                     // Replace current selection
                     ((Grid)this.Control).SelectedRows.Replace(newselection);
+
+                    // Fire Event
+                    ((Grid)this.Control).OnRowsSelected();
 
                     // Set to Execute
                     this.CanExecute = true;
