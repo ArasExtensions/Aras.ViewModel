@@ -56,7 +56,16 @@ namespace Aras.ViewModel.Containers
         {
             try
             {
+                // Get Context
                 Model.Item context = this.GetBindingItem(ID);
+
+                // Refresh Context
+                if (context != null)
+                {
+                    context.Refresh();
+                }
+                    
+                // Set Binding
                 this.Binding = context;
             }
             catch (Exception e)
