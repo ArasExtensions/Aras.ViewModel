@@ -53,6 +53,29 @@ namespace Aras.ViewModel.Grids
             }
         }
 
+        public class RelationshipsCreatedEventArgs : EventArgs
+        {
+            public Model.Relationship Relationship { get; private set; }
+
+            public RelationshipsCreatedEventArgs(Model.Relationship Relationship)
+                : base()
+            {
+                this.Relationship = Relationship;
+            }
+        }
+
+        public delegate void RelationshipsCreatedEventHandler(object sender, RelationshipsCreatedEventArgs e);
+
+        public event RelationshipsCreatedEventHandler RelationshipsCreated;
+
+        private void OnRelationshipsCreated(Model.Relationship Relationship)
+        {
+            if (this.RelationshipsCreated != null)
+            {
+                RelationshipsCreated(this, new RelationshipsCreatedEventArgs(Relationship));
+            }
+        }
+
         private Containers.Toolbar _toolbar;
         public virtual Containers.Toolbar Toolbar
         {
@@ -591,6 +614,7 @@ namespace Aras.ViewModel.Grids
                         {
                             Model.Relationship relationship = (Model.Relationship)((Model.Item)this.Binding).Relationships(this.RelationshipType).Create(this.Parent.Transaction);
                             relationship.Related = relateditem;
+                            this.OnRelationshipsCreated(relationship);
                         }
 
                         this.LoadRows();
