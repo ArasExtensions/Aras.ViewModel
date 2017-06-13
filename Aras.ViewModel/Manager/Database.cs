@@ -54,9 +54,9 @@ namespace Aras.ViewModel.Manager
         {
             Model.Session modelsession = this.Model.Login(Username, Password);
 
-            if (this.Server.SessionInCache(modelsession.ID))
+            if (this.Server.SessionInCache(modelsession.Database.ID, modelsession.ID))
             {
-                return this.Server.GetSessionFromCache(modelsession.ID);
+                return this.Server.GetSessionFromCache(modelsession.Database.ID, modelsession.ID);
             }
             else
             {

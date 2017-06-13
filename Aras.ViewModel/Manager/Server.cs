@@ -27,11 +27,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Reflection;
+using System.Security.Cryptography;
 
 namespace Aras.ViewModel.Manager
 {
     public class Server
     {
+        private const String tokensep = "+++++++++++";
+
         private const double MinExpireSession = 1;
         private const double MaxExpireSession = 60;
         private const double DefaultExpireSession = 10;
@@ -215,29 +218,68 @@ namespace Aras.ViewModel.Manager
             }
         }
 
+        private RSACryptoServiceProvider RSA;
+
+        internal String GetToken(Session Session)
+        {
+            // Build Token
+            String tokenstring = Session.Database.ID + tokensep + Session.ID;
+            
+            // Encrypt Token
+            UnicodeEncoding byteconverter = new UnicodeEncoding();
+            byte[] tokenstringbytes = byteconverter.GetBytes(tokenstring);
+            byte[] encryptedbytes = this.RSA.Encrypt(tokenstringbytes, false);
+
+            String token = Convert.ToBase64String(encryptedbytes);
+
+            return token;
+        }
+
         private Object _sessionCacheLock = new Object();
-        private Dictionary<String, Session> SessionCache;
+        private Dictionary<String, Dictionary<String, Session>> SessionCache;
 
         internal void AddSessionToCache(Session Session)
         {
             lock (this._sessionCacheLock)
             {
-                this.SessionCache[Session.ID] = Session;
+                if (!this.SessionCache.ContainsKey(Session.Database.ID))
+                {
+                    this.SessionCache[Session.Database.ID] = new Dictionary<String, Session>();
+                }
+
+                this.SessionCache[Session.Database.ID][Session.ID] = Session;
             }
         }
 
-        internal Boolean SessionInCache(String ID)
-        {
-            return this.SessionCache.ContainsKey(ID);
-        }
-
-        internal Session GetSessionFromCache(String ID)
+        internal Boolean SessionInCache(String DatabaseID, String SessionID)
         {
             lock (this._sessionCacheLock)
             {
-                if (this.SessionCache.ContainsKey(ID))
+                if (this.SessionCache.ContainsKey(DatabaseID))
                 {
-                    return this.SessionCache[ID];
+                    return this.SessionCache[DatabaseID].ContainsKey(SessionID);
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
+        internal Session GetSessionFromCache(String DatabaseID, String SessionID)
+        {
+            lock (this._sessionCacheLock)
+            {
+                if (this.SessionCache.ContainsKey(DatabaseID))
+                {
+                    if (this.SessionCache[DatabaseID].ContainsKey(SessionID))
+                    {
+                        return this.SessionCache[DatabaseID][SessionID];
+                    }
+                    else
+                    {
+                        throw new Exceptions.SessionException();
+                    }
                 }
                 else
                 {
@@ -248,7 +290,25 @@ namespace Aras.ViewModel.Manager
 
         public Session Session(String Token)
         {
-            return this.GetSessionFromCache(Token);
+            // Decrypt Token
+            byte[] tokenbytes = Convert.FromBase64String(Token);
+            byte[] decyptedbytes = this.RSA.Decrypt(tokenbytes, false);
+            UnicodeEncoding byteconverter = new UnicodeEncoding();
+            String tokenstring = byteconverter.GetString(decyptedbytes);
+
+            int seppos = tokenstring.IndexOf(tokensep);
+
+            if (seppos > 0)
+            {
+                String databaseid = tokenstring.Substring(0, seppos);
+                String sessionid = tokenstring.Substring(seppos + tokensep.Length, tokenstring.Length - seppos - tokensep.Length);
+
+                return this.GetSessionFromCache(databaseid, sessionid);
+            }
+            else
+            {
+                throw new Exceptions.SessionException();
+            }
         }
 
         public override string ToString()
@@ -263,6 +323,9 @@ namespace Aras.ViewModel.Manager
             this.PluginTypeCache = new Dictionary<String, ControlTypes.PluginType>();
             this.ApplicationTypeCache = new Dictionary<String, ControlTypes.ApplicationType>();
 
+            // Initialiase RSA Encyption
+            this.RSA = new RSACryptoServiceProvider();
+
             // Store Log
             this.Log = Log;
 
@@ -273,7 +336,7 @@ namespace Aras.ViewModel.Manager
             this.ExpireSession = DefaultExpireSession;
 
             // Initialiase Session Cache
-            this.SessionCache = new Dictionary<String, Session>();
+            this.SessionCache = new Dictionary<String, Dictionary<String, Session>>();
 
             // Set Default Assembly Directory
             this.AssemblyDirectory = new DirectoryInfo(Environment.CurrentDirectory);

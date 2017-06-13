@@ -78,11 +78,17 @@ namespace Aras.ViewModel.Manager
             }
         }
 
+        private String _token;
         public String Token
         {
             get
             {
-                return this.ID;
+                if (this._token == null)
+                {
+                    this._token = this.Database.Server.GetToken(this);
+                }
+
+                return this._token;
             }
         }
 
@@ -116,22 +122,14 @@ namespace Aras.ViewModel.Manager
         private Dictionary<ControlTypes.ApplicationType, ViewModel.Containers.Application> ApplicationCache;
         public ViewModel.Containers.Application Application(ControlTypes.ApplicationType ApplicationType)
         {
-            if (!this.ApplicationCache.ContainsKey(ApplicationType))
-            {
-                // Create Control
-                this.ApplicationCache[ApplicationType] = (ViewModel.Containers.Application)Activator.CreateInstance(ApplicationType.Type, new object[1] { this });
-                this.ApplicationCache[ApplicationType].Name = ApplicationType.Name;
-                this.ApplicationCache[ApplicationType].Label = ApplicationType.Label;
-                this.ApplicationCache[ApplicationType].Icon = ApplicationType.Icon;
+            // Create Control
+            this.ApplicationCache[ApplicationType] = (ViewModel.Containers.Application)Activator.CreateInstance(ApplicationType.Type, new object[1] { this });
+            this.ApplicationCache[ApplicationType].Name = ApplicationType.Name;
+            this.ApplicationCache[ApplicationType].Label = ApplicationType.Label;
+            this.ApplicationCache[ApplicationType].Icon = ApplicationType.Icon;
 
-                // Set Binding to Session
-                this.ApplicationCache[ApplicationType].Binding = this.Model;
-            }
-            else
-            {
-                // Add Application to Queue because client must have restarted
-                this.QueueControlRecursive(this.ApplicationCache[ApplicationType]);
-            }
+            // Set Binding to Session
+            this.ApplicationCache[ApplicationType].Binding = this.Model;
 
             return this.ApplicationCache[ApplicationType];
         }
