@@ -69,7 +69,7 @@ namespace Aras.ViewModel.Containers
         {
             if (this.ModelItem != null)
             {
-                // this.ModelItem.Refresh();
+                this.ModelItem.Refresh();
 
                 if (this.ModelItem.Locked == Model.Item.Locks.User)
                 {
