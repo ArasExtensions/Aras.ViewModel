@@ -38,7 +38,7 @@ namespace Aras.ViewModel.Trees
             }
         }
 
-        private Model.Relationship Relationship
+        public Model.Relationship Relationship
         {
             get
             {
@@ -60,7 +60,7 @@ namespace Aras.ViewModel.Trees
             }
         }
 
-        private Model.Item Item
+        public Model.Item Item
         {
             get
             {
@@ -88,9 +88,9 @@ namespace Aras.ViewModel.Trees
 
             if (Binding != null)
             {
-                if (!(Binding is Model.Item))
+                if (!((Binding is Model.Item) || (Binding is Model.Relationship)))
                 {
-                    throw new Model.Exceptions.ArgumentException("Binding must be a Aras.Model.Item");
+                    throw new Model.Exceptions.ArgumentException("Binding must be a Aras.Model.Item or Aras.Model.Relationship");
                 }
             }
         }

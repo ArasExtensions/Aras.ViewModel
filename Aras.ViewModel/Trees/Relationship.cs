@@ -27,12 +27,56 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel.Trees
 {
-    public class Relationship : Tree
+    public class Relationship : Tree, IToolbarProvider
     {
+        [ViewModel.Attributes.Command("Refresh")]
+        public RefreshCommand Refresh { get; private set; }
+
+        private Button _refreshButton;
+        public Button RefreshButton
+        {
+            get
+            {
+                if (this._refreshButton == null)
+                {
+                    this._refreshButton = new Button(this.Session);
+                    this._refreshButton.Icon = "Refresh";
+                    this._refreshButton.Tooltip = "Refresh";
+                    this._refreshButton.Command = this.Refresh;
+                }
+
+                return this._refreshButton;
+            }
+        }
+
+        private Containers.Toolbar _toolbar;
+        public virtual Containers.Toolbar Toolbar
+        {
+            get
+            {
+                if (this._toolbar == null)
+                {
+                    // Create Toolbar
+                    this._toolbar = new Containers.Toolbar(this.Session);
+
+                    // Stop Notification
+                    this._toolbar.Children.NotifyListChanged = false;
+
+                    // Add Refresh Button
+                    this._toolbar.Children.Add(this.RefreshButton);
+
+                    // Start Notification
+                    this._toolbar.Children.NotifyListChanged = true;
+                }
+
+                return this._toolbar;
+            }
+        }
+
         protected override void CheckBinding(object Binding)
         {
             base.CheckBinding(Binding);
-        
+
             if (Binding != null)
             {
                 if (!(Binding is Model.Item))
@@ -57,10 +101,30 @@ namespace Aras.ViewModel.Trees
             }
         }
 
-        public Relationship(Manager.Session Session)
-            : base(Session)
+        public void RefreshTree()
         {
 
+        }
+
+        public Relationship(Manager.Session Session, Type NodeFormatter)
+            : base(Session, NodeFormatter)
+        {
+
+        }
+
+        public class RefreshCommand : Aras.ViewModel.Command
+        {
+            protected override void Run(IEnumerable<Control> Parameters)
+            {
+                ((Relationship)this.Control).RefreshTree();
+                this.CanExecute = true;
+            }
+
+            internal RefreshCommand(Control Control)
+                : base(Control)
+            {
+                this.CanExecute = true;
+            }
         }
 
     }

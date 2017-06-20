@@ -212,6 +212,9 @@ namespace Aras.ViewModel.Containers
                     // Create Toolbar
                     this._toolbar = new Containers.Toolbar(this.Session);
 
+                    // Stop Notification
+                    this._toolbar.Children.NotifyListChanged = false;
+
                     // Add Refresh Button
                     this._toolbar.Children.Add(this.RefreshButton);
 
@@ -230,6 +233,8 @@ namespace Aras.ViewModel.Containers
                     // Add Promote Button
                     this._toolbar.Children.Add(this.PromoteButton);
 
+                    // Start Notification
+                    this._toolbar.Children.NotifyListChanged = true;
                 }
 
                 return this._toolbar;

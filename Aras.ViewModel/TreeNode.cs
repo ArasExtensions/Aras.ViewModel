@@ -34,6 +34,8 @@ namespace Aras.ViewModel
 
         public TreeNode Parent { get; private set; }
 
+        public TreeNodeFormatter Formatter { get; private set; }
+
         private String _label;
         [ViewModel.Attributes.Property("Label", Aras.ViewModel.Attributes.PropertyTypes.String, true)]
         public String Label 
@@ -205,6 +207,24 @@ namespace Aras.ViewModel
             this.Children.Clear();
         }
 
+        private void Formatter_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case "Label":
+                    this.Label = this.Formatter.Label;
+                    break;
+                case "OpenIcon":
+                    this.OpenIcon = this.Formatter.OpenIcon;
+                    break;
+                case "ClosedIcon":
+                    this.ClosedIcon = this.Formatter.ClosedIcon;
+                    break;
+                default:
+                    break;
+            }
+        }
+
         public TreeNode(Tree Tree, TreeNode Parent)
             :base(Tree.Session)
         {
@@ -213,6 +233,13 @@ namespace Aras.ViewModel
             this.ChildrenLoaded = false;
             this.Refresh = new RefreshCommand(this);
             this.Load = new LoadCommand(this);
+
+            // Create Formatter
+            this.Formatter = (Aras.ViewModel.TreeNodeFormatter)this.Tree.NodeFormatterType.GetConstructor(new Type[] { typeof(Aras.ViewModel.TreeNode) }).Invoke(new object[] { this });
+            this.Label = this.Formatter.Label;
+            this.OpenIcon = this.Formatter.OpenIcon;
+            this.ClosedIcon = this.Formatter.ClosedIcon;
+            this.Formatter.PropertyChanged += Formatter_PropertyChanged;
         }
 
         public class RefreshCommand : Aras.ViewModel.Command

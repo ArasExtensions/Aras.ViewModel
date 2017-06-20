@@ -28,7 +28,7 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel.Containers.BorderContainers
 {
-    public class Relationship : BorderContainer
+    public class RelationshipGrid : BorderContainer
     {
         public Containers.Toolbar Toolbar { get; private set; }
 
@@ -54,7 +54,7 @@ namespace Aras.ViewModel.Containers.BorderContainers
             this.Grid.Binding = this.Binding;
         }
 
-        public Relationship(IItemControl Parent, Model.RelationshipType RelationshipType)
+        public RelationshipGrid(IItemControl Parent, Model.RelationshipType RelationshipType)
             :base(Parent.Session)
         {
             // Create Search

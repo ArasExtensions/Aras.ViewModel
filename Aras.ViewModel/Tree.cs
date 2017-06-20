@@ -28,11 +28,18 @@ using System.Threading.Tasks;
 
 namespace Aras.ViewModel
 {
+    [Attributes.ClientControl("Aras.View.Tree")]
     public abstract class Tree : Control
     {
         [ViewModel.Attributes.Property("Select", Aras.ViewModel.Attributes.PropertyTypes.Command, true)]
         [ViewModel.Attributes.Command("Select")]
         public SelectCommand Select { get; private set; }
+
+        [Attributes.Property("Region", Attributes.PropertyTypes.Int32, true)]
+        public Regions Region { get; set; }
+
+        [Attributes.Property("Splitter", Attributes.PropertyTypes.Boolean, true)]
+        public Boolean Splitter { get; set; }
 
         private Boolean _lazyLoad;
         [ViewModel.Attributes.Property("LazyLoad", Aras.ViewModel.Attributes.PropertyTypes.Boolean, true)]
@@ -52,6 +59,26 @@ namespace Aras.ViewModel
             }
         }
 
+        private Type _nodeFormatterType;
+        public Type NodeFormatterType
+        {
+            get
+            {
+                return this._nodeFormatterType;
+            }
+            private set
+            {
+                if ((value != null) && value.IsSubclassOf(typeof(Aras.ViewModel.TreeNodeFormatter)))
+                {
+                    this._nodeFormatterType = value;
+                }
+                else
+                {
+                    throw new Model.Exceptions.ArgumentException("Node Formatter must be a sub class of Aras.ViewModel.TreeNodeFormatter");
+                }
+            }
+        }
+
         private TreeNode _root;
         [ViewModel.Attributes.Property("Root", Aras.ViewModel.Attributes.PropertyTypes.Control, true)]
         public TreeNode Root 
@@ -60,7 +87,7 @@ namespace Aras.ViewModel
             {
                 return this._root;
             }
-            protected set
+            set
             {
                 if (this._root == null)
                 {
@@ -109,11 +136,12 @@ namespace Aras.ViewModel
             }
         }
 
-        public Tree(Manager.Session Session)
+        public Tree(Manager.Session Session, Type NodeFormatterType)
             :base(Session)
         {
             this.Select = new SelectCommand(this);
             this._lazyLoad = true;
+            this.NodeFormatterType = NodeFormatterType;
         }
 
         public class SelectCommand : Aras.ViewModel.Command

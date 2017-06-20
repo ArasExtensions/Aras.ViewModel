@@ -84,7 +84,8 @@
     <Compile Include="Columns\Sequence.cs" />
     <Compile Include="Columns\Text.cs" />
     <Compile Include="Columns\String.cs" />
-    <Compile Include="Containers\BorderContainers\Relationship.cs" />
+    <Compile Include="Containers\BorderContainers\RelationshipTree.cs" />
+    <Compile Include="Containers\BorderContainers\RelationshipGrid.cs" />
     <Compile Include="Containers\BorderContainers\Search.cs" />
     <Compile Include="Containers\TableContainers\Item.cs" />
     <Compile Include="Dialog.cs" />
@@ -128,6 +129,7 @@
     <Compile Include="ObservableControlList.cs" />
     <Compile Include="Props\Integer.cs" />
     <Compile Include="ListValue.cs" />
+    <Compile Include="TreeNodeFormatter.cs" />
     <Compile Include="Trees\Relationship.cs" />
     <Compile Include="Trees\RelationshipNode.cs" />
     <Compile Include="Row.cs" />

@@ -54,10 +54,13 @@ namespace Aras.ViewModel.Design.Debug
 
             Model.Design.Items.Part treeroot = (Model.Design.Items.Part)treequery.Store.First();
 
-            foreach(Model.Design.Relationships.PartBOM partbom in treeroot.Relationships("Part BOM"))
-            {
+            ViewModel.Trees.Relationship reltree = new Trees.Relationship(session, typeof(Aras.ViewModel.Design.NodeFormatters.Part));
+            reltree.Binding = treeroot;
 
-            }
+            TreeNode rootnode = reltree.Root;
+            rootnode.Load.Execute();
+
+            String test = rootnode.Label;
         }
     }
 }

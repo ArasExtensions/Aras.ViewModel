@@ -114,6 +114,18 @@
       <Project>{95ccb1e3-f2fa-423a-bae6-a5a3ec0cec94}</Project>
       <Name>Aras.Logging</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Aras.Model\Aras.Model.Design\Aras.Model.Design.csproj">
+      <Project>{d99031a4-f91e-4d94-8080-be0375d3e83b}</Project>
+      <Name>Aras.Model.Design</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Aras.Model\Aras.Model\Aras.Model.csproj">
+      <Project>{4eee1056-fcb1-4523-8884-76e41149832f}</Project>
+      <Name>Aras.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Aras.ViewModel.Design\Aras.ViewModel.Design.csproj">
+      <Project>{6e26fc31-50b0-402e-aabe-1974fefb4d6c}</Project>
+      <Name>Aras.ViewModel.Design</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Aras.ViewModel.WebService\Aras.ViewModel.WebService.csproj">
       <Project>{d9521c6e-38a6-4f4e-99ed-f2fad98d365a}</Project>
       <Name>Aras.ViewModel.WebService</Name>
