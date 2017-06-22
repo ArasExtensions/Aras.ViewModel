@@ -35,6 +35,8 @@ namespace Aras.ViewModel.Design.Forms
 
         public Panes.Part DetailPane { get; private set; }
 
+        public ViewModel.Containers.BorderContainers.RelationshipTree Tree { get; private set; }
+
         protected override void AfterBindingChanged()
         {
             base.AfterBindingChanged();
@@ -49,13 +51,20 @@ namespace Aras.ViewModel.Design.Forms
 
             // Create TabContainer
             this.TabContainer = new Aras.ViewModel.Containers.TabContainer(this.Session);
-            this.TabContainer.Region = Aras.ViewModel.Regions.Center;
+            this.TabContainer.Region = Aras.ViewModel.Regions.Top;
+            this.TabContainer.Splitter = true;
             this.Children.Add(this.TabContainer);
 
             // Create Detail Pane
             this.DetailPane = new Panes.Part(this.Session);
             this.DetailPane.Title = "Details";
             this.TabContainer.Children.Add(this.DetailPane);
+
+            // Create Relationship Tree
+            this.Tree = new Containers.BorderContainers.RelationshipTree(this, typeof(Design.NodeFormatters.Part));
+            this.Tree.Region = Regions.Center;
+            this.Tree.Splitter = true;
+            this.Children.Add(this.Tree);
 
             this.Children.NotifyListChanged = true;
         }

@@ -109,7 +109,7 @@ namespace Aras.ViewModel.Trees
         public Relationship(Manager.Session Session, Type NodeFormatter)
             : base(Session, NodeFormatter)
         {
-
+            this.Refresh = new RefreshCommand(this);
         }
 
         public class RefreshCommand : Aras.ViewModel.Command
@@ -126,6 +126,5 @@ namespace Aras.ViewModel.Trees
                 this.CanExecute = true;
             }
         }
-
     }
 }
