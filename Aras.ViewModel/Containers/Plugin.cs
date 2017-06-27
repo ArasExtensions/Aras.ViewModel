@@ -148,20 +148,41 @@ namespace Aras.ViewModel.Containers
             }
         }
 
+        protected abstract Boolean CanSave { get; }
+
+        protected abstract Boolean CanEdit { get; }
+
         private void SetCommandsCanExecute()
         {
             if (this.ModelItem != null)
             {
                 if (this.ModelTransaction == null)
                 {
-                    this.Edit.UpdateCanExecute(true);
+                    if (this.CanEdit)
+                    {
+                        this.Edit.UpdateCanExecute(true);
+                    }
+                    else
+                    {
+                        this.Edit.UpdateCanExecute(false);
+                    }
+
                     this.Save.UpdateCanExecute(false);
                     this.Undo.UpdateCanExecute(false);
                 }
                 else
                 {
                     this.Edit.UpdateCanExecute(false);
-                    this.Save.UpdateCanExecute(true);
+
+                    if (this.CanSave)
+                    {
+                        this.Save.UpdateCanExecute(true);
+                    }
+                    else
+                    {
+                        this.Save.UpdateCanExecute(false);
+                    }
+
                     this.Undo.UpdateCanExecute(true);
                 }
             }
