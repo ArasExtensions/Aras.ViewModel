@@ -35,5 +35,11 @@ namespace Aras.ViewModel.Manager.Exceptions
         {
 
         }
+
+        internal SessionException(Exception InnerException)
+            : base("Session Timeout", InnerException)
+        {
+
+        }
     }
 }

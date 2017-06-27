@@ -290,24 +290,31 @@ namespace Aras.ViewModel.Manager
 
         public Session Session(String Token)
         {
-            // Decrypt Token
-            byte[] tokenbytes = Convert.FromBase64String(Token);
-            byte[] decyptedbytes = this.RSA.Decrypt(tokenbytes, false);
-            UnicodeEncoding byteconverter = new UnicodeEncoding();
-            String tokenstring = byteconverter.GetString(decyptedbytes);
-
-            int seppos = tokenstring.IndexOf(tokensep);
-
-            if (seppos > 0)
+            try
             {
-                String databaseid = tokenstring.Substring(0, seppos);
-                String sessionid = tokenstring.Substring(seppos + tokensep.Length, tokenstring.Length - seppos - tokensep.Length);
+                // Decrypt Token
+                byte[] tokenbytes = Convert.FromBase64String(Token);
+                byte[] decyptedbytes = this.RSA.Decrypt(tokenbytes, false);
+                UnicodeEncoding byteconverter = new UnicodeEncoding();
+                String tokenstring = byteconverter.GetString(decyptedbytes);
 
-                return this.GetSessionFromCache(databaseid, sessionid);
+                int seppos = tokenstring.IndexOf(tokensep);
+
+                if (seppos > 0)
+                {
+                    String databaseid = tokenstring.Substring(0, seppos);
+                    String sessionid = tokenstring.Substring(seppos + tokensep.Length, tokenstring.Length - seppos - tokensep.Length);
+
+                    return this.GetSessionFromCache(databaseid, sessionid);
+                }
+                else
+                {
+                    throw new Exceptions.SessionException();
+                }
             }
-            else
+            catch (Exception e)
             {
-                throw new Exceptions.SessionException();
+                throw new Exceptions.SessionException(e);
             }
         }
 
