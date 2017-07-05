@@ -313,7 +313,7 @@ namespace Aras.ViewModel.Manager
                 }
             }
             catch (Exception e)
-            {
+            { 
                 throw new Exceptions.SessionException(e);
             }
         }

@@ -30,6 +30,9 @@ namespace Aras.ViewModel.Cells
 {
     public class List : Cell
     {
+        [Attributes.Property("AllowNull", Attributes.PropertyTypes.Boolean, true)]
+        public System.Boolean AllowNull { get; set; }
+
         [Attributes.Property("Values", Attributes.PropertyTypes.ControlList, true)]
         public Model.ObservableList<ListValue> Values { get; private set; }
 
@@ -180,6 +183,7 @@ namespace Aras.ViewModel.Cells
             :base(Column, Row)
         {
             this.Values = new Model.ObservableList<ListValue>();
+            this.AllowNull = false;
         }
     }
 }

@@ -31,6 +31,10 @@ namespace Aras.ViewModel.Properties
     [Attributes.ClientControl("Aras.View.Properties.List")]
     public class List : Property
     {
+
+        [Attributes.Property("AllowNull", Attributes.PropertyTypes.Boolean, true)]
+        public System.Boolean AllowNull { get; set; }
+
         private System.String _value;
         [Attributes.Property("Value", Attributes.PropertyTypes.String, false)]
         public System.String Value
@@ -171,6 +175,7 @@ namespace Aras.ViewModel.Properties
             this.Values = new Model.ObservableList<ListValue>();
             this.Values.ListChanged += Values_ListChanged;
             this.Value = null;
+            this.AllowNull = false;
         }
 
         public List(Manager.Session Session, Model.PropertyTypes.List PropertyType)
@@ -178,6 +183,7 @@ namespace Aras.ViewModel.Properties
         {
             this.Values = new Model.ObservableList<ListValue>();
             this.Value = null;
+            this.AllowNull = false;
 
             if (PropertyType != null)
             {
