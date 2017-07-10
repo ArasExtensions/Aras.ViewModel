@@ -64,13 +64,16 @@ namespace Aras.ViewModel.Dialogs
                 {
                      case "Boolean":
 
-                        if (((Properties.Boolean)prop).Value)
-                         {
-                             condition = Aras.Conditions.Eq(((Properties.Boolean)prop).PropertyType.Name, "1");
-                         }
-                        else
+                        if (((Properties.Boolean)prop).Value != null)
                         {
-                            condition = Aras.Conditions.Eq(((Properties.Boolean)prop).PropertyType.Name, "0");
+                            if ((System.Boolean)((Properties.Boolean)prop).Value)
+                            {
+                                condition = Aras.Conditions.Eq(((Properties.Boolean)prop).PropertyType.Name, "1");
+                            }
+                            else
+                            {
+                                condition = Aras.Conditions.Eq(((Properties.Boolean)prop).PropertyType.Name, "0");
+                            }
                         }
 
                         break;
@@ -188,7 +191,7 @@ namespace Aras.ViewModel.Dialogs
                 switch (prop.GetType().Name)
                 {
                     case "Boolean":
-                        ((Properties.Boolean)prop).Value = false;
+                        ((Properties.Boolean)prop).Value = null;
                         break;
                     case "Date":
                         ((Properties.Date)prop).Value = null;

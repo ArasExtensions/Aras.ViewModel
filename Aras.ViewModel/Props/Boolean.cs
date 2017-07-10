@@ -32,9 +32,9 @@ namespace Aras.ViewModel.Properties
     public class Boolean : Property
     {
 
-        private System.Boolean _value;
+        private System.Boolean? _value;
         [Attributes.Property("Value", Attributes.PropertyTypes.Boolean, false)]
-        public System.Boolean Value
+        public System.Boolean? Value
         {
             get
             {
@@ -49,7 +49,7 @@ namespace Aras.ViewModel.Properties
             }
         }
 
-        private void SetValue(System.Boolean Value)
+        private void SetValue(System.Boolean? Value)
         {
             this._value = Value;
             this.OnPropertyChanged("Value");
@@ -81,18 +81,11 @@ namespace Aras.ViewModel.Properties
 
             if (this.Binding != null)
             {
-                if (((Model.Properties.Boolean)this.Binding).Value == null)
-                {
-                    this.Value = false;
-                }
-                else
-                {
-                    this.Value = (System.Boolean)((Model.Properties.Boolean)this.Binding).Value;
-                }
+                this.Value = (System.Boolean?)((Model.Properties.Boolean)this.Binding).Value;
             }
             else
             {
-                this.Value = false;
+                this.Value = null;
             }
         }
 
@@ -113,7 +106,7 @@ namespace Aras.ViewModel.Properties
 
                         if (!this.UpdatingBinding)
                         {
-                            this.Value = (System.Boolean)((Model.Properties.Boolean)this.Binding).Value;
+                            this.Value = (System.Boolean?)((Model.Properties.Boolean)this.Binding).Value;
                         }
 
                         break;

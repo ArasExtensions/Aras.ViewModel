@@ -77,13 +77,20 @@ namespace Aras.ViewModel.WebService.Models
                     {
                         case ViewModel.Attributes.PropertyTypes.Boolean:
 
-                            if (((Boolean)viewmodelvalue) == true)
+                            if (viewmodelvalue != null)
                             {
-                                property.Values.Add("1");
+                                if (((Boolean)viewmodelvalue) == true)
+                                {
+                                    property.Values.Add("1");
+                                }
+                                else
+                                {
+                                    property.Values.Add("0");
+                                }
                             }
                             else
                             {
-                                property.Values.Add("0");
+                                property.Values.Add(null);
                             }
 
                             break;
