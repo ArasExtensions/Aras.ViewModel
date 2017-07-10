@@ -30,6 +30,10 @@ namespace Aras.ViewModel.Dialogs
 {
     public class Filters : Dialog
     {
+        private const Int32 NoColumns = 3;
+        private const Int32 RowHeight = 60;
+        private const Int32 ToolbarHeight = 50;
+
         [ViewModel.Attributes.Command("ApplyFilter")]
         public FilterCommand ApplyFilter { get; private set; }
 
@@ -47,20 +51,6 @@ namespace Aras.ViewModel.Dialogs
         public Button FilterButton { get; private set; }
 
         public Containers.TableContainer Table { get; private set; }
-
-        private void BuildTable()
-        {
-            this.Table = new Containers.TableContainer(this.Session);
-            this.Table.Columns = 3;
-
-            foreach (Model.PropertyType proptype in this.PropertyTypes)
-            {
-                ViewModel.Property viewmodelproperty = this.Session.CreateProperty(proptype, false);
-                viewmodelproperty.IntermediateChanges = true;
-                viewmodelproperty.Enabled = true;
-                this.Table.Children.Add(viewmodelproperty);
-            }
-        }
 
         public Model.Condition Condition()
         {
@@ -280,11 +270,28 @@ namespace Aras.ViewModel.Dialogs
             this.Toolbar.Children.NotifyListChanged = true;
 
             // Build Table
-            this.BuildTable();
+            this.Table = new Containers.TableContainer(this.Session);
+            this.Table.Columns = NoColumns;
+            this.Table.Children.NotifyListChanged = false;
+
+            foreach (Model.PropertyType proptype in this.PropertyTypes)
+            {
+                ViewModel.Property viewmodelproperty = this.Session.CreateProperty(proptype, true);
+                viewmodelproperty.IntermediateChanges = true;
+                viewmodelproperty.Enabled = true;
+                this.Table.Children.Add(viewmodelproperty);
+            }
+
+            this.Table.Children.NotifyListChanged = true;
+
             this.Table.Region = Regions.Center;
             this.Layout.Children.Add(this.Table);
 
             this.Layout.Children.NotifyListChanged = true;
+
+            // Set Width and Height
+            this.Width = 600;
+            this.Height = (((this.PropertyTypes.Count() / NoColumns) + (this.PropertyTypes.Count() % NoColumns > 0 ? 1 : 0)) * RowHeight) + ToolbarHeight;                                                 
         }
 
         public class FilterCommand : Aras.ViewModel.Command
