@@ -179,11 +179,19 @@ namespace Aras.ViewModel.Cells
             this.Values.NotifyListChanged = true;
         }
 
+        private void Values_ListChanged(object sender, EventArgs e)
+        {
+            this.OnPropertyChanged("Values");
+        }
+
         internal List(Column Column, Row Row)
             :base(Column, Row)
         {
             this.Values = new Model.ObservableList<ListValue>();
+            this.Values.ListChanged += Values_ListChanged;
             this.AllowNull = false;
         }
+
+
     }
 }
