@@ -125,7 +125,7 @@ namespace Aras.ViewModel.Grids
                     this._toolbar.Children.Add(createbutton);
                     createbutton.Command = this.Create;
 
-                    // Add Create Button
+                    // Add Delete Button
                     Button deletebutton = new Button(this.Session);
                     deletebutton.Icon = "Delete";
                     deletebutton.Tooltip = "Delete Selected " + this.RelationshipType.PluralLabel;

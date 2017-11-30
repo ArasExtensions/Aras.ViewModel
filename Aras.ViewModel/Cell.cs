@@ -152,6 +152,19 @@ namespace Aras.ViewModel
             }
         }
 
+        private void Column_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case "Editable":
+                    this.Editable = this.Column.Editable;
+                    break;
+                default:
+
+                    break;
+            }
+        }
+
         internal Cell(Column Column, Row Row)
             :base(Column.Session)
         {
@@ -160,8 +173,10 @@ namespace Aras.ViewModel
             this.UpdatingBinding = false;
 
             // Set Default Value for Editable from Column
-            this.Editable = Column.Editable;
-        }
+            this.Editable = this.Column.Editable;
 
+            // Watch for Changes in Column Editable
+            this.Column.PropertyChanged += Column_PropertyChanged;
+        }
     }
 }
