@@ -167,12 +167,18 @@ namespace Aras.ViewModel.Cells
 
             if (this.Binding != null)
             {
+                Model.Relationships.Value selectedvalue = (Model.Relationships.Value)((Model.Properties.List)this.Binding).Value;
+
                 foreach (Model.Relationships.Value listvalue in ((Model.Properties.List)this.Binding).Values.Relationships("Value"))
                 {
                     ListValue thisvalue = new ListValue(this.Session);
                     thisvalue.Binding = listvalue;
                     this.Values.Add(thisvalue);
 
+                    if (listvalue.Equals(selectedvalue))
+                    {
+                        this.Selected = thisvalue;
+                    }  
                 }
             }
 
