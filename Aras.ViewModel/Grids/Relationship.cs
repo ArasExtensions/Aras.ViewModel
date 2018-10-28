@@ -89,35 +89,6 @@ namespace Aras.ViewModel.Grids
                     // Stop Notification
                     this._toolbar.Children.NotifyListChanged = false;
 
-                    // Add Search Button
-                    //Button searchbutton = new Button(this.Session);
-                    //searchbutton.Icon = "Search";
-                    //searchbutton.Tooltip = "Search";
-                    //this._toolbar.Children.Add(searchbutton);
-                    //searchbutton.Command = this.Refresh;
-
-                    // Add Page Size
-                    //this._toolbar.Children.Add(this.PageSize);
-
-                    // Add Next Page Button
-                    //Button nextbutton = new Button(this.Session);
-                    //nextbutton.Icon = "NextPage";
-                    //nextbutton.Tooltip = "Next Page";
-                    //this._toolbar.Children.Add(nextbutton);
-                    //nextbutton.Command = this.NextPage;
-
-                    // Add Previous Page Button
-                    //Button previousbutton = new Button(this.Session);
-                    //previousbutton.Icon = "PreviousPage";
-                    //previousbutton.Tooltip = "Previous Page";
-                    //this._toolbar.Children.Add(previousbutton);
-                    //previousbutton.Command = this.PreviousPage;
-
-                    // Add Query String - disabled for now, need to work out how to query Related
-                    // this._toolbar.Children.Add(this.QueryString);
-
-                    //this._toolbar.Children.Add(new ToolbarSeparator(this.Session));
-
                     // Add Create Button
                     Button createbutton = new Button(this.Session);
                     createbutton.Icon = "New";
