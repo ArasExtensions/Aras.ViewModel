@@ -35,6 +35,10 @@ namespace Aras.ViewModel.Containers
         [ViewModel.Attributes.Command("Refresh")]
         public RefreshCommand Refresh { get; private set; }
 
+        [Attributes.Property("ItemLock", Attributes.PropertyTypes.Command, true)]
+        [ViewModel.Attributes.Command("ItemLock")]
+        public ItemLockCommand ItemLock { get; private set; }
+        
         [ViewModel.Attributes.Command("Save")]
         public SaveCommand Save { get; private set; }
 
@@ -266,6 +270,49 @@ namespace Aras.ViewModel.Containers
             this.SetCommandsCanExecute();
         }
 
+        protected virtual void BeforeItemLock()
+        {
+
+        }
+
+        protected virtual void AfterItemLock()
+        {
+
+        }
+
+        private void LockItem()
+        {
+            if (this.ModelItem != null)
+            {
+                // Run Before ItemLock
+                this.BeforeItemLock();
+
+                if (this.ModelTransaction != null)
+                {
+                    if (this.ModelItem.Locked == Model.Item.Locks.User)
+                    {
+                        // Already Locked so Save
+                        this.SaveUnLockItem();
+                    }
+                    else
+                    {
+                        // Undo any changes
+                        this.UndoItem();
+                    }
+                }
+                else
+                {
+                    // Not Locked so Edit
+                    this.EditItem();
+                }
+
+                // Run After ItemLock
+                this.AfterItemLock();
+
+                this.SetCommandsCanExecute();
+            }            
+        }
+
         protected virtual void BeforeSave()
         {
 
@@ -341,6 +388,7 @@ namespace Aras.ViewModel.Containers
             :base(Session)
         {
             this.Refresh = new RefreshCommand(this);
+            this.ItemLock = new ItemLockCommand(this);
             this.Edit = new EditCommand(this);
             this.Save = new SaveCommand(this);
             this.SaveUnLock = new SaveUnLockCommand(this);
@@ -356,6 +404,21 @@ namespace Aras.ViewModel.Containers
             }
 
             internal RefreshCommand(Plugin Plugin)
+                : base(Plugin)
+            {
+                this.CanExecute = true;
+            }
+        }
+
+        public class ItemLockCommand : Aras.ViewModel.Command
+        {
+            protected override void Run(IEnumerable<Control> Parameters)
+            {
+                ((Plugin)this.Control).LockItem();
+                this.CanExecute = true;
+            }
+
+            internal ItemLockCommand(Plugin Plugin)
                 : base(Plugin)
             {
                 this.CanExecute = true;
