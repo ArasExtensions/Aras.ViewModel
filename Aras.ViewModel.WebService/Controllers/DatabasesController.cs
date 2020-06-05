@@ -81,7 +81,7 @@ namespace Aras.ViewModel.WebService.Controllers
                 ViewModel.Manager.Database database = this.Server.Database(Name);
 
                 // Login
-                ViewModel.Manager.Session session = database.Login(Credentials.Username, Credentials.Password);
+                ViewModel.Manager.Session session = database.Login(Credentials.Username, Credentials.AccessToken);
                 HttpCookie cookie = new HttpCookie(tokencookie, session.Token);
                 HttpContext.Current.Response.Cookies.Add(cookie);
 

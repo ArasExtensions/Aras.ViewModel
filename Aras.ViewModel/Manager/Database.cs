@@ -50,9 +50,9 @@ namespace Aras.ViewModel.Manager
             }
         }
 
-        public Session Login(String Username, String Password)
+        public Session Login(String Username, String AccessToken)
         {
-            Model.Session modelsession = this.Model.Login(Username, Password);
+            Model.Session modelsession = this.Model.Login(Username, AccessToken);
 
             if (this.Server.SessionInCache(modelsession.Database.ID, modelsession.ID))
             {
