@@ -38,6 +38,8 @@ namespace Aras.ViewModel.WebService.Controllers
         {
             try
             {
+                this.Server.Log.Add(Logging.Levels.Debug, String.Format("Starting Put commands/{0}/execute", ID));
+
                 // Get Parameters
                 List<ViewModel.Control> viewmodelparameters = new List<ViewModel.Control>();
 
@@ -61,6 +63,10 @@ namespace Aras.ViewModel.WebService.Controllers
             catch (Exception e)
             {
                 throw this.ProcessException(e);
+            }
+            finally
+            {
+                this.Server.Log.Add(Logging.Levels.Debug, String.Format("Completed Put commands/{0}/execute", ID));
             }
         }
 

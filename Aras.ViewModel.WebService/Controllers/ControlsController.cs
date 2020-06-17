@@ -37,6 +37,8 @@ namespace Aras.ViewModel.WebService.Controllers
         {
             try
             {
+                this.Server.Log.Add(Logging.Levels.Debug, String.Format("Starting Get controls/{0}", ID));
+
                 Guid viewmodelid = ViewModel.Utilities.StringToGuid(ID);
                 ViewModel.Control control = this.Session.Control(viewmodelid);
                 return new Models.Responses.Control(this.Session, control);
@@ -46,6 +48,10 @@ namespace Aras.ViewModel.WebService.Controllers
             {
                 throw this.ProcessException(e);
             }
+            finally
+            {
+                this.Server.Log.Add(Logging.Levels.Debug, String.Format("Completed Get controls/{0}", ID));
+            }
         }
 
         [Route("controls/{ID}")]
@@ -54,6 +60,8 @@ namespace Aras.ViewModel.WebService.Controllers
         {
             try
             {
+                this.Server.Log.Add(Logging.Levels.Debug, String.Format("Completed Put controls/{0}", ID));
+
                 Guid viewmodelid = ViewModel.Utilities.StringToGuid(ID);
                 ViewModel.Control control = this.Session.Control(viewmodelid);
 
@@ -159,6 +167,10 @@ namespace Aras.ViewModel.WebService.Controllers
             catch (Exception e)
             {
                 throw this.ProcessException(e);
+            }
+            finally
+            {
+                this.Server.Log.Add(Logging.Levels.Debug, String.Format("Completed Put controls/{0}", ID));
             }
         }
 

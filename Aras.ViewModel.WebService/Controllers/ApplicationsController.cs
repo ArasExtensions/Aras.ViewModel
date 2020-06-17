@@ -95,6 +95,8 @@ namespace Aras.ViewModel.WebService.Controllers
         {
             try
             {
+                this.Server.Log.Add(Logging.Levels.Debug, "Starting Get applicationtypes");
+
                 // Create Root
                 Models.ApplicationType root = new Models.ApplicationType();
                 root.ID = Guid.NewGuid().ToString();
@@ -121,6 +123,10 @@ namespace Aras.ViewModel.WebService.Controllers
             {
                 throw this.ProcessException(e);
             }
+            finally
+            {
+                this.Server.Log.Add(Logging.Levels.Debug, "Completed Get applicationtypes");
+            }
         }
 
         [Route("applications")]
@@ -129,6 +135,8 @@ namespace Aras.ViewModel.WebService.Controllers
         {
             try
             {
+                this.Server.Log.Add(Logging.Levels.Debug, "Starting Put applications");
+
                 // Get Application Type
                 Manager.ControlTypes.ApplicationType apptype = this.Session.ApplicationType(ApplicationType.Name);
                 
@@ -140,6 +148,10 @@ namespace Aras.ViewModel.WebService.Controllers
             catch(Exception e)
             {
                 throw this.ProcessException(e);
+            }
+            finally
+            {
+                this.Server.Log.Add(Logging.Levels.Debug, "Completed Put applications");
             }
         }
 

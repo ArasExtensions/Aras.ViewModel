@@ -38,6 +38,8 @@ namespace Aras.ViewModel.WebService.Controllers
         {
             try
             {
+                this.Server.Log.Add(Logging.Levels.Debug, String.Format("Starting Get databases"));
+
                 List<Models.Database> ret = new List<Models.Database>();
 
                 foreach (ViewModel.Manager.Database database in this.Server.Databases)
@@ -51,6 +53,10 @@ namespace Aras.ViewModel.WebService.Controllers
             {
                 throw this.ProcessException(e);
             }
+            finally
+            {
+                this.Server.Log.Add(Logging.Levels.Debug, String.Format("Completed Get databases"));
+            }
         }
 
         [Route("databases/{Name}")]
@@ -59,6 +65,8 @@ namespace Aras.ViewModel.WebService.Controllers
         {
             try
             {
+                this.Server.Log.Add(Logging.Levels.Debug, String.Format("Starting Get databases/{0}", Name));
+
                 // Get Database
                 ViewModel.Manager.Database database = this.Server.Database(Name);
 
@@ -69,6 +77,10 @@ namespace Aras.ViewModel.WebService.Controllers
             {
                 throw this.ProcessException(e);
             }
+            finally
+            {
+                this.Server.Log.Add(Logging.Levels.Debug, String.Format("Completed Get databases/{0}", Name));
+            }
         }
 
         [Route("databases/{Name}/login")]
@@ -77,6 +89,8 @@ namespace Aras.ViewModel.WebService.Controllers
         {
             try
             {
+                this.Server.Log.Add(Logging.Levels.Debug, String.Format("Starting Put databases/{0}/login", Name));
+
                 // Get Database
                 ViewModel.Manager.Database database = this.Server.Database(Name);
 
@@ -90,6 +104,10 @@ namespace Aras.ViewModel.WebService.Controllers
             catch (Exception e)
             {
                 throw this.ProcessException(e);
+            }
+            finally
+            {
+                this.Server.Log.Add(Logging.Levels.Debug, String.Format("Completed Put databases/{0}/login", Name));
             }
         }
 
