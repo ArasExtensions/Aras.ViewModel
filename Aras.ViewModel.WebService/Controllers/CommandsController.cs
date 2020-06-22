@@ -33,7 +33,7 @@ namespace Aras.ViewModel.WebService.Controllers
     public class CommandsController : BaseController
     {
         [Route("commands/{ID}/execute")]
-        [HttpPut]
+        [HttpPost]
         public Models.Response ExecuteCommand(String ID, List<String> Parameters)
         {
             try

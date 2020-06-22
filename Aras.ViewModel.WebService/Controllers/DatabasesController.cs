@@ -84,7 +84,7 @@ namespace Aras.ViewModel.WebService.Controllers
         }
 
         [Route("databases/{Name}/login")]
-        [HttpPut]
+        [HttpPost]
         public Models.Response Login(String Name, Models.Credentials Credentials)
         {
             try

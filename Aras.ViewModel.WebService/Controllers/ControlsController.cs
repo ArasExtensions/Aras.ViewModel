@@ -55,7 +55,7 @@ namespace Aras.ViewModel.WebService.Controllers
         }
 
         [Route("controls/{ID}")]
-        [HttpPut]
+        [HttpPost]
         public Models.Response UpdateControl(String ID, Models.Control Control)
         {
             try
