@@ -130,7 +130,7 @@ namespace Aras.ViewModel.WebService.Controllers
         }
 
         [Route("applications")]
-        [HttpPut]
+        [HttpPost]
         public Models.Responses.Control GetApplication(Models.ApplicationType ApplicationType)
         {
             try

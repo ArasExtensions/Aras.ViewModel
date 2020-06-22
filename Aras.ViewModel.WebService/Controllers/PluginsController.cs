@@ -33,7 +33,7 @@ namespace Aras.ViewModel.WebService.Controllers
     public class PluginsController : BaseController
     {
         [Route("plugins")]
-        [HttpPut]
+        [HttpPost]
         public Models.Responses.Control GetPlugin(Models.Plugin Plugin)
         {
             try
