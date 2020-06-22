@@ -48,6 +48,9 @@ namespace Aras.ViewModel.WebService.Controllers
                     this._session = this.Server.Session(token);
                 }
 
+                String auth_token = HttpContext.Current.Request?.Headers["AUTH_TOKEN"];
+                this._session.Model.IO.UpdateAccesToken(auth_token);
+
                 return this._session;
             }
         }
