@@ -84,6 +84,10 @@
       <Project>{95ccb1e3-f2fa-423a-bae6-a5a3ec0cec94}</Project>
       <Name>Aras.Logging</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Aras.IO\Aras.IO\Aras.IO.csproj">
+      <Project>{5acc089e-892b-4fa7-891d-b2f6d74a4d7b}</Project>
+      <Name>Aras.IO</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Aras.Model\Aras.Model\Aras.Model.csproj">
       <Project>{4eee1056-fcb1-4523-8884-76e41149832f}</Project>
       <Name>Aras.Model</Name>
