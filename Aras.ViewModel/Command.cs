@@ -44,7 +44,7 @@ namespace Aras.ViewModel
             }
         }
 
-        private object _canExecuteLock = new object();
+        private readonly object _canExecuteLock = new object();
         private volatile Boolean _canExecute;
         public Boolean CanExecute
         {

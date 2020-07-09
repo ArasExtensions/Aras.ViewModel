@@ -38,7 +38,7 @@ namespace Aras.ViewModel.WebService.Controllers
         {
             try
             {
-                this.Server.Log.Add(Logging.Levels.Debug, String.Format("Starting Put commands/{0}/execute", ID));
+                this.Server.Log.Add(Logging.Levels.Debug, String.Format("Starting Post commands/{0}/execute", ID));
 
                 // Get Parameters
                 List<ViewModel.Control> viewmodelparameters = new List<ViewModel.Control>();
@@ -66,7 +66,7 @@ namespace Aras.ViewModel.WebService.Controllers
             }
             finally
             {
-                this.Server.Log.Add(Logging.Levels.Debug, String.Format("Completed Put commands/{0}/execute", ID));
+                this.Server.Log.Add(Logging.Levels.Debug, String.Format("Completed Post commands/{0}/execute", ID));
             }
         }
 

@@ -38,7 +38,7 @@ namespace Aras.ViewModel.WebService.Controllers
         {
             try
             {
-                this.Server.Log.Add(Logging.Levels.Debug, String.Format("Starting Put plugins"));
+                this.Server.Log.Add(Logging.Levels.Debug, String.Format("Starting Post plugins"));
 
                 // Get Plugin Type
                 Manager.ControlType plugintype = this.Session.Database.Server.ControlType(Plugin.Name);
@@ -54,7 +54,7 @@ namespace Aras.ViewModel.WebService.Controllers
             }
             finally
             {
-                this.Server.Log.Add(Logging.Levels.Debug, String.Format("Completed Put plugins"));
+                this.Server.Log.Add(Logging.Levels.Debug, String.Format("Completed Post plugins"));
             }
         }
 
