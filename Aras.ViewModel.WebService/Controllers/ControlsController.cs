@@ -60,7 +60,7 @@ namespace Aras.ViewModel.WebService.Controllers
         {
             try
             {
-                this.Server.Log.Add(Logging.Levels.Debug, String.Format("Completed Put controls/{0}", ID));
+                this.Server.Log.Add(Logging.Levels.Debug, String.Format("Completed Post controls/{0}", ID));
 
                 Guid viewmodelid = ViewModel.Utilities.StringToGuid(ID);
                 ViewModel.Control control = this.Session.Control(viewmodelid);
@@ -170,7 +170,7 @@ namespace Aras.ViewModel.WebService.Controllers
             }
             finally
             {
-                this.Server.Log.Add(Logging.Levels.Debug, String.Format("Completed Put controls/{0}", ID));
+                this.Server.Log.Add(Logging.Levels.Debug, String.Format("Completed Post controls/{0}", ID));
             }
         }
 

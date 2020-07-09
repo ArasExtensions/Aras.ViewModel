@@ -227,27 +227,31 @@ namespace Aras.ViewModel
         }
 
         private Dictionary<String, PropertyDetails> _propertyInfoCache;
+        private readonly object _propertyInfoCacheLock = new object();
         private Dictionary<String, PropertyDetails> PropertyInfoCache
         {
             get
             {
-                if (this._propertyInfoCache == null)
+                lock (this._propertyInfoCacheLock)
                 {
-                    this._propertyInfoCache = new Dictionary<String, PropertyDetails>();
-
-                    foreach (System.Reflection.PropertyInfo propinfo in this.GetType().GetProperties())
+                    if (this._propertyInfoCache == null)
                     {
-                        object[] customattrs = propinfo.GetCustomAttributes(typeof(Attributes.Property), true);
+                        this._propertyInfoCache = new Dictionary<String, PropertyDetails>();
 
-                        foreach (object customattr in customattrs)
+                        foreach (System.Reflection.PropertyInfo propinfo in this.GetType().GetProperties())
                         {
-                            this._propertyInfoCache[((Attributes.Property)customattr).Name] = new PropertyDetails(propinfo, (Attributes.Property)customattr);
-                            break;
+                            object[] customattrs = propinfo.GetCustomAttributes(typeof(Attributes.Property), true);
+
+                            foreach (object customattr in customattrs)
+                            {
+                                this._propertyInfoCache[((Attributes.Property)customattr).Name] = new PropertyDetails(propinfo, (Attributes.Property)customattr);
+                                break;
+                            }
                         }
                     }
-                }
 
-                return this._propertyInfoCache;
+                    return this._propertyInfoCache;
+                }
             }
         }
 

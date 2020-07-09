@@ -135,7 +135,7 @@ namespace Aras.ViewModel.WebService.Controllers
         {
             try
             {
-                this.Server.Log.Add(Logging.Levels.Debug, "Starting Put applications");
+                this.Server.Log.Add(Logging.Levels.Debug, "Starting Post applications");
 
                 // Get Application Type
                 Manager.ControlTypes.ApplicationType apptype = this.Session.ApplicationType(ApplicationType.Name);
@@ -151,7 +151,7 @@ namespace Aras.ViewModel.WebService.Controllers
             }
             finally
             {
-                this.Server.Log.Add(Logging.Levels.Debug, "Completed Put applications");
+                this.Server.Log.Add(Logging.Levels.Debug, "Completed Post applications");
             }
         }
 

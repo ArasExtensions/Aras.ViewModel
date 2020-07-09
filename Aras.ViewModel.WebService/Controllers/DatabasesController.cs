@@ -89,7 +89,7 @@ namespace Aras.ViewModel.WebService.Controllers
         {
             try
             {
-                this.Server.Log.Add(Logging.Levels.Debug, String.Format("Starting Put databases/{0}/login", Name));
+                this.Server.Log.Add(Logging.Levels.Debug, String.Format("Starting Post databases/{0}/login", Name));
 
                 // Get Database
                 ViewModel.Manager.Database database = this.Server.Database(Name);
@@ -107,7 +107,7 @@ namespace Aras.ViewModel.WebService.Controllers
             }
             finally
             {
-                this.Server.Log.Add(Logging.Levels.Debug, String.Format("Completed Put databases/{0}/login", Name));
+                this.Server.Log.Add(Logging.Levels.Debug, String.Format("Completed Post databases/{0}/login", Name));
             }
         }
 
